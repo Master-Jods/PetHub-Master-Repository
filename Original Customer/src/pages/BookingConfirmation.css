@@ -1,0 +1,559 @@
+.ht-booking-confirmation {
+  min-height: 100vh;
+  background-color: #fff2fa;
+  font-family: 'Inter', sans-serif;
+  padding-top: 20px;
+}
+
+.ht-confirmation-container {
+  padding-top: 20px;
+  padding-bottom: 60px;
+}
+
+.ht-confirmation-title-row {
+  margin-bottom: 40px;
+}
+
+.ht-confirmation-main-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.ht-confirmation-subtitle {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.ht-confirmation-progress-row {
+  margin: 60px 0;
+}
+
+.ht-confirmation-progress-steps {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ht-confirmation-progress-bar {
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.ht-confirmation-progress-bar .progress-bar {
+  background: linear-gradient(90deg, #f53799 0%, #ff6bc0 100%);
+  transition: width 0.5s ease;
+  border-radius: 3px;
+}
+
+.ht-confirmation-step-indicators {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: -22px;
+}
+
+.ht-confirmation-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  z-index: 2;
+  min-width: 100px;
+}
+
+.ht-confirmation-step-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #7f8c8d;
+  margin-bottom: 12px;
+  border: 3px solid #e9ecef;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Show number always */
+.ht-confirmation-step-circle span {
+  display: block;
+}
+
+.ht-confirmation-step-active .ht-confirmation-step-circle {
+  background: linear-gradient(135deg, #f53799, #ff6bc0);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(245, 55, 153, 0.4);
+  border-color: #f53799;
+}
+
+.ht-confirmation-step-label {
+  font-weight: 600;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+}
+
+.ht-confirmation-step-active .ht-confirmation-step-label {
+  color: #f53799;
+  font-weight: 700;
+  transform: translateY(2px);
+}
+
+.ht-confirmation-content-row {
+  margin-bottom: 40px;
+  justify-content: center;
+}
+
+.ht-confirmation-card {
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(245, 55, 153, 0.15);
+  background-color: white;
+  overflow: hidden;
+  border: 3px solid #ff6bc0;
+  padding: 40px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ht-confirmation-card-body {
+  padding: 0;
+}
+
+.ht-confirmation-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #ffe4f1;
+}
+
+.ht-confirmation-header-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.ht-confirmation-header-subtitle {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.ht-confirmation-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.ht-confirmation-details-column,
+.ht-confirmation-services-column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.ht-confirmation-detail-section {
+  background-color: #fff9fb;
+  border-radius: 20px;
+  padding: 25px;
+  border: 2px solid #ffe4f1;
+  transition: all 0.3s ease;
+}
+
+.ht-confirmation-detail-section:hover {
+  border-color: #ff6bc0;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(245, 55, 153, 0.2);
+}
+
+.ht-confirmation-detail-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ht-confirmation-detail-badge {
+  background: linear-gradient(135deg, #f53799, #ff6bc0);
+  color: white;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.ht-confirmation-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ht-confirmation-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ffe4f1;
+}
+
+.ht-confirmation-detail-item:last-child {
+  border-bottom: none;
+}
+
+.ht-confirmation-detail-label {
+  font-weight: 600;
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+.ht-confirmation-detail-value {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  text-align: right;
+}
+
+.ht-confirmation-services-section {
+  background-color: #fff9fb;
+  border-radius: 20px;
+  padding: 25px;
+  border: 2px solid #ffe4f1;
+  flex: 1;
+}
+
+.ht-confirmation-services-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ht-confirmation-service-item-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #ffe4f1;
+  transition: all 0.2s ease;
+}
+
+.ht-confirmation-service-item-compact:hover {
+  border-color: #ff6bc0;
+  background-color: #fff2fa;
+}
+
+.ht-confirmation-service-info {
+  flex: 1;
+}
+
+.ht-confirmation-service-name-compact {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.ht-confirmation-service-variant-compact {
+  color: #f53799;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.ht-confirmation-service-price-compact {
+  font-weight: 700;
+  color: #f53799;
+  font-size: 1.1rem;
+  min-width: 80px;
+  text-align: right;
+}
+
+.ht-confirmation-no-services {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  font-style: italic;
+  text-align: center;
+  padding: 30px;
+  background-color: #fff9fb;
+  border-radius: 12px;
+  border: 2px dashed #ff6bc0;
+}
+
+.ht-confirmation-total-section {
+  background: linear-gradient(135deg, #fff2fa 0%, #ffe9f5 100%);
+  border-radius: 20px;
+  padding: 25px;
+  border: 2px solid #ff6bc0;
+}
+
+.ht-confirmation-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ht-confirmation-total-label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.3rem;
+}
+
+.ht-confirmation-total-price {
+  font-weight: 800;
+  color: #f53799;
+  font-size: 2.2rem;
+}
+
+.ht-confirmation-price-note {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  text-align: center;
+  margin-top: 15px;
+  font-style: italic;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+.ht-confirmation-divider-main {
+  height: 3px;
+  background: linear-gradient(to right, transparent, #f53799, #ff6bc0, transparent);
+  margin: 40px 0;
+  border-radius: 2px;
+}
+
+.ht-confirmation-reminders-section {
+  margin-bottom: 40px;
+}
+
+.ht-confirmation-reminders-header {
+  margin-bottom: 30px;
+}
+
+.ht-confirmation-reminders-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.ht-confirmation-reminders-description {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  line-height: 1.5;
+}
+
+.ht-confirmation-reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.ht-confirmation-reminder-group {
+  background-color: #fff9fb;
+  border-radius: 15px;
+  padding: 25px;
+  border: 2px solid #ffe4f1;
+  transition: all 0.3s ease;
+}
+
+.ht-confirmation-reminder-group:hover {
+  border-color: #ff6bc0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 55, 153, 0.15);
+}
+
+.ht-confirmation-reminder-group-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #f53799;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ffe4f1;
+  display: flex;
+  align-items: center;
+}
+
+.ht-confirmation-reminder-group-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #f53799;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.ht-confirmation-reminder-items {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ht-confirmation-reminder-item {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.ht-confirmation-reminder-item:last-child {
+  margin-bottom: 0;
+}
+
+.ht-confirmation-reminder-item::before {
+  content: '•';
+  color: #ff6bc0;
+  font-size: 1.2rem;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* Button Container - Updated to match other pages */
+.ht-confirmation-button-container {
+  margin-top: 15px;
+  padding-top: 30px;
+  border-top: 2px solid #ffe4f1;
+}
+
+.ht-confirmation-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Back Button - Updated to match other pages */
+.ht-confirmation-back-btn {
+  border: 2px solid #6c757d !important;
+  color: #6c757d !important;
+  font-weight: 600 !important;
+  padding: 14px 40px !important;
+  border-radius: 15px !important;
+  transition: all 0.3s ease !important;
+  font-size: 1.1rem !important;
+  background-color: white !important;
+  min-width: 120px !important;
+  white-space: nowrap !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ht-confirmation-back-btn:hover {
+  background-color: #6c757d !important;
+  color: white !important;
+  transform: scale(1.05);
+  border-color: #6c757d !important;
+}
+
+/* Confirm Button - UPDATED to match Continue buttons from other pages */
+.ht-confirmation-confirm-btn {
+  background: linear-gradient(135deg, #f53799 0%, #ff6bc0 100%) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 14px 50px !important;
+  border-radius: 15px !important;
+  transition: all 0.3s ease !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 8px 20px rgba(245, 55, 153, 0.25) !important;
+  min-width: 220px !important;
+  white-space: nowrap !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ht-confirmation-confirm-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s ease;
+  z-index: 1;
+}
+
+.ht-confirmation-confirm-btn:hover {
+  background: linear-gradient(135deg, #d42d87 0%, #ff5ab8 100%) !important;
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(245, 55, 153, 0.35) !important;
+}
+
+.ht-confirmation-confirm-btn:hover::before {
+  left: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ht-confirmation-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .ht-confirmation-back-btn,
+  .ht-confirmation-confirm-btn {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 300px;
+  }
+  
+  .ht-confirmation-back-btn {
+    padding: 12px 30px !important;
+    font-size: 1rem !important;
+  }
+  
+  .ht-confirmation-confirm-btn {
+    padding: 14px 30px !important;
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .ht-confirmation-back-btn,
+  .ht-confirmation-confirm-btn {
+    max-width: 280px;
+    padding: 12px 25px !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .ht-confirmation-back-btn,
+  .ht-confirmation-confirm-btn {
+    max-width: 250px;
+    padding: 10px 20px !important;
+    font-size: 0.9rem !important;
+  }
+}

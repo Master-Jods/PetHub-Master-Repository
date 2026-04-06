@@ -1,0 +1,851 @@
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+
+/* Main Header */
+.ht2-main-header {
+  width: 100%;
+  background-color: #ffffff;
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ht2-header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 15px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 80px;
+  position: relative;
+}
+
+/* Logo Area - Pushed to extreme left */
+.ht2-logo-area {
+  flex: 0 0 auto;
+  margin-left: -30px;
+  margin-right: auto;
+}
+
+.ht2-logo-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Logo Image - on LEFT side */
+.ht2-logo-image {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  order: 1;
+}
+
+.ht2-logo-image:hover {
+  transform: scale(1.05);
+}
+
+/* Text Title - on RIGHT side of image */
+.ht2-logo-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  display: flex;
+  order: 2;
+}
+
+.ht2-logo-happy {
+  color: #f53799;
+}
+
+.ht2-logo-tails {
+  color: #3ae4fa;
+}
+
+/* Mobile Toggle Button */
+.ht2-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1100;
+}
+
+.ht2-toggle-bar {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.ht2-mobile-toggle.active .ht2-toggle-bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.ht2-mobile-toggle.active .ht2-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.ht2-mobile-toggle.active .ht2-toggle-bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Navigation - Pushed to extreme right */
+.ht2-main-navigation {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  margin-left: auto;
+  margin-right: -40px;
+}
+
+.ht2-nav-item {
+  color: #333333;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  padding: 10px 0;
+  position: relative;
+  white-space: nowrap;
+}
+
+.ht2-nav-item:hover {
+  color: #FF6B6B;
+}
+
+.ht2-nav-item:hover::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #FF6B6B;
+  transform: scaleX(1);
+}
+
+/* Dropdown styling - IMPROVED */
+.ht2-dropdown {
+  position: relative;
+}
+
+.ht2-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+  color: inherit;
+  background: none;
+  border: none;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.ht2-dropdown-toggle:hover {
+  color: #FF6B6B;
+}
+
+.ht2-dropdown-icon {
+  font-size: 10px;
+  margin-left: 4px;
+  color: #666;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.ht2-dropdown-icon.open {
+  transform: rotate(180deg);
+}
+
+/* Services Dropdown Content - IMPROVED */
+.ht2-dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 2000;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  padding: 12px 0;
+  margin-top: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.ht2-dropdown-content.show {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Add a hover bridge to prevent closing */
+.ht2-dropdown-content::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+}
+
+.ht2-dropdown-item {
+  color: #333;
+  padding: 12px 24px;
+  text-decoration: none;
+  display: block;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+}
+
+.ht2-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.ht2-dropdown-item:hover {
+  background-color: #fff9fb;
+  color: #f53799;
+  padding-left: 28px;
+  border-bottom: 1px solid #ffe0e8;
+}
+
+/* Login/Signup Box Container - Pushed to far right */
+.ht2-login-signup-box {
+  position: relative;
+  background-color: #f53799;
+  border-radius: 8px;
+  padding: 2px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f53799;
+  margin-right: 10px;
+}
+
+/* Login/Signup Button */
+.ht2-login-signup-btn {
+  color: #f53799;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  padding: 10px 20px;
+  position: relative;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #fff9fb;
+  border-radius: 6px;
+  width: 100%;
+  justify-content: center;
+}
+
+.ht2-login-signup-btn:hover {
+  color: #d42a7d !important;
+  background-color: #fff5f7;
+}
+
+/* Login Dropdown Container */
+.ht2-login-dropdown-container {
+  margin-left: 20px;
+  position: relative;
+}
+
+/* Login Dropdown Styles - IMPROVED */
+.ht2-login-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 380px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  margin-top: 15px;
+  z-index: 2000;
+  overflow: hidden;
+  border: 2px solid #f53799;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.ht2-login-dropdown.show {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Add hover bridge for login dropdown */
+.ht2-login-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  width: 20px;
+  height: 15px;
+  background: transparent;
+}
+
+/* Login Content */
+.ht2-login-content {
+  padding: 30px;
+}
+
+.ht2-form-title {
+  font-size: 20px;
+  margin-bottom: 25px;
+  color: #333;
+  text-align: center;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Form Styles */
+.ht2-form-group {
+  margin-bottom: 20px;
+}
+
+.ht2-form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+  font-size: 14px;
+}
+
+.ht2-form-label i {
+  color: #666;
+}
+
+/* Form input boxes with better styling */
+.ht2-form-input {
+  width: 100%;
+  padding: 14px 45px 14px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.ht2-form-input:focus {
+  outline: none;
+  border-color: #f53799;
+  box-shadow: 0 0 0 3px rgba(245, 55, 153, 0.15);
+}
+
+/* Password input container with eye icon ALWAYS VISIBLE */
+.ht2-password-input-container {
+  position: relative;
+}
+
+.ht2-password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  font-size: 18px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+}
+
+.ht2-password-toggle:hover {
+  color: #f53799;
+}
+
+/* Make sure eye icon is always visible in password fields */
+.ht2-password-input-container .ht2-form-input {
+  padding-right: 45px;
+}
+
+/* Name row for first/last name */
+.ht2-name-group {
+  margin-bottom: 20px;
+}
+
+.ht2-name-row {
+  display: flex;
+  gap: 15px;
+}
+
+.ht2-name-field {
+  flex: 1;
+}
+
+/* Remember me checkbox */
+.ht2-remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 12px;
+}
+
+.ht2-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.ht2-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.ht2-forgot-password-btn {
+  background: none;
+  border: none;
+  color: #f53799;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ht2-forgot-password-btn:hover {
+  color: #d42a7d;
+  text-decoration: underline;
+}
+
+/* Submit buttons - Make them more prominent */
+.ht2-submit-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  margin-top: 10px;
+}
+
+.ht2-login-submit {
+  background-color: #f53799 !important;
+  color: white;
+}
+
+.ht2-login-submit:hover {
+  background-color: #d42a7d !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 55, 153, 0.3);
+}
+
+.ht2-signup-submit {
+  background-color: #f53799 !important;
+  color: white;
+}
+
+.ht2-signup-submit:hover {
+  background-color: #d42a7d !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 55, 153, 0.3);
+}
+
+/* Switch buttons - Make them look like links */
+.ht2-switch-to-signup-btn,
+.ht2-switch-to-login-btn {
+  background: none;
+  border: none;
+  color: #f53799;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0;
+  margin-left: 5px;
+  text-decoration: none;
+}
+
+.ht2-switch-to-signup-btn:hover,
+.ht2-switch-to-login-btn:hover {
+  text-decoration: underline;
+  color: #d42a7d;
+}
+
+/* Prompt sections */
+.ht2-signup-prompt,
+.ht2-login-prompt {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* Moving Banner - Light Pink */
+.ht2-moving-banner {
+  width: 100%;
+  background-color: #f53799;
+  padding: 12px 0;
+  overflow: hidden;
+  position: relative;
+  border-top: 1px solid #ffa8b5;
+}
+
+.ht2-banner-scroll {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ht2-banner-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ht2-scrollBanner 30s linear infinite;
+  padding: 0 20px;
+}
+
+.ht2-banner-item {
+  display: inline-block;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.8px;
+  margin: 0 50px;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0.5px 0.5px 0px rgba(255, 255, 255, 0.5);
+}
+
+/* Animations */
+@keyframes ht2-scrollBanner {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 1200px) {
+  .ht2-header-container {
+    padding: 15px 40px;
+  }
+  
+  .ht2-logo-area {
+    margin-left: -20px;
+  }
+  
+  .ht2-main-navigation {
+    gap: 30px;
+    margin-right: -30px;
+  }
+  
+  .ht2-logo-title {
+    font-size: 28px;
+  }
+  
+  .ht2-logo-image {
+    width: 65px;
+    height: 65px;
+  }
+}
+
+@media (max-width: 992px) {
+  .ht2-mobile-toggle {
+    display: flex;
+  }
+
+  .ht2-header-container {
+    padding: 15px 30px;
+    justify-content: space-between;
+  }
+  
+  .ht2-logo-area {
+    margin-left: 0;
+    flex: 1;
+  }
+  
+  .ht2-logo-title {
+    font-size: 26px;
+  }
+  
+  .ht2-logo-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  /* Mobile Navigation */
+  .ht2-main-navigation {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 100px 30px 30px;
+    margin: 0;
+    gap: 20px;
+    z-index: 2000;
+    overflow-y: auto;
+    box-shadow: none;
+  }
+
+  .ht2-main-navigation.active {
+    display: flex;
+  }
+
+  .ht2-nav-item {
+    width: 100%;
+    font-size: 18px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: normal;
+  }
+
+  .ht2-nav-item:last-child {
+    border-bottom: none;
+  }
+
+  .ht2-nav-item:hover::after {
+    display: none;
+  }
+
+  /* Mobile Dropdown */
+  .ht2-dropdown {
+    width: 100%;
+  }
+
+  .ht2-dropdown-toggle {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 18px;
+    padding: 15px 0;
+  }
+
+  .ht2-dropdown-content {
+    position: static;
+    display: none;
+    box-shadow: none;
+    border: none;
+    padding: 0 0 0 20px;
+    margin-top: 0;
+    min-width: 100%;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ht2-dropdown-content.show {
+    display: block;
+  }
+
+  .ht2-dropdown-item {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+
+  .ht2-dropdown-item:hover {
+    padding-left: 25px;
+  }
+
+  /* Mobile Login Dropdown */
+  .ht2-login-dropdown-container {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .ht2-login-signup-box {
+    margin-right: 0;
+    width: 100%;
+  }
+  
+  .ht2-login-signup-btn {
+    padding: 12px 20px;
+    justify-content: center;
+    font-size: 18px;
+  }
+  
+  .ht2-login-dropdown {
+    position: static;
+    width: 100%;
+    margin-top: 10px;
+    border: 2px solid #f53799;
+    opacity: 1;
+    visibility: visible;
+    display: none;
+  }
+  
+  .ht2-login-dropdown.show {
+    display: block;
+  }
+  
+  .ht2-login-dropdown::before {
+    display: none;
+  }
+  
+  .ht2-login-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ht2-header-container {
+    padding: 15px 20px;
+  }
+  
+  .ht2-logo-title {
+    font-size: 24px;
+  }
+  
+  .ht2-logo-image {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .ht2-nav-item,
+  .ht2-dropdown-toggle,
+  .ht2-login-signup-btn {
+    font-size: 17px;
+  }
+  
+  .ht2-dropdown-item {
+    font-size: 15px;
+  }
+  
+  .ht2-login-dropdown {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .ht2-logo-placeholder {
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .ht2-logo-title {
+    font-size: 22px;
+  }
+  
+  .ht2-logo-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .ht2-nav-item,
+  .ht2-dropdown-toggle,
+  .ht2-login-signup-btn {
+    font-size: 16px;
+  }
+  
+  .ht2-dropdown-item {
+    font-size: 14px;
+    padding: 10px 18px;
+  }
+  
+  .ht2-login-dropdown {
+    width: 100%;
+  }
+  
+  .ht2-name-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .ht2-banner-item {
+    font-size: 13px;
+    margin: 0 30px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1400px) {
+  .ht2-header-container {
+    max-width: 1400px;
+    padding: 15px 80px;
+  }
+  
+  .ht2-logo-area {
+    margin-left: -50px;
+  }
+  
+  .ht2-logo-title {
+    font-size: 34px;
+  }
+  
+  .ht2-logo-image {
+    width: 75px;
+    height: 75px;
+  }
+  
+  .ht2-main-navigation {
+    gap: 45px;
+    margin-right: -60px;
+  }
+}
+
+/* Extra large screens */
+@media (min-width: 1600px) {
+  .ht2-header-container {
+    max-width: 1600px;
+    padding: 15px 100px;
+  }
+  
+  .ht2-logo-area {
+    margin-left: -60px;
+  }
+  
+  .ht2-logo-title {
+    font-size: 36px;
+  }
+  
+  .ht2-logo-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .ht2-main-navigation {
+    margin-right: -80px;
+  }
+}

@@ -1,0 +1,361 @@
+/* ==================== HAPPY TAILS FOOTER ==================== */
+.happy-tails-footer-section {
+  background: #2c3e50;
+  color: white;
+  padding: 30px 0 15px; /* Reduced padding for slimmer look */
+  margin-top: auto;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.happy-tails-footer-section .container {
+  max-width: 1400px; /* Increased from 1200px to span more width */
+  margin: 0 auto;
+  padding: 0 30px;
+  width: 100%;
+}
+
+/* Row Layout - Horizontal Span */
+.happy-tails-footer-section .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px; /* Increased gap for better spacing */
+  margin: 0;
+  width: 100%;
+}
+
+.happy-tails-footer-section .col-md-4 {
+  flex: 1;
+  min-width: 280px;
+  padding: 0;
+}
+
+/* Brand Section - Slimmer */
+.footer-brand {
+  margin-bottom: 10px;
+}
+
+.footer-brand h3 {
+  font-size: 24px; /* Reduced from 28px */
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+
+.footer-happy {
+  color: #f53799;
+}
+
+.footer-tails {
+  color: #3ae4fa;
+}
+
+.footer-brand p {
+  color: #bbb;
+  font-size: 12px; /* Reduced from 13px */
+  margin-bottom: 0;
+}
+
+/* Hours Section - Slimmer */
+.footer-hours h4,
+.footer-contact h4 {
+  font-size: 15px; /* Reduced from 16px */
+  font-weight: 700;
+  margin-bottom: 12px; /* Reduced from 15px */
+  color: #ff6b9d;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-hours h4::after,
+.footer-contact h4::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 35px; /* Slightly smaller */
+  height: 2px;
+  background: linear-gradient(90deg, #f53799, #3ae4fa);
+}
+
+.footer-hours p,
+.footer-contact p {
+  color: #bbb;
+  font-size: 12px;
+  margin-bottom: 5px; /* Reduced from 6px */
+  line-height: 1.4;
+}
+
+/* Contact Section - Tighter spacing */
+.footer-address {
+  margin-top: 6px; /* Reduced from 8px */
+  font-size: 11px;
+  line-height: 1.3;
+  color: #aaa !important;
+  max-width: 350px; /* Control width for better readability */
+}
+
+/* Footer Bottom - Slimmer */
+.footer-bottom {
+  text-align: center;
+  margin-top: 25px; /* Reduced from 40px */
+  padding-top: 15px; /* Reduced from 20px */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #999;
+  font-size: 11px; /* Reduced from 12px */
+}
+
+.footer-bottom p {
+  margin-bottom: 3px; /* Reduced from 5px */
+}
+
+.footer-bottom p:last-child {
+  color: #bbb;
+  font-size: 10px; /* Reduced from 11px */
+}
+
+/* Hover Effects */
+.footer-hours h4:hover,
+.footer-contact h4:hover {
+  color: #3ae4fa;
+  transition: color 0.3s ease;
+}
+
+.footer-hours h4:hover::after,
+.footer-contact h4:hover::after {
+  background: linear-gradient(90deg, #3ae4fa, #f53799);
+  transition: background 0.3s ease;
+  width: 45px; /* Expand on hover */
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (min-width: 1600px) {
+  .happy-tails-footer-section .container {
+    max-width: 1600px;
+    padding: 0 50px;
+  }
+  
+  .happy-tails-footer-section .row {
+    gap: 60px;
+  }
+  
+  .footer-brand h3 {
+    font-size: 26px;
+  }
+  
+  .footer-hours p,
+  .footer-contact p {
+    font-size: 13px;
+  }
+  
+  .footer-address {
+    font-size: 12px;
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .happy-tails-footer-section .container {
+    max-width: 1300px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .happy-tails-footer-section {
+    padding: 28px 0 12px;
+  }
+  
+  .happy-tails-footer-section .container {
+    max-width: 1100px;
+    padding: 0 25px;
+  }
+  
+  .happy-tails-footer-section .row {
+    gap: 35px;
+  }
+  
+  .footer-brand h3 {
+    font-size: 23px;
+  }
+  
+  .footer-hours h4,
+  .footer-contact h4 {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 992px) {
+  .happy-tails-footer-section {
+    padding: 30px 0 15px;
+  }
+  
+  .happy-tails-footer-section .row {
+    flex-wrap: wrap;
+    gap: 25px;
+  }
+  
+  .happy-tails-footer-section .col-md-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  .footer-brand,
+  .footer-hours,
+  .footer-contact {
+    margin-bottom: 15px;
+  }
+  
+  .footer-brand h3 {
+    font-size: 26px;
+  }
+  
+  .footer-hours h4,
+  .footer-contact h4 {
+    display: inline-block;
+    font-size: 15px;
+  }
+  
+  .footer-hours h4::after,
+  .footer-contact h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+  }
+  
+  .footer-hours p,
+  .footer-contact p {
+    font-size: 13px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .footer-address {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 12px;
+  }
+  
+  .footer-bottom {
+    margin-top: 20px;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .happy-tails-footer-section {
+    padding: 25px 0 12px;
+  }
+  
+  .happy-tails-footer-section .container {
+    padding: 0 20px;
+  }
+  
+  .happy-tails-footer-section .row {
+    gap: 20px;
+  }
+  
+  .footer-brand h3 {
+    font-size: 24px;
+  }
+  
+  .footer-brand p {
+    font-size: 11px;
+  }
+  
+  .footer-hours h4,
+  .footer-contact h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  .footer-hours p,
+  .footer-contact p {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  
+  .footer-address {
+    font-size: 11px;
+  }
+  
+  .footer-bottom {
+    margin-top: 18px;
+    padding-top: 10px;
+  }
+  
+  .footer-bottom p {
+    font-size: 10px;
+  }
+  
+  .footer-bottom p:last-child {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 576px) {
+  .happy-tails-footer-section {
+    padding: 20px 0 10px;
+  }
+  
+  .happy-tails-footer-section .container {
+    padding: 0 15px;
+  }
+  
+  .footer-brand h3 {
+    font-size: 22px;
+  }
+  
+  .footer-brand p {
+    font-size: 10px;
+  }
+  
+  .footer-hours h4,
+  .footer-contact h4 {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  
+  .footer-hours p,
+  .footer-contact p {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+  
+  .footer-address {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+  
+  .footer-bottom {
+    margin-top: 15px;
+    padding-top: 8px;
+  }
+  
+  .footer-bottom p {
+    font-size: 9px;
+    margin-bottom: 2px;
+  }
+  
+  .footer-bottom p:last-child {
+    font-size: 8px;
+  }
+}
+
+/* Animation - Keep it subtle */
+.happy-tails-footer-section {
+  animation: footer-fadeInUp 0.6s ease-out;
+}
+
+@keyframes footer-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

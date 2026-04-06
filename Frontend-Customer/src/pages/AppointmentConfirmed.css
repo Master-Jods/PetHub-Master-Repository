@@ -1,0 +1,114 @@
+/* AppointmentConfirmed.css */
+.appt-confirmed-page {
+  min-height: 100vh;
+  background-color: #fff2fa;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+}
+
+.appt-confirmed-card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(245, 55, 153, 0.2);
+  background-color: white;
+  border: 2px solid #ff6bc0;
+  padding: 50px 40px;
+}
+
+.appt-confirmed-icon {
+  margin-bottom: 30px;
+  animation: icon-bounce 0.6s ease-out;
+}
+
+@keyframes icon-bounce {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.appt-confirmed-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f53799 0%, #ff6bc0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.appt-confirmed-message {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.appt-confirmed-home-btn {
+  background: linear-gradient(135deg, #f53799 0%, #ff6bc0 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 14px 40px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(245, 55, 153, 0.3);
+}
+
+.appt-confirmed-home-btn:hover {
+  background: linear-gradient(135deg, #d42d87 0%, #ff5ab8 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(245, 55, 153, 0.4);
+}
+
+.appt-confirmed-home-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .appt-confirmed-card {
+    padding: 40px 30px;
+  }
+  
+  .appt-confirmed-title {
+    font-size: 2rem;
+  }
+  
+  .appt-confirmed-message {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .appt-confirmed-card {
+    padding: 30px 20px;
+  }
+  
+  .appt-confirmed-title {
+    font-size: 1.8rem;
+  }
+  
+  .appt-confirmed-message {
+    font-size: 1rem;
+  }
+  
+  .appt-confirmed-home-btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+    width: 100%;
+  }
+}

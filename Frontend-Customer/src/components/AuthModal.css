@@ -1,0 +1,126 @@
+.ht-auth-modal {
+  border-radius: 16px;
+  border: 1px solid #f472b6;
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
+  padding: 4px;
+}
+
+.ht-auth-header {
+  border: none;
+  justify-content: center;
+}
+
+.ht-auth-title {
+  font-weight: 700;
+  color: #111827;
+}
+
+.ht-auth-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.ht-auth-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ht-auth-field .form-control {
+  background: #eef4ff;
+  border-radius: 10px;
+  padding-left: 42px;
+  border: 1px solid #dbeafe;
+  box-shadow: none;
+  height: 48px;
+}
+
+.ht-auth-field .form-control:focus {
+  border-color: #f472b6;
+  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.25);
+}
+
+.ht-auth-icon {
+  position: absolute;
+  left: 14px;
+  color: #9ca3af;
+  font-size: 16px;
+}
+
+.ht-auth-eye {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.ht-auth-eye:hover {
+  color: #6b7280;
+}
+
+.ht-auth-remember .form-check-input {
+  border-radius: 4px;
+  width: 18px;
+  height: 18px;
+}
+
+.ht-auth-remember .form-check-input:checked {
+  background-color: #f53699;
+  border-color: #f53699;
+}
+
+.ht-auth-submit {
+  background: #f53699;
+  border: none;
+  font-weight: 700;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.ht-auth-submit:hover {
+  background: #e22f8a;
+}
+
+.ht-auth-footer {
+  justify-content: center;
+  font-size: 0.95rem;
+  border: none;
+  color: #4b5563;
+  text-align: center;
+  width: 100%;
+}
+
+.ht-auth-footer span {
+  display: block;
+  width: 100%;
+}
+
+.ht-auth-link {
+  background: none;
+  border: none;
+  color: #f53699;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ht-auth-link:hover {
+  text-decoration: underline;
+}
+
+.ht-auth-backdrop {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* Allow page to stay scrollable while modal is open */
+body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}

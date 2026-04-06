@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+dist/
+.tmp_restore_path
+
+Frontend-Customer/node_modules/
+Frontend-Customer/dist/
+
+Frontend-Admin/node_modules/
+Frontend-Admin/dist/
+
+Backend-Customer/node_modules/
+
+Backend-Admin/node_modules/

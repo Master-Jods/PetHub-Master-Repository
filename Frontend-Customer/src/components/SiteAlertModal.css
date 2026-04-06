@@ -1,0 +1,68 @@
+.site-alert-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 37, 56, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 3000;
+}
+
+.site-alert-card {
+  width: min(100%, 440px);
+  background: linear-gradient(180deg, #fff8fc 0%, #ffffff 100%);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 28px 56px rgba(34, 48, 71, 0.18);
+  text-align: center;
+}
+
+.site-alert-badge {
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(245, 55, 153, 0.12);
+  color: #f53799;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-alert-title {
+  margin: 14px 0 10px;
+  color: #223047;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.site-alert-message {
+  margin: 0 0 22px;
+  color: #55657c;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.site-alert-btn {
+  min-width: 140px;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 24px;
+  background: #f53799;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.site-alert-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.site-alert-btn-secondary {
+  background: #edf2f8;
+  color: #29415e;
+}

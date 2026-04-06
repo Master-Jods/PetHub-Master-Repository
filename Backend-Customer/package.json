@@ -1,0 +1,19 @@
+{
+  "name": "backend-customer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "db:inspect": "node scripts/inspect-db.mjs",
+    "db:migrate:profile": "node scripts/run-sql-file.mjs database/migrations/20260320_profile_backend.sql",
+    "db:migrate:order-methods": "node scripts/run-sql-file.mjs database/migrations/20260405_profile_orders_methods.sql",
+    "db:migrate:shared-schema": "node scripts/run-sql-file.mjs database/migrations/20260406_shared_app_schema.sql",
+    "db:migrate:shared-legacy": "node scripts/run-sql-file.mjs database/migrations/20260406_migrate_legacy_customer_admin.sql",
+    "db:migrate:profile-cleanup": "node scripts/run-sql-file.mjs database/migrations/20260406_profile_cleanup.sql",
+    "db:migrate:profile-trigger": "node scripts/run-sql-file.mjs database/migrations/20260406_profile_trigger.sql",
+    "db:migrate:announcements": "node scripts/run-sql-file.mjs database/migrations/20260406_announcements.sql"
+  },
+  "dependencies": {
+    "pg": "^8.20.0"
+  }
+}

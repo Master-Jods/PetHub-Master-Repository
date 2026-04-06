@@ -1,0 +1,370 @@
+.bookings-wrapper {
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.bookings-header {
+  margin-bottom: 20px;
+}
+
+.bookings-header--with-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.bookings-header__title {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.bookings-header__subtitle {
+  color: #666;
+  margin: 0;
+  font-size: 16px;
+}
+
+.bookings-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.bookings-tab {
+  padding: 8px 14px;
+  border: 1px solid #ffd0e5;
+  border-radius: 20px;
+  background: white;
+  color: #555;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.bookings-tab.active {
+  background: #f53799;
+  border-color: #f53799;
+  color: white;
+}
+
+.bookings-search-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.bookings-search__input,
+.bookings-filter__select,
+.bookings-payment-select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+  background-color: white;
+  outline: none;
+}
+
+.bookings-search__input {
+  flex: 1;
+}
+
+.bookings-filter__select {
+  min-width: 180px;
+}
+
+.bookings-search__input:focus,
+.bookings-filter__select:focus,
+.bookings-payment-select:focus {
+  border-color: #f53799;
+}
+
+.bookings-feedback {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #ffe1ef;
+  color: #5f5f5f;
+}
+
+.bookings-feedback--error {
+  border-color: #ffcfd8;
+  color: #b42318;
+  background: #fff5f7;
+}
+
+.bookings-table-container {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #ffd0e5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1120px;
+}
+
+.bookings-table__header-cell,
+.bookings-table__cell {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.bookings-table__header-cell {
+  background-color: #f8f9fa;
+  font-weight: 700;
+  color: #555;
+  font-size: 13px;
+}
+
+.bookings-table__row:hover {
+  background-color: #fff8fc;
+}
+
+.bookings-payment-select {
+  width: 100%;
+  min-width: 132px;
+}
+
+.bookings-total-trigger {
+  border: none;
+  background: #fff3fa;
+  color: #d7267f;
+  padding: 12px 18px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  text-align: center;
+}
+
+.bookings-table-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bookings-view-btn,
+.bookings-update-btn {
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.bookings-view-btn {
+  background: #f53799;
+}
+
+.bookings-update-btn {
+  background: #111827;
+}
+
+.bookings-update-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.bookings-table .bookings-payment-select {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 26px 6px 8px;
+  font-size: 11.5px;
+  line-height: 1.25;
+  box-sizing: border-box;
+}
+
+.bookings-empty-state {
+  text-align: center;
+  padding: 36px;
+  color: #666;
+  font-size: 15px;
+}
+
+.bookings-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.bookings-modal {
+  width: 980px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 14px;
+}
+
+.bookings-modal__header {
+  padding: 16px 20px;
+  background: #f53799;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bookings-modal__header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.bookings-modal__close {
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.bookings-modal__body {
+  padding: 20px;
+}
+
+.bookings-modal__summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.bookings-summary-card {
+  border: 1px solid #f1d7e4;
+  border-radius: 10px;
+  padding: 14px;
+  background: #fff;
+}
+
+.bookings-summary-card h4 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.bookings-summary-card p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #444;
+}
+
+.bookings-pet-info-layout {
+  display: block;
+}
+
+.bookings-pet-info-layout.has-photo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 18px;
+  align-items: start;
+}
+
+.bookings-pet-info-copy {
+  min-width: 0;
+}
+
+.bookings-modal__section {
+  margin: 16px 0 0;
+}
+
+.bookings-pet-photo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #f5d9e8;
+  border-radius: 14px;
+  background: #fff8fc;
+}
+
+.bookings-pet-photo__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #8a3d67;
+}
+
+.bookings-pet-photo__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #f0d8e4;
+  background: #fff8fc;
+}
+
+.bookings-pet-photo__download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #f53799;
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bookings-pet-photo__download:hover {
+  background: #e0287e;
+}
+
+.bookings-history-list {
+  margin-top: 8px;
+  border: 1px solid #f1d7e4;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bookings-history-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f6e7ef;
+}
+
+.bookings-history-item:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 992px) {
+  .bookings-search-section {
+    flex-direction: column;
+  }
+
+  .bookings-modal__summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bookings-pet-info-layout.has-photo {
+    grid-template-columns: 1fr;
+  }
+}

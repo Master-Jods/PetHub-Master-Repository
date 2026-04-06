@@ -1,0 +1,39 @@
+{
+  "name": "petshop-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "db:inspect": "node scripts/inspect-db.mjs",
+    "db:migrate:profile": "node scripts/run-sql-file.mjs database/migrations/20260320_profile_backend.sql",
+    "db:migrate:order-methods": "node scripts/run-sql-file.mjs database/migrations/20260405_profile_orders_methods.sql"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.97.0",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "react": "^19.2.0",
+    "react-bootstrap": "^2.10.10",
+    "react-bootstrap-icons": "^1.11.6",
+    "react-calendar": "^6.0.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.13.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "pg": "^8.20.0",
+    "vite": "^7.2.4"
+  }
+}

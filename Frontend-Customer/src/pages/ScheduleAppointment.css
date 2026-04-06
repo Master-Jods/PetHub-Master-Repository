@@ -1,0 +1,1087 @@
+/* Schedule Appointment Styles */
+.ht-schedule-appointment {
+  min-height: 100vh;
+  background-color: #fff2fa;
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+}
+
+.ht-schedule-container {
+  padding: 20px 0 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Title Section */
+.ht-schedule-title-row {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.ht-schedule-main-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.ht-schedule-subtitle {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Progress Bar */
+.ht-schedule-progress-row {
+  margin: 60px 0;
+}
+
+.ht-schedule-progress-steps {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ht-schedule-progress-bar {
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+}
+
+.ht-schedule-progress-bar .progress-bar {
+  background: linear-gradient(90deg, #f53799 0%, #ff6bc0 100%);
+  border-radius: 3px;
+}
+
+.ht-schedule-step-indicators {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: -22px;
+}
+
+.ht-schedule-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  z-index: 2;
+  min-width: 100px;
+}
+
+.ht-schedule-step-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #7f8c8d;
+  margin-bottom: 12px;
+  border: 3px solid #e9ecef;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Show number always */
+.ht-schedule-step-circle span {
+  display: block;
+}
+
+.ht-schedule-step-active .ht-schedule-step-circle {
+  background: linear-gradient(135deg, #f53799, #ff6bc0);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(245, 55, 153, 0.4);
+  border-color: #f53799;
+}
+
+.ht-schedule-step-label {
+  font-weight: 600;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+}
+
+.ht-schedule-step-active .ht-schedule-step-label {
+  color: #f53799;
+  font-weight: 700;
+}
+
+/* Content Row */
+.ht-schedule-content-row {
+  margin-bottom: 40px;
+}
+
+/* Card Styling */
+.ht-schedule-card {
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(245, 55, 153, 0.15);
+  background-color: white;
+  overflow: hidden;
+  border: 3px solid #ff6bc0;
+  padding: 40px;
+}
+
+.ht-schedule-card-body {
+  padding: 0;
+}
+
+/* Section Styling */
+.ht-schedule-section {
+  margin-bottom: 40px;
+}
+
+.ht-schedule-section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.ht-schedule-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(to right, #f53799, #ff6bc0);
+  border-radius: 2px;
+}
+
+.ht-schedule-instruction {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.ht-schedule-divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, #ffe4f1, transparent);
+  margin: 40px 0;
+}
+
+/* Calendar Container */
+.ht-schedule-calendar-container {
+  background-color: #fff9fb;
+  border-radius: 20px;
+  padding: 30px;
+  border: 2px solid #ffe4f1;
+}
+
+
+.ht-schedule-form-control {
+  border: 2px solid #ffe4f1 !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+}
+
+.ht-schedule-form-control:focus {
+  border-color: #f53799 !important;
+  box-shadow: 0 0 0 0.25rem rgba(245, 55, 153, 0.2) !important;
+}
+
+/* Custom month display */
+.ht-schedule-month-display {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #fff2fa;
+  border-radius: 10px;
+  border: 2px solid #ffe4f1;
+}
+
+/* React Calendar Custom Styling */
+.ht-schedule-calendar {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Fix calendar grid */
+.react-calendar {
+  width: 100% !important;
+}
+
+/* Navigation */
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.react-calendar__navigation button {
+  background-color: #fff2fa;
+  border: 2px solid #ffe4f1;
+  border-radius: 10px;
+  color: #2c3e50;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.react-calendar__navigation button:hover {
+  background-color: #ffe4f1;
+  border-color: #ff6bc0;
+  transform: scale(1.05);
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: #f8f9fa;
+  color: #ced4da;
+  border-color: #e9ecef;
+}
+
+.react-calendar__navigation__label {
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  color: #2c3e50 !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* Weekdays */
+.react-calendar__month-view__weekdays {
+  display: flex !important;
+  flex-direction: row !important;
+  margin-bottom: 10px;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0 !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none !important;
+  font-weight: 600;
+}
+
+/* Sunday styling */
+.react-calendar__month-view__weekdays__weekday:first-child abbr {
+  color: #f53799 !important;
+}
+
+/* Saturday styling */
+.react-calendar__month-view__weekdays__weekday:last-child abbr {
+  color: #f53799 !important;
+}
+
+/* Calendar grid */
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 2px;
+}
+
+/* Calendar tiles */
+.react-calendar__tile {
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  padding: 10px 0 !important;
+  aspect-ratio: 1;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 500;
+  font-size: 1rem;
+  height: 44px !important;
+}
+
+.react-calendar__tile:enabled:hover {
+  background-color: #ffe4f1 !important;
+  border-color: #ff6bc0 !important;
+  transform: scale(1.05);
+}
+
+.react-calendar__tile:disabled {
+  background-color: #f8f9fa !important;
+  color: #ced4da !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+
+/* CUSTOM CLASSES - These will override React Calendar defaults */
+.ht-calendar-today {
+  background-color: #ffe4f1 !important;
+  border: 2px solid #ff6bc0 !important;
+  color: #2c3e50 !important;
+  font-weight: 700 !important;
+}
+
+.ht-calendar-selected {
+  background: linear-gradient(135deg, #f53799, #ff6bc0) !important;
+  color: white !important;
+  border-color: #f53799 !important;
+  box-shadow: 0 4px 15px rgba(245, 55, 153, 0.3) !important;
+  font-weight: 700 !important;
+}
+
+.ht-calendar-weekend {
+  background-color: #f8f9fa !important;
+  color: #dc3545 !important;
+  border-color: #e9ecef !important;
+}
+
+/* Weekend disabled styling */
+.ht-calendar-weekend-disabled {
+  background-color: #f8f9fa !important;
+  color: #999 !important;
+  border-color: #e9ecef !important;
+  cursor: not-allowed !important;
+}
+
+/* Ensure weekend tiles are properly disabled */
+.react-calendar__tile:disabled,
+.react-calendar__tile--disabled {
+  background-color: #f8f9fa !important;
+  color: #999 !important;
+  border-color: #e9ecef !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+/* Make sure weekend tiles don't show hover effects */
+.ht-calendar-weekend-disabled:hover,
+.react-calendar__tile:disabled:hover,
+.react-calendar__tile--disabled:hover {
+  background-color: #f8f9fa !important;
+  color: #999 !important;
+  border-color: #e9ecef !important;
+  transform: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Weekend day headers in the weekday row */
+.react-calendar__month-view__weekdays__weekday:first-child,
+.react-calendar__month-view__weekdays__weekday:last-child {
+  color: #999 !important;
+}
+
+/* Update the calendar legend */
+.ht-schedule-legend-box.weekend {
+  background-color: #f8f9fa !important;
+  border-color: #e9ecef !important;
+}
+
+.ht-calendar-weekend:enabled:hover {
+  background-color: #ffe4f1 !important;
+  border-color: #ff6bc0 !important;
+}
+
+/* Neighboring month days */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #adb5bd !important;
+  opacity: 0.5;
+}
+
+/* Selected Date Display */
+.ht-schedule-selected-date {
+  margin-top: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fff2fa 0%, #ffe9f5 100%);
+  border-radius: 15px;
+  border: 2px solid #ffe4f1;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ht-schedule-selected-label {
+  font-weight: 600;
+  color: #f53799;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.ht-schedule-selected-value {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  font-weight: 500;
+  flex: 1;
+}
+
+
+/* Calendar Legend */
+.ht-schedule-calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #fff9fb;
+  border-radius: 10px;
+  border: 1px solid #ffe4f1;
+  justify-content: center;
+}
+
+.ht-schedule-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ht-schedule-legend-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.ht-schedule-legend-box.today {
+  background-color: #ffe4f1;
+  border-color: #ff6bc0;
+}
+
+.ht-schedule-legend-box.available {
+  background-color: white;
+  border-color: #ffe4f1;
+}
+
+.ht-schedule-legend-box.selected {
+  background: linear-gradient(135deg, #f53799, #ff6bc0);
+  border-color: #f53799;
+}
+
+.ht-schedule-legend-box.weekend {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+/* Time Slots */
+.ht-schedule-time-group {
+  margin-bottom: 30px;
+}
+
+
+.ht-schedule-time-group-title {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  border-left: 4px solid #f53799;
+}
+
+.ht-schedule-time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Available Time Slot */
+.ht-schedule-time-slot {
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #ffe4f1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 80px;
+}
+
+.ht-schedule-time-slot:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(245, 55, 153, 0.2);
+  border-color: #ff6bc0;
+  background-color: #fff2fa;
+}
+
+.ht-schedule-time-slot-selected {
+  border-color: #f53799;
+  background: linear-gradient(135deg, #fff2fa 0%, #ffe9f5 100%);
+  box-shadow: 0 10px 25px rgba(245, 55, 153, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Booked Time Slot - GRAYED OUT */
+.ht-schedule-time-slot-booked {
+  background-color: #f8f9fa !important;
+  border-color: #e9ecef !important;
+  color: #999 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+.ht-schedule-time-slot-booked:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background-color: #f8f9fa !important;
+  border-color: #e9ecef !important;
+  cursor: not-allowed !important;
+}
+
+.ht-schedule-time-slot-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ht-schedule-time-slot-hour {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Booked slot hour text color */
+.ht-schedule-time-slot-booked .ht-schedule-time-slot-hour {
+  color: #999 !important;
+}
+
+.ht-schedule-time-slot-status {
+  font-size: 0.85rem;
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+/* Booked status text */
+.ht-schedule-time-slot-status-booked {
+  color: #dc3545 !important;
+}
+
+.ht-schedule-time-slot-checkmark {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #f53799, #ff6bc0);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(245, 55, 153, 0.3);
+}
+
+.ht-schedule-time-slot-booked-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.ht-schedule-no-slots {
+  padding: 30px;
+  background-color: #fff9fb;
+  border-radius: 15px;
+  border: 2px dashed #ffe4f1;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.ht-schedule-no-slots-text {
+  color: #666;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Booked Slots Summary */
+.ht-schedule-booked-section {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 2px solid #ffe4f1;
+}
+
+.ht-schedule-booked-title {
+  font-size: 1.3rem;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.ht-schedule-booked-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ht-schedule-booked-slot {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 2px solid #e9ecef;
+  min-width: 180px;
+}
+
+.ht-schedule-booked-time {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.95rem;
+  min-width: 80px;
+}
+
+.ht-schedule-booked-type {
+  color: #999;
+  font-size: 0.85rem;
+  background-color: #f1f3f4;
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 70px;
+  text-align: center;
+}
+
+.ht-schedule-booked-status {
+  color: #dc3545;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding-left: 10px;
+  border-left: 2px solid #e9ecef;
+  min-width: 60px;
+}
+
+/* Loading State */
+.ht-schedule-loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.ht-schedule-loading .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 20px;
+  color: #f53799;
+}
+
+/* Note Section */
+.ht-schedule-note {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #17a2b8;
+}
+
+.ht-schedule-note-text {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Button Container */
+.ht-schedule-button-container {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 2px solid #ffe4f1;
+}
+
+.ht-schedule-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ht-schedule-back-btn {
+  border: 2px solid #6c757d;
+  color: #6c757d;
+  font-weight: 600;
+  padding: 14px 40px;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  background-color: white;
+}
+
+.ht-schedule-back-btn:hover {
+  background-color: #6c757d;
+  color: white;
+  transform: scale(1.05);
+  border-color: #6c757d;
+}
+
+.ht-schedule-continue-btn {
+  background: linear-gradient(135deg, #f53799 0%, #ff6bc0 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 14px 50px;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  box-shadow: 0 8px 20px rgba(245, 55, 153, 0.25);
+}
+
+.ht-schedule-continue-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d42d87 0%, #ff5ab8 100%);
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(245, 55, 153, 0.35);
+}
+
+.ht-schedule-continue-btn:disabled {
+  background: linear-gradient(135deg, #cccccc 0%, #dddddd 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  opacity: 0.7;
+}
+
+/* Make steps clickable */
+.ht-schedule-step-clickable {
+  cursor: pointer;
+}
+
+.ht-schedule-step-clickable:hover .ht-schedule-step-circle {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.ht-schedule-step-clickable:hover .ht-schedule-step-label {
+  color: #f53799;
+  font-weight: 600;
+}
+
+/* Disable clicking on future steps (except confirmation which has special logic) */
+.ht-schedule-step:not(.ht-schedule-step-clickable) {
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* Confirmation step styling when not ready */
+.ht-schedule-step:nth-child(4):not(.ht-schedule-step-active):not(.ht-schedule-step-clickable) {
+  position: relative;
+}
+
+.ht-schedule-step:nth-child(4):not(.ht-schedule-step-active):not(.ht-schedule-step-clickable)::after {
+  content: 'Select time first';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f53799;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.ht-schedule-step:nth-child(4):not(.ht-schedule-step-active):not(.ht-schedule-step-clickable):hover::after {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .ht-schedule-main-title {
+    font-size: 2.5rem;
+  }
+  
+  .ht-schedule-card {
+    padding: 30px;
+  }
+  
+  .ht-schedule-time-slots {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .ht-schedule-appointment {
+    padding-top: 10px;
+  }
+  
+  .ht-schedule-container {
+    padding-top: 10px;
+    padding-bottom: 40px;
+  }
+  
+  .ht-schedule-main-title {
+    font-size: 2rem;
+  }
+  
+  .ht-schedule-subtitle {
+    font-size: 1rem;
+    padding: 0 20px;
+  }
+  
+  .ht-schedule-step-label {
+    font-size: 0.8rem;
+  }
+  
+  .ht-schedule-step-circle {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .ht-schedule-card {
+    padding: 25px;
+  }
+  
+  .ht-schedule-calendar-container {
+    padding: 20px;
+  }
+  
+  .ht-schedule-section-title {
+    font-size: 1.5rem;
+  }
+  
+  .ht-schedule-time-slots {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  
+  .ht-schedule-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .ht-schedule-back-btn,
+  .ht-schedule-continue-btn {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+  }
+  
+  .react-calendar__tile {
+    height: 36px !important;
+    font-size: 0.9rem !important;
+    padding: 5px 0 !important;
+  }
+  
+  .react-calendar__navigation button {
+    min-width: 36px;
+    height: 36px;
+  }
+  
+  .ht-schedule-month-display {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .ht-schedule-main-title {
+    font-size: 1.8rem;
+  }
+  
+  .ht-schedule-progress-row {
+    margin: 40px 0;
+  }
+  
+  .ht-schedule-step-indicators {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .ht-schedule-step {
+    min-width: 80px;
+  }
+  
+  .ht-schedule-card {
+    padding: 20px;
+  }
+  
+  .ht-schedule-calendar-container {
+    padding: 15px;
+  }
+  
+  .ht-schedule-selected-date {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  
+  .ht-schedule-time-slots {
+    grid-template-columns: 1fr;
+  }
+  
+  .ht-schedule-time-slot {
+    padding: 15px;
+  }
+  
+  .ht-schedule-booked-slot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .ht-schedule-booked-status {
+    border-left: none;
+    border-top: 2px solid #e9ecef;
+    padding-left: 0;
+    padding-top: 8px;
+    width: 100%;
+  }
+  
+  .ht-schedule-booked-time,
+  .ht-schedule-booked-type {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .ht-schedule-back-btn,
+  .ht-schedule-continue-btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+  
+  .react-calendar__tile {
+    height: 32px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .ht-schedule-main-title {
+    font-size: 1.6rem;
+  }
+  
+  .ht-schedule-card {
+    padding: 15px;
+  }
+  
+  .ht-schedule-calendar-container {
+    padding: 12px;
+  }
+  
+  .ht-schedule-month-display {
+    font-size: 1.1rem;
+  }
+  
+  .ht-schedule-section-title {
+    font-size: 1.3rem;
+  }
+  
+  .ht-schedule-time-group-title {
+    font-size: 1.1rem;
+  }
+  
+  .ht-schedule-time-slot {
+    padding: 12px;
+  }
+  
+  .ht-schedule-back-btn {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .ht-schedule-continue-btn {
+    padding: 12px 40px;
+    font-size: 1rem;
+  }
+}
+
+/* Add to ScheduleAppointment.css - FIXED BUTTON WIDTHS */
+
+.ht-schedule-buttons-fixed {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.ht-schedule-back-btn-fixed {
+  border: 2px solid #6c757d !important;
+  color: #6c757d !important;
+  font-weight: 600 !important;
+  padding: 14px 40px !important;
+  border-radius: 15px !important;
+  transition: all 0.3s ease !important;
+  font-size: 1.1rem !important;
+  background-color: white !important;
+  min-width: 150px !important;
+  width: auto !important;
+}
+
+.ht-schedule-back-btn-fixed:hover {
+  background-color: #6c757d !important;
+  color: white !important;
+  transform: scale(1.05);
+  border-color: #6c757d !important;
+}
+
+.ht-schedule-continue-btn-fixed {
+  background: linear-gradient(135deg, #f53799 0%, #ff6bc0 100%) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 14px 50px !important;
+  border-radius: 15px !important;
+  transition: all 0.3s ease !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 8px 20px rgba(245, 55, 153, 0.25) !important;
+  min-width: 250px !important;
+  width: auto !important;
+  white-space: nowrap !important;
+}
+
+.ht-schedule-continue-btn-fixed:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d42d87 0%, #ff5ab8 100%) !important;
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(245, 55, 153, 0.35) !important;
+}
+
+.ht-schedule-continue-btn-fixed:disabled {
+  background: linear-gradient(135deg, #cccccc 0%, #dddddd 100%) !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .ht-schedule-buttons-fixed {
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+  }
+  
+  .ht-schedule-back-btn-fixed,
+  .ht-schedule-continue-btn-fixed {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}

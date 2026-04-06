@@ -1,0 +1,203 @@
+/* Login.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.login-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-layout {
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.08fr;
+  overflow: hidden;
+}
+
+.login-visual-panel {
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  height: 100vh;
+}
+
+.login-hero-logo {
+  width: min(480px, 80%);
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.login-form-panel {
+  background: #f53799;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  height: 100vh;
+}
+
+.login-card {
+  width: min(480px, 100%);
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 40px 36px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.login-title {
+  text-align: center;
+  color: #333;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 28px;
+  letter-spacing: -0.5px;
+}
+
+.user-type-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+  background: #f5f5f5;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.type-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #666;
+  border-radius: 8px;
+  padding: 12px 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.type-btn.active {
+  background: #f53799;
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #333;
+  background: white;
+}
+
+.form-group input::placeholder {
+  color: #999;
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #f53799;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: 24px;
+}
+
+.forgot-password a {
+  color: #f53799;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.signin-btn {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 16px 14px;
+  background: #f53799;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.signin-btn:hover {
+  background: #e02d88;
+}
+
+@media (max-width: 992px) {
+  .login-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .login-visual-panel {
+    height: auto;
+    min-height: 300px;
+    padding: 40px 20px;
+  }
+
+  .login-form-panel {
+    height: auto;
+    min-height: 600px;
+    padding: 40px 20px;
+  }
+
+  .login-hero-logo {
+    width: min(300px, 70%);
+  }
+
+  .login-card {
+    padding: 32px 28px;
+  }
+
+  .login-title {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px 20px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .login-visual-panel {
+    min-height: 200px;
+  }
+}

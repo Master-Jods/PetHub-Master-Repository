@@ -1,0 +1,1478 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.grooming-page {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  padding-top: 0;
+}
+
+/* Hero Section */
+.grooming-hero {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grooming-hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.grooming-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.grooming-background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(100, 98, 98, 0.5) 100%
+  );
+  z-index: 2;
+}
+
+.grooming-hero-content {
+  width: 100%;
+  position: relative;
+  z-index: 3;
+  padding: 40px 20px;
+}
+
+.grooming-hero-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.grooming-hero-text-section {
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 30px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 100vw;
+  overflow: visible;
+}
+
+.grooming-hero-title {
+  font-size: clamp(36px, 4.5vw, 60px);
+  font-weight: 900;
+  color: white;
+  margin: 0 auto 30px auto;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7),
+               0 0 25px rgba(0, 0, 0, 0.4);
+  animation: grooming-fadeInUp 1s ease-out;
+  padding: 0 10px;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+  box-sizing: border-box;
+  max-width: 100%;
+  word-break: keep-all;
+}
+
+.grooming-hero-title::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 4px;
+  background-color: #f53799;
+  margin: 25px auto;
+  border-radius: 2px;
+  animation: grooming-expandWidth 1s ease-out 0.5s both;
+}
+
+.grooming-hero-description {
+  font-size: clamp(18px, 2.5vw, 28px);
+  color: white;
+  line-height: 1.6;
+  margin-bottom: 50px;
+  font-weight: 400;
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
+  animation: grooming-fadeInUp 1s ease-out 0.3s both;
+  padding: 0 20px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Updated Hero Buttons */
+.grooming-hero-buttons {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-top: 50px;
+  animation: grooming-fadeInUp 1s ease-out 0.6s both;
+  z-index: 1000;
+  position: relative;
+}
+
+.grooming-hero-btn {
+  padding: 20px 50px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 200px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.grooming-hero-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s;
+}
+
+.grooming-hero-btn:hover::before {
+  left: 100%;
+}
+
+.grooming-book-btn {
+  background: #f53799;
+  color: white;
+}
+
+.grooming-book-btn:hover {
+  background: #d42a7d;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(245, 55, 153, 0.4);
+}
+
+/* New Learn More Button Styles */
+.grooming-learn-btn {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.grooming-learn-btn:hover {
+  background-color: white;
+  color: #f53799;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(255, 255, 255, 0.3);
+}
+
+.grooming-services {
+  padding: 100px 20px;
+  background-color: #fff2fa;
+  position: relative;
+  z-index: 3;
+}
+
+.grooming-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.grooming-services-title {
+  text-align: center;
+  font-size: 42px;
+  font-weight: 900;
+  color: #333;
+  margin-bottom: 15px;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grooming-services-title::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, #f53799, #f53799);
+  margin: 20px auto 25px auto;
+  border-radius: 2px;
+  animation: grooming-expandWidth 1s ease-out 0.5s both;
+}
+
+.grooming-services-subtitle {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 70px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.grooming-packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.grooming-package-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(245, 55, 153, 0.1);
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  border: 2px solid transparent;
+  position: relative;
+  pointer-events: auto;
+}
+
+.grooming-package-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(245, 55, 153, 0.15);
+  border: 2px solid #f53799;
+}
+
+.grooming-package-card.grooming-featured {
+  transform: scale(1.05);
+  z-index: 2;
+  border: 2px solid #f53799;
+}
+
+.grooming-package-card.grooming-featured:hover {
+  transform: translateY(-10px) scale(1.05);
+  border: 2px solid #f53799;
+}
+
+.grooming-most-popular-badge {
+  position: absolute;
+  top: 15px;
+  right: -10px;
+  background: linear-gradient(135deg, #f53799, #f53799);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 20px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(245, 55, 153, 0.3);
+  transform: rotate(5deg);
+  animation: grooming-badgePulse 2s infinite ease-in-out;
+}
+
+@keyframes grooming-badgePulse {
+  0%, 100% {
+    transform: rotate(5deg) scale(1);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.05);
+  }
+}
+
+.grooming-card-header {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.grooming-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.grooming-package-card:hover .grooming-card-image {
+  transform: scale(1.08);
+}
+
+.grooming-package-content {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.grooming-package-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.grooming-price-container {
+  position: relative;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.grooming-price-spacer {
+  height: 4px;
+  margin-bottom: 1;
+}
+
+.grooming-starts-at-label {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 600;
+  color: #f53799;
+  background: white;
+  padding: 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.grooming-package-price {
+  font-size: 48px;
+  font-weight: 900;
+  color: #f53799;
+  line-height: 1;
+  text-align: center;
+  margin: 4px 0 18px 0;
+}
+
+.grooming-package-card.grooming-featured .grooming-package-price {
+  margin: 6px 0 10px 0;
+}
+
+.grooming-package-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 30px 0;
+  flex: 1;
+}
+
+.grooming-package-features li {
+  padding: 10px 0 10px 28px;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.5;
+  position: relative;
+  border-bottom: 1px dashed #f0f0f0;
+}
+
+.grooming-package-features li:last-child {
+  border-bottom: none;
+}
+
+.grooming-package-features li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #f53799;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.grooming-ala-carte-services {
+  padding: 100px 40px;
+  background: white;
+  position: relative;
+  z-index: 4;
+}
+
+.grooming-services-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.grooming-services-header h2 {
+  font-size: 42px;
+  font-weight: 900;
+  color: #333;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.grooming-services-header h2::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, #f53799, #f53799);
+  margin: 20px auto;
+  border-radius: 2px;
+}
+
+.grooming-services-subtitle {
+  font-size: 18px;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.grooming-ala-carte-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.grooming-service-card {
+  background: rgb(251, 217, 231);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(245, 55, 153, 0.1);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.grooming-service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #f53799, #f53799);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.grooming-service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(245, 55, 153, 0.15);
+  border-color: rgba(245, 55, 153, 0.2);
+}
+
+.grooming-service-card:hover::before {
+  opacity: 1;
+}
+
+.grooming-service-card-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f8f8f8;
+  position: relative;
+}
+
+.grooming-service-card-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #f53799, #f53799);
+}
+
+.grooming-price-list {
+  flex: 1;
+}
+
+.grooming-price-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.grooming-price-item:last-child {
+  border-bottom: none;
+}
+
+.grooming-size-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.grooming-size-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.grooming-size-weight {
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+}
+
+.grooming-price-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: #f53799;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.grooming-price-value::before {
+  content: '₱';
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+@media (max-width: 1200px) {
+  .grooming-ala-carte-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .grooming-ala-carte-services {
+    padding: 80px 20px;
+  }
+  
+  .grooming-ala-carte-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+  
+  .grooming-service-card {
+    padding: 25px;
+  }
+  
+  .grooming-service-card-title {
+    font-size: 20px;
+  }
+  
+  .grooming-price-value {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grooming-ala-carte-services {
+    padding: 60px 15px;
+  }
+  
+  .grooming-services-header h2 {
+    font-size: 32px;
+  }
+  
+  .grooming-services-subtitle {
+    font-size: 16px;
+  }
+  
+  .grooming-service-card {
+    padding: 20px;
+  }
+  
+  .grooming-price-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 15px 0;
+  }
+  
+  .grooming-price-value {
+    align-self: flex-end;
+    font-size: 24px;
+  }
+}
+
+/* Unified Book Now Button Style */
+.grooming-book-now-button {
+  background: #f53799;
+  color: white;
+  border: none;
+  padding: 18px 45px;
+  font-size: 18px;
+  font-weight: 800;
+  border-radius: 50px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(245, 55, 153, 0.3);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+.grooming-book-now-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s;
+}
+
+.grooming-book-now-button:hover::before {
+  left: 100%;
+}
+
+.grooming-book-now-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(245, 55, 153, 0.4);
+}
+
+.grooming-cat-section {
+  padding: 100px 40px;
+  background-color: #fff2fa;
+  position: relative;
+  z-index: 4;
+}
+
+.grooming-dog-deluxe-section {
+  padding: 100px 40px;
+  background-color: white;
+  position: relative;
+  z-index: 4;
+}
+
+.grooming-dog-premium-section {
+  padding: 100px 40px;
+  background-color: #fff2fa;
+  position: relative;
+  z-index: 4;
+}
+
+.grooming-deluxe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.grooming-deluxe-main-title {
+  font-size: 48px;
+  font-weight: 900;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+.grooming-deluxe-content {
+  margin-bottom: 80px;
+}
+
+.grooming-deluxe-description {
+  font-size: 18px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  font-weight: 500;
+  max-width: 800px;
+}
+
+.grooming-simple-price-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 600px;
+}
+
+.grooming-price-line {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(245, 55, 153, 0.2);
+}
+
+.grooming-price-line:last-child {
+  border-bottom: none;
+}
+
+.grooming-price-amount {
+  font-size: 32px;
+  font-weight: 900;
+  color: #f53799;
+  min-width: 100px;
+}
+
+.grooming-price-size {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+.grooming-gallery-section {
+  margin-top: 60px;
+}
+
+.grooming-gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.grooming-gallery-title {
+  font-size: 48px;
+  font-weight: 900;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+.grooming-three-photo-gallery-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.grooming-gallery-three-photos {
+  width: 100%;
+  max-width: 1000px;
+  overflow: hidden;
+}
+
+.grooming-gallery-three-wrapper {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%;
+}
+
+.grooming-photo-group {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.grooming-photo-card {
+  flex: 1;
+  max-width: 300px;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.grooming-photo-square {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 3px solid #f53799;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.grooming-photo-square:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(245, 55, 153, 0.2);
+  border-color: #f53799;
+}
+
+.grooming-gallery-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.grooming-photo-name {
+  font-size: 20px;
+  font-weight: 900;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-align: center;
+  padding: 8px 20px;
+  background: rgba(245, 55, 153, 0.1);
+  border-radius: 20px;
+  border: 2px solid #f53799;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.grooming-gallery-arrow {
+  background: #f53799;
+  color: white;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(245, 55, 153, 0.3);
+  z-index: 10;
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.grooming-gallery-arrow:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 30px rgba(245, 55, 153, 0.4);
+}
+
+.grooming-gallery-arrow:active {
+  transform: scale(0.95);
+}
+
+.grooming-gallery-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.grooming-gallery-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #f53799;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+.grooming-gallery-indicator.grooming-active {
+  background: #f53799;
+  transform: scale(1.2);
+}
+
+.grooming-gallery-indicator:hover {
+  background: #f53799;
+  transform: scale(1.1);
+}
+
+/* Section Divider */
+.grooming-section-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #f53799, transparent);
+  margin: 60px 0;
+  width: 100%;
+}
+
+@keyframes grooming-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes grooming-expandWidth {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 100px;
+    opacity: 1;
+  }
+}
+
+/* Pointer Events */
+.grooming-background-overlay,
+.grooming-background-image,
+.grooming-hero-background {
+  pointer-events: none;
+}
+
+.grooming-hero-content,
+.grooming-hero-text-section,
+.grooming-hero-btn,
+.grooming-book-now-button,
+.grooming-gallery-arrow,
+.grooming-gallery-indicator,
+.grooming-package-card {
+  pointer-events: auto;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .grooming-photo-card {
+    max-width: 280px;
+    min-width: 230px;
+  }
+  
+  .grooming-photo-group {
+    gap: 25px;
+  }
+}
+
+@media (max-width: 992px) {
+  .grooming-hero-title {
+    font-size: 44px;
+  }
+  
+  .grooming-hero-description {
+    font-size: 20px;
+  }
+  
+  .grooming-hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .grooming-hero-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .grooming-services {
+    padding: 80px 30px;
+  }
+  
+  .grooming-ala-carte-services {
+    padding: 80px 30px;
+  }
+  
+  .grooming-cat-section,
+  .grooming-dog-deluxe-section,
+  .grooming-dog-premium-section {
+    padding: 80px 30px;
+  }
+  
+  .grooming-services-title {
+    font-size: 36px;
+  }
+  
+  .grooming-deluxe-main-title {
+    font-size: 36px;
+  }
+  
+  .grooming-gallery-title {
+    font-size: 36px;
+  }
+  
+  .grooming-price-amount {
+    font-size: 28px;
+    min-width: 80px;
+  }
+  
+  .grooming-price-size {
+    font-size: 16px;
+  }
+  
+  .grooming-photo-card {
+    max-width: 250px;
+    min-width: 200px;
+  }
+  
+  .grooming-photo-name {
+    font-size: 18px;
+    padding: 7px 18px;
+  }
+  
+  .grooming-gallery-arrow {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .grooming-hero-title {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  .grooming-hero-description {
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+  
+  .grooming-hero-btn {
+    padding: 18px 40px;
+    font-size: 16px;
+    min-width: 180px;
+  }
+  
+  .grooming-packages-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    max-width: 400px;
+  }
+  
+  .grooming-deluxe-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .grooming-gallery-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .grooming-deluxe-main-title {
+    font-size: 32px;
+  }
+  
+  .grooming-gallery-title {
+    font-size: 32px;
+  }
+  
+  .grooming-book-now-button {
+    width: 100%;
+    max-width: 300px;
+    padding: 16px 30px;
+  }
+  
+  .grooming-package-card.grooming-featured {
+    transform: scale(1);
+  }
+  
+  .grooming-package-card.grooming-featured:hover {
+    transform: translateY(-10px);
+  }
+  
+  .grooming-services-title {
+    font-size: 32px;
+  }
+  
+  .grooming-services-subtitle {
+    font-size: 16px;
+    margin-bottom: 50px;
+  }
+  
+  .grooming-deluxe-description {
+    font-size: 16px;
+  }
+  
+  .grooming-card-header {
+    height: 180px;
+  }
+  
+  .grooming-package-title {
+    font-size: 24px;
+  }
+  
+  .grooming-package-price {
+    font-size: 42px;
+    margin: 10px 0 16px 0;
+  }
+  
+  .grooming-package-card.grooming-featured .grooming-package-price {
+    margin: 10px 0 20px 0;
+  }
+  
+  .grooming-most-popular-badge {
+    font-size: 11px;
+    padding: 7px 15px;
+    right: -8px;
+  }
+  
+  .grooming-price-spacer {
+    height: 6px;
+  }
+  
+  .grooming-price-amount {
+    font-size: 24px;
+    min-width: 70px;
+  }
+  
+  .grooming-price-size {
+    font-size: 15px;
+  }
+  
+  .grooming-price-line {
+    gap: 20px;
+  }
+  
+  .grooming-photo-group {
+    gap: 20px;
+  }
+  
+  .grooming-photo-card {
+    max-width: 220px;
+    min-width: 180px;
+  }
+  
+  .grooming-photo-name {
+    font-size: 16px;
+    padding: 6px 15px;
+  }
+  
+  .grooming-gallery-arrow {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  
+  .grooming-three-photo-gallery-container {
+    gap: 15px;
+  }
+  
+  .grooming-section-divider {
+    margin: 40px 0;
+  }
+  
+  .grooming-deluxe-content {
+    margin-bottom: 30px;
+  }
+  
+  .grooming-gallery-section {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 680px) {
+  .grooming-photo-group {
+    gap: 15px;
+  }
+  
+  .grooming-photo-card {
+    max-width: 180px;
+    min-width: 150px;
+  }
+  
+  .grooming-photo-name {
+    font-size: 14px;
+    padding: 5px 12px;
+  }
+}
+
+@media (max-width: 580px) {
+  .grooming-photo-group {
+    gap: 10px;
+  }
+  
+  .grooming-photo-card {
+    max-width: 150px;
+    min-width: 120px;
+  }
+  
+  .grooming-photo-name {
+    font-size: 12px;
+    padding: 4px 10px;
+    letter-spacing: 1px;
+  }
+  
+  .grooming-photo-square {
+    border-width: 2px;
+    border-radius: 10px;
+  }
+  
+  .grooming-gallery-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grooming-hero-title {
+    font-size: 28px;
+  }
+  
+  .grooming-hero-description {
+    font-size: 16px;
+  }
+  
+  .grooming-hero-btn {
+    padding: 16px 30px;
+    font-size: 15px;
+    min-width: 160px;
+  }
+  
+  .grooming-services {
+    padding: 60px 20px;
+  }
+  
+  .grooming-ala-carte-services {
+    padding: 60px 20px;
+  }
+  
+  .grooming-cat-section,
+  .grooming-dog-deluxe-section,
+  .grooming-dog-premium-section {
+    padding: 60px 20px;
+  }
+  
+  .grooming-services-title {
+    font-size: 28px;
+  }
+  
+  .grooming-deluxe-main-title {
+    font-size: 28px;
+  }
+  
+  .grooming-gallery-title {
+    font-size: 28px;
+  }
+  
+  .grooming-package-card {
+    border-radius: 15px;
+  }
+  
+  .grooming-package-content {
+    padding: 20px;
+  }
+  
+  .grooming-package-title {
+    font-size: 22px;
+  }
+  
+  .grooming-package-price {
+    font-size: 38px;
+    margin: 10px 0 14px 0;
+  }
+  
+  .grooming-package-card.grooming-featured .grooming-package-price {
+    margin: 10px 0 18px 0;
+  }
+  
+  .grooming-card-header {
+    height: 160px;
+  }
+  
+  .grooming-book-now-button {
+    padding: 14px 30px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .grooming-price-amount {
+    font-size: 22px;
+    min-width: 60px;
+  }
+  
+  .grooming-price-size {
+    font-size: 14px;
+  }
+  
+  .grooming-price-line {
+    gap: 15px;
+    padding: 12px 0;
+  }
+  
+  .grooming-three-photo-gallery-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .grooming-gallery-three-photos {
+    order: 2;
+  }
+  
+  .grooming-gallery-arrow {
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    order: 1;
+  }
+  
+  .grooming-gallery-arrow.grooming-prev-arrow {
+    order: 1;
+  }
+  
+  .grooming-gallery-arrow.grooming-next-arrow {
+    order: 3;
+  }
+  
+  .grooming-photo-group {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .grooming-photo-card {
+    max-width: 300px;
+    width: 100%;
+  }
+  
+  .grooming-photo-name {
+    font-size: 18px;
+    padding: 8px 20px;
+  }
+  
+  .grooming-most-popular-badge {
+    font-size: 10px;
+    padding: 6px 12px;
+    right: -6px;
+    top: 10px;
+  }
+  
+  .grooming-price-spacer {
+    height: 4px;
+  }
+  
+  .grooming-section-divider {
+    margin: 30px 0;
+  }
+  
+  .grooming-deluxe-content {
+    margin-bottom: 25px;
+  }
+  
+  .grooming-gallery-section {
+    margin-top: 25px;
+  }
+}
+
+@media (max-width: 360px) {
+  .grooming-hero-title {
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+  
+  .grooming-packages-grid {
+    gap: 20px;
+  }
+  
+  .grooming-card-header {
+    height: 140px;
+  }
+  
+  .grooming-package-price {
+    font-size: 34px;
+  }
+  
+  .grooming-price-amount {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .grooming-hero-title {
+    font-size: 100px;
+  }
+  
+  .grooming-hero-description {
+    font-size: 24px;
+  }
+  
+  .grooming-hero-btn {
+    padding: 22px 20px;
+    font-size: 20px;
+  }
+  
+  .grooming-packages-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  
+  .grooming-services-title {
+    font-size: 48px;
+  }
+  
+  .grooming-deluxe-main-title {
+    font-size: 52px;
+  }
+  
+  .grooming-gallery-title {
+    font-size: 52px;
+  }
+  
+  .grooming-price-amount {
+    font-size: 36px;
+  }
+  
+  .grooming-price-size {
+    font-size: 20px;
+  }
+  
+  .grooming-photo-card {
+    max-width: 350px;
+    min-width: 300px;
+  }
+  
+  .grooming-photo-name {
+    font-size: 22px;
+    padding: 10px 25px;
+  }
+  
+  .grooming-photo-square {
+    border-radius: 20px;
+    border-width: 4px;
+  }
+  
+  .grooming-cat-section,
+  .grooming-dog-deluxe-section,
+  .grooming-dog-premium-section {
+    padding: 120px 60px;
+  }
+}

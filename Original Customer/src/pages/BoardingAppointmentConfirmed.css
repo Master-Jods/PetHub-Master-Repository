@@ -1,0 +1,285 @@
+/* BoardingAppointmentConfirmed.css */
+.ht-boarding-appt-confirmed {
+  min-height: 100vh;
+  background-color: #fff2fa;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.ht-boarding-appt-confirmed-card {
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 20px 50px rgba(245, 55, 153, 0.25);
+  background-color: white;
+  border: 3px solid #ff6bc0;
+  padding: 60px 50px;
+  animation: ht-boarding-appt-card-appear 0.6s ease-out;
+}
+
+@keyframes ht-boarding-appt-card-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ht-boarding-appt-confirmed-icon {
+  margin-bottom: 40px;
+  animation: ht-boarding-appt-icon-bounce 0.8s ease-out 0.2s both;
+}
+
+@keyframes ht-boarding-appt-icon-bounce {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ht-boarding-appt-confirmed-icon svg {
+  filter: drop-shadow(0 8px 20px rgba(76, 175, 80, 0.3));
+  animation: ht-boarding-appt-icon-float 3s ease-in-out infinite;
+}
+
+@keyframes ht-boarding-appt-icon-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.ht-boarding-appt-confirmed-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  background: linear-gradient(135deg, #f53799 0%, #ff6bc0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: ht-boarding-appt-title-appear 0.8s ease-out 0.4s both;
+  opacity: 0;
+}
+
+@keyframes ht-boarding-appt-title-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ht-boarding-appt-confirmed-message {
+  font-size: 1.3rem;
+  color: #666;
+  margin-bottom: 50px;
+  line-height: 1.8;
+  animation: ht-boarding-appt-message-appear 0.8s ease-out 0.6s both;
+  opacity: 0;
+}
+
+@keyframes ht-boarding-appt-message-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ht-boarding-appt-confirmed-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: ht-boarding-appt-buttons-appear 0.8s ease-out 0.8s both;
+  opacity: 0;
+}
+
+@keyframes ht-boarding-appt-buttons-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ht-boarding-appt-confirmed-back-btn {
+  border: 2px solid #f53799;
+  color: #f53799;
+  font-weight: 600;
+  padding: 16px 40px;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  background-color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ht-boarding-appt-confirmed-back-btn:hover {
+  background-color: #f53799;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(245, 55, 153, 0.3);
+}
+
+.ht-boarding-appt-confirmed-back-btn:active {
+  transform: translateY(-1px);
+}
+
+.ht-boarding-appt-confirmed-home-btn {
+  background: linear-gradient(135deg, #f53799 0%, #ff6bc0 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 18px 50px;
+  border-radius: 15px;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 12px 30px rgba(245, 55, 153, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ht-boarding-appt-confirmed-home-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s ease;
+}
+
+.ht-boarding-appt-confirmed-home-btn:hover {
+  background: linear-gradient(135deg, #d42d87 0%, #ff5ab8 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(245, 55, 153, 0.4);
+}
+
+.ht-boarding-appt-confirmed-home-btn:hover::before {
+  left: 100%;
+}
+
+.ht-boarding-appt-confirmed-home-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Confetti Animation */
+@keyframes ht-boarding-appt-confetti {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.ht-boarding-appt-confetti {
+  position: fixed;
+  width: 15px;
+  height: 15px;
+  background-color: #f53799;
+  border-radius: 50%;
+  animation: ht-boarding-appt-confetti 3s ease-out forwards;
+  z-index: 1000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ht-boarding-appt-confirmed-card {
+    padding: 40px 30px;
+  }
+  
+  .ht-boarding-appt-confirmed-title {
+    font-size: 2rem;
+  }
+  
+  .ht-boarding-appt-confirmed-message {
+    font-size: 1.1rem;
+  }
+  
+  .ht-boarding-appt-confirmed-back-btn,
+  .ht-boarding-appt-confirmed-home-btn {
+    padding: 14px 30px;
+    font-size: 1rem;
+  }
+  
+  .ht-boarding-appt-confirmed-button-container {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .ht-boarding-appt-confirmed-card {
+    padding: 30px 20px;
+  }
+  
+  .ht-boarding-appt-confirmed-title {
+    font-size: 1.8rem;
+  }
+  
+  .ht-boarding-appt-confirmed-message {
+    font-size: 1rem;
+  }
+  
+  .ht-boarding-appt-confirmed-back-btn,
+  .ht-boarding-appt-confirmed-home-btn {
+    padding: 12px 25px;
+    font-size: 0.95rem;
+    width: 100%;
+  }
+  
+  .ht-boarding-appt-confirmed-button-container {
+    gap: 12px;
+  }
+}
+
+/* Add confetti effect on load */
+.ht-boarding-appt-confirmed::before,
+.ht-boarding-appt-confirmed::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.ht-boarding-appt-confirmed::before {
+  background: radial-gradient(circle at 20% 50%, rgba(245, 55, 153, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(255, 107, 192, 0.1) 0%, transparent 50%);
+}

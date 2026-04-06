@@ -1,0 +1,176 @@
+/* App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+.App {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure main content takes available space */
+.main-content {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+/* Content container */
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.instructions {
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-top: 40px;
+}
+
+.instructions h1 {
+  color: #FF6B6B;
+  font-size: 36px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.instructions p {
+  color: #666;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+/* Features */
+.features {
+  display: grid;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.feature {
+  background-color: #fff9fa;
+  border-left: 4px solid #FFB6C1;
+  padding: 25px;
+  border-radius: 8px;
+}
+
+.feature h3 {
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feature p {
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* Code block */
+pre {
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: 10px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Color sample */
+.color-sample {
+  padding: 15px;
+  border-radius: 8px;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* List styling */
+.feature ul {
+  list-style-position: inside;
+  margin-top: 10px;
+}
+
+.feature li {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+/* Style for the homepage navbar wrapper */
+.homepage-navbar-wrapper {
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+/* Remove old footer styles */
+.happy-tails-footer {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content-container {
+    padding: 20px;
+  }
+  
+  .instructions {
+    padding: 25px;
+  }
+  
+  .instructions h1 {
+    font-size: 28px;
+  }
+  
+  pre {
+    font-size: 12px;
+    padding: 15px;
+  }
+}
+
+/* Bootstrap Overrides */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.col-md-4 {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Ensure Bootstrap doesn't conflict with your custom styles */
+@media (min-width: 768px) {
+  .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}

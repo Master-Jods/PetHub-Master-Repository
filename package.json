@@ -1,0 +1,41 @@
+{
+  "name": "pet-shop-staff",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/index.js",
+    "dev:launcher": "vite --host 0.0.0.0 --port 5175",
+    "dev:customer": "npm --prefix Frontend-Customer run dev -- --host 0.0.0.0 --port 5173",
+    "dev:admin": "npm --prefix Frontend-Admin run dev -- --host 0.0.0.0 --port 5174",
+    "dev:backend-admin": "npm --prefix Backend-Admin run dev",
+    "dev:all": "concurrently -n launcher,customer,admin,backend-admin \"npm run dev:launcher\" \"npm run dev:customer\" \"npm run dev:admin\" \"npm run dev:backend-admin\""
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
+    "axios": "^1.13.5",
+    "bootstrap": "^5.3.8",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "react": "^19.2.0",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.13.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.0.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "vite": "^7.3.1"
+  }
+}
