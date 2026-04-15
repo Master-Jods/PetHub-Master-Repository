@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Alert, Container, Row, Col, Card, Button, ProgressBar, Form, Modal } from 'react-bootstrap';
 import { useAuth } from '../backend/context/AuthContext';
@@ -31,6 +31,7 @@ const normalizePetSize = (value) => {
 
 const BoardingBook = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user: authUser, profile } = useAuth();
   const [activeStep, setActiveStep] = useState(1);
   const steps = ['Information', 'Service Details', 'Confirmation'];
@@ -49,8 +50,6 @@ const BoardingBook = () => {
   const [serviceType, setServiceType] = useState('');
   const [checkInDate, setCheckInDate] = useState('');
   const [checkInTime, setCheckInTime] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
-  const [checkOutTime, setCheckOutTime] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -154,6 +153,36 @@ const BoardingBook = () => {
 
     void loadPets();
   }, [authUser?.email, authUser?.id, profile?.first_name, profile?.last_name, profile?.phone]);
+
+  useEffect(() => {
+    const booking = location.state?.booking;
+    if (location.state?.step) {
+      setActiveStep(location.state.step);
+    }
+
+    if (booking) {
+      setServiceType(booking.metadata?.serviceType || booking.serviceDetails?.serviceType || '');
+      setCheckInDate(booking.metadata?.checkInDate || booking.appointmentInfo?.date || '');
+      setCheckInTime(booking.metadata?.checkInTime || booking.appointmentInfo?.time || '');
+      setAcceptedTerms(true);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    const booking = location.state?.booking;
+    const preferredPetName = location.state?.petName || booking?.petName || booking?.petInfo?.name || '';
+    if (!preferredPetName || pets.length === 0) return;
+
+    setPets((prev) => {
+      const next = prev.map((pet) => ({
+        ...pet,
+        selected: pet.name === preferredPetName,
+      }));
+
+      const changed = next.some((pet, index) => pet.selected !== prev[index]?.selected);
+      return changed ? next : prev;
+    });
+  }, [location.state, pets.length]);
 
   const serviceTypes = [
     { 
@@ -326,7 +355,7 @@ const BoardingBook = () => {
         setActiveStep(2);
         break;
       case 3:
-        if (!serviceType || !checkInDate || !checkInTime || !checkOutDate || !checkOutTime) {
+        if (!serviceType || !checkInDate || !checkInTime) {
           alert('Please complete service details first.');
           return;
         }
@@ -341,8 +370,8 @@ const BoardingBook = () => {
             serviceType: serviceType,
             checkInDate: checkInDate,
             checkInTime: checkInTime,
-            checkOutDate: checkOutDate,
-            checkOutTime: checkOutTime
+            booking: location.state?.booking,
+            mode: location.state?.mode || 'new',
           } 
         });
         break;
@@ -361,7 +390,7 @@ const BoardingBook = () => {
   };
 
   const handleContinueToConfirmation = () => {
-    if (!serviceType || !checkInDate || !checkInTime || !checkOutDate || !checkOutTime) {
+    if (!serviceType || !checkInDate || !checkInTime) {
       alert('Please complete all service details');
       return;
     }
@@ -377,8 +406,8 @@ const BoardingBook = () => {
         serviceType: serviceType,
         checkInDate: checkInDate,
         checkInTime: checkInTime,
-        checkOutDate: checkOutDate,
-        checkOutTime: checkOutTime
+        booking: location.state?.booking,
+        mode: location.state?.mode || 'new',
       } 
     });
   };
@@ -587,36 +616,9 @@ const BoardingBook = () => {
                       </Col>
                     </Row>
                     
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Expected Check-out Date *</Form.Label>
-                          <Form.Control
-                            type="date"
-                            value={checkOutDate}
-                            onChange={(e) => setCheckOutDate(e.target.value)}
-                            className="ht-boarding-form-control"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label>Check-out Time *</Form.Label>
-                          <Form.Select
-                            value={checkOutTime}
-                            onChange={(e) => setCheckOutTime(e.target.value)}
-                            className="ht-boarding-form-control"
-                          >
-                            <option value="">Select a time</option>
-                            {timeOptions.map((timeOption) => (
-                              <option key={`checkout-${timeOption.value}`} value={timeOption.value}>
-                                {timeOption.label}
-                              </option>
-                            ))}
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                    </Row>
+                    <div className="ht-boarding-date-note">
+                      Check-out details will be coordinated by the team after approval if needed.
+                    </div>
 
                     <div className="mt-3">
                       <h5>Terms and Conditions</h5>
@@ -650,7 +652,7 @@ const BoardingBook = () => {
                         variant="primary" 
                         onClick={handleContinueToConfirmation}
                         className="ht-boarding-confirm-btn"
-                        disabled={!serviceType || !checkInDate || !checkInTime || !checkOutDate || !checkOutTime || !acceptedTerms}
+                        disabled={!serviceType || !checkInDate || !checkInTime || !acceptedTerms}
                       >
                         Continue to Confirmation
                       </Button>

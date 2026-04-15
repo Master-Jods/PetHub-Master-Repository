@@ -16,6 +16,70 @@ const DELIVERY_ZONE_RATES = {
   'Domoit/Ibabang Dupay/Red-V/Marketview/Ilayang Dupay/Silangang Mayao/Mayao Parada/Cotta/Isabang': 150
 };
 
+const normalizeNullableText = (value) => {
+  if (value === undefined) return undefined;
+  const normalized = String(value ?? '').trim();
+  return normalized ? normalized : null;
+};
+
+const toDeliveryStatus = (status) => {
+  const text = String(status || '').trim();
+  if (text === 'Delivered' || text === 'Order Received') return 'Completed';
+  if (text === 'Out for Delivery' || text === 'Rider Picked Up') return 'Out for Delivery';
+  if (text === 'Preparing Order') return 'Preparing Order';
+  if (text === 'Cancelled') return 'Cancelled';
+  return 'Processing';
+};
+
+const buildTrackingUpdatesFromTimeline = (timeline) => {
+  if (!Array.isArray(timeline)) return [];
+
+  return timeline
+    .filter((step) => step && (step.completed || step.timestamp))
+    .map((step) => ({
+      time: step.timestamp || '',
+      title: step.title || 'Order Update',
+      details: step.description || '',
+      completed: Boolean(step.completed),
+      key: step.key || null,
+    }));
+};
+
+async function markAdminOrderNotificationsRead(filters = {}) {
+  let query = supabaseAdmin
+    .from('notifications')
+    .update({ is_read: true, read_at: new Date().toISOString() })
+    .eq('audience', 'admin')
+    .eq('type', 'order')
+    .eq('is_read', false);
+
+  if (filters.entityId) {
+    query = query.eq('entity_id', filters.entityId);
+  }
+
+  let { error } = await query;
+
+  if (!error) return;
+
+  if (!String(error.message || '').toLowerCase().includes('read_at')) {
+    throw error;
+  }
+
+  query = supabaseAdmin
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('audience', 'admin')
+    .eq('type', 'order')
+    .eq('is_read', false);
+
+  if (filters.entityId) {
+    query = query.eq('entity_id', filters.entityId);
+  }
+
+  ({ error } = await query);
+  if (error) throw error;
+}
+
 const mapNotification = (row) => ({
   id: row.metadata?.orderCode || row.entity_id,
   title: row.title || 'New Order',
@@ -54,6 +118,9 @@ const mapOrder = (row) => ({
   rider: row.rider_snapshot,
   timeline: row.timeline || [],
   proofOfPayment: row.proof_of_payment
+    || row.metadata?.proofOfPaymentDataUrl
+    || '',
+  proofOfPaymentName: row.metadata?.proofOfPaymentName || '',
 });
 
 async function getRecentNotifications() {
@@ -85,32 +152,7 @@ router.get('/', async (_req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('orders')
-      .select(`
-        id,
-        order_code,
-        category,
-        customer_name,
-        customer_email,
-        customer_phone,
-        order_date,
-        items,
-        base_total,
-        total,
-        status,
-        request_status,
-        rejection_reason,
-        payment_method,
-        payment_status,
-        delivery_method,
-        delivery_zone,
-        delivery_fee,
-        shipping_address,
-        eta,
-        rider_snapshot,
-        timeline,
-        proof_of_payment,
-        created_at
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -132,14 +174,7 @@ router.get('/', async (_req, res) => {
 
 router.patch('/notifications/read-all', async (_req, res) => {
   try {
-    const { error } = await supabaseAdmin
-      .from('notifications')
-      .update({ is_read: true, read_at: new Date().toISOString() })
-      .eq('audience', 'admin')
-      .eq('type', 'order')
-      .eq('is_read', false);
-
-    if (error) throw error;
+    await markAdminOrderNotificationsRead();
 
     const notifications = await getRecentNotifications();
     res.json({
@@ -174,6 +209,7 @@ router.patch('/:id', async (req, res) => {
       return res.status(400).json({ message: 'Invalid order status.' });
     }
     patch.status = req.body.status;
+    patch.delivery_status = toDeliveryStatus(req.body.status);
   }
 
   if (req.body.requestStatus !== undefined) {
@@ -196,11 +232,12 @@ router.patch('/:id', async (req, res) => {
   }
 
   if (req.body.eta !== undefined) {
-    patch.eta = req.body.eta;
+    patch.eta = normalizeNullableText(req.body.eta);
   }
 
   if (req.body.timeline !== undefined) {
     patch.timeline = req.body.timeline;
+    patch.tracking_updates = buildTrackingUpdatesFromTimeline(req.body.timeline);
   }
 
   if (req.body.total !== undefined) {
@@ -267,45 +304,17 @@ router.patch('/:id', async (req, res) => {
       .from('orders')
       .update(patch)
       .eq('order_code', id)
-      .select(`
-        id,
-        order_code,
-        category,
-        customer_name,
-        customer_email,
-        customer_phone,
-        order_date,
-        items,
-        base_total,
-        total,
-        status,
-        request_status,
-        rejection_reason,
-        payment_method,
-        payment_status,
-        delivery_method,
-        delivery_zone,
-        delivery_fee,
-        shipping_address,
-        eta,
-        rider_snapshot,
-        timeline,
-        proof_of_payment
-      `)
+      .select('*')
       .single();
 
     if (error) throw error;
 
     if (patch.request_status && patch.request_status !== 'Pending Request') {
-      const { error: notificationError } = await supabaseAdmin
-        .from('notifications')
-        .update({ is_read: true, read_at: new Date().toISOString() })
-        .eq('audience', 'admin')
-        .eq('type', 'order')
-        .eq('entity_id', existingOrder.id)
-        .eq('is_read', false);
-
-      if (notificationError) throw notificationError;
+      try {
+        await markAdminOrderNotificationsRead({ entityId: existingOrder.id });
+      } catch (notificationError) {
+        console.warn('Order saved but notification state was not updated:', notificationError.message || notificationError);
+      }
     }
 
     const [notifications, unreadCount] = await Promise.all([

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, ProgressBar, Form } from 'react-bootstrap';
 import './ScheduleAppointment.css';
@@ -19,6 +19,13 @@ const ScheduleAppointment = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const minDate = new Date().toISOString().split('T')[0];
+
+  useEffect(() => {
+    const nextDate = location.state?.schedule?.rawDate || location.state?.booking?.appointmentInfo?.date || '';
+    const nextTime = location.state?.schedule?.time || location.state?.booking?.appointmentInfo?.time || '';
+    if (nextDate) setSelectedDate(nextDate);
+    if (nextTime) setSelectedTime(nextTime);
+  }, [location.state]);
 
   const formatDateForDisplay = (dateValue) => {
     if (!dateValue) return 'Not selected';

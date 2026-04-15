@@ -6,6 +6,43 @@ const router = Router();
 const PAYMENT_STATUS_OPTIONS = ['Pending', 'Paid', 'Refunded'];
 const BOOKING_STATUS_OPTIONS = ['Pending Approval', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'];
 
+const CONFLICT_EXCLUDED_STATUSES = new Set(['cancelled', 'completed']);
+
+async function markAdminBookingNotificationsRead(filters = {}) {
+  let query = supabaseAdmin
+    .from('notifications')
+    .update({ is_read: true, read_at: new Date().toISOString() })
+    .eq('audience', 'admin')
+    .eq('type', 'booking')
+    .eq('is_read', false);
+
+  if (filters.entityId) {
+    query = query.eq('entity_id', filters.entityId);
+  }
+
+  let { error } = await query;
+
+  if (!error) return;
+
+  if (!String(error.message || '').toLowerCase().includes('read_at')) {
+    throw error;
+  }
+
+  query = supabaseAdmin
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('audience', 'admin')
+    .eq('type', 'booking')
+    .eq('is_read', false);
+
+  if (filters.entityId) {
+    query = query.eq('entity_id', filters.entityId);
+  }
+
+  ({ error } = await query);
+  if (error) throw error;
+}
+
 const getAllowedPaymentMethods = (serviceType) => {
   if (serviceType === 'Birthday Party') return ['GCash'];
   if (serviceType === 'Grooming' || serviceType === 'Boarding') return ['Cash'];
@@ -41,7 +78,104 @@ const mapNotification = (row) => ({
   status: row.is_read ? 'accepted' : 'pending'
 });
 
-const mapBooking = (row) => ({
+const formatConflictDateTime = (dateValue, timeValue) => {
+  if (!dateValue && !timeValue) return 'the same schedule';
+  if (!dateValue) return timeValue;
+  if (!timeValue) {
+    const parsedDate = new Date(dateValue);
+    return Number.isNaN(parsedDate.getTime())
+      ? dateValue
+      : parsedDate.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  const parsed = new Date(`${dateValue}T${timeValue}`);
+  if (Number.isNaN(parsed.getTime())) {
+    return `${dateValue} ${timeValue}`;
+  }
+
+  return parsed.toLocaleString('en-PH', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+};
+
+const buildBookingSlotKey = (row) => {
+  const dateValue = row.appointment_date || row.appointment_info?.date || row.scheduled_at?.slice(0, 10) || '';
+  const timeValue = row.appointment_time || row.appointment_info?.time || '';
+
+  if (!dateValue || !timeValue) return '';
+  return `${dateValue}__${timeValue}`;
+};
+
+function buildBookingConflictMap(rows = []) {
+  const grouped = new Map();
+
+  for (const row of rows) {
+    const status = String(row.booking_status || '').trim().toLowerCase();
+    if (CONFLICT_EXCLUDED_STATUSES.has(status)) continue;
+
+    const slotKey = buildBookingSlotKey(row);
+    if (!slotKey) continue;
+
+    const bucket = grouped.get(slotKey) || [];
+    bucket.push(row);
+    grouped.set(slotKey, bucket);
+  }
+
+  const conflictMap = new Map();
+
+  for (const [slotKey, bucket] of grouped.entries()) {
+    if (bucket.length < 2) continue;
+
+    for (const row of bucket) {
+      conflictMap.set(row.id, {
+        slotKey,
+        conflictCount: bucket.length,
+        conflictingBookingIds: bucket.map((item) => item.id),
+        conflictingBookingCodes: bucket.map((item) => item.booking_code),
+      });
+    }
+  }
+
+  return conflictMap;
+}
+
+function buildConflictNotifications(rows = [], conflictMap) {
+  const grouped = new Map();
+
+  for (const row of rows) {
+    const conflict = conflictMap.get(row.id);
+    if (!conflict) continue;
+
+    if (!grouped.has(conflict.slotKey)) {
+      grouped.set(conflict.slotKey, { row, conflict });
+    }
+  }
+
+  return Array.from(grouped.values())
+    .map(({ row, conflict }) => ({
+      id: row.id,
+      title: 'Schedule Conflict',
+      message: `${conflict.conflictCount} bookings share ${formatConflictDateTime(
+        row.appointment_date || row.appointment_info?.date || row.scheduled_at?.slice(0, 10) || '',
+        row.appointment_time || row.appointment_info?.time || ''
+      )}.`,
+      time: new Date(row.created_at || row.updated_at || row.scheduled_at || Date.now()).toLocaleString('en-PH', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      }),
+      read: false,
+      status: 'conflict'
+    }))
+    .slice(0, 10);
+}
+
+const mapBooking = (row, conflict = null) => ({
   id: row.id,
   bookingId: row.booking_code,
   serviceType: row.service_type,
@@ -59,6 +193,12 @@ const mapBooking = (row) => ({
   totalPriceHistory: row.total_price_history || [],
   paymentProof: row.metadata?.paymentProofDataUrl || row.service_details?.paymentProofDataUrl || '',
   paymentProofName: row.metadata?.paymentProofName || row.service_details?.paymentProofName || '',
+  note: row.note || '',
+  specialRequests: row.metadata?.specialRequests || row.service_details?.specialRequests || '',
+  hasScheduleConflict: Boolean(conflict),
+  scheduleConflictCount: Number(conflict?.conflictCount || 0),
+  conflictingBookingIds: conflict?.conflictingBookingIds || [],
+  conflictingBookingCodes: conflict?.conflictingBookingCodes || [],
 });
 
 async function findBookingByIdentifier(identifier, columns) {
@@ -115,30 +255,13 @@ router.get('/', async (_req, res) => {
   try {
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
-      .select(`
-        id,
-        booking_code,
-        service_type,
-        customer_name,
-        appointment_date,
-        appointment_time,
-        scheduled_at,
-        service_total,
-        payment_method,
-        payment_status,
-        booking_status,
-        pet_info,
-        appointment_info,
-        contact_info,
-        grooming_summary,
-        total_price_history,
-        service_details,
-        metadata,
-        created_at
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+
+    const conflictMap = buildBookingConflictMap(bookings || []);
+    const conflictNotifications = buildConflictNotifications(bookings || [], conflictMap);
 
     const [notifications, unreadCount] = await Promise.all([
       getRecentNotifications(),
@@ -146,9 +269,9 @@ router.get('/', async (_req, res) => {
     ]);
 
     res.json({
-      bookings: (bookings || []).map(mapBooking),
-      notifications,
-      unreadCount
+      bookings: (bookings || []).map((row) => mapBooking(row, conflictMap.get(row.id))),
+      notifications: [...conflictNotifications, ...notifications].slice(0, 10),
+      unreadCount: unreadCount + conflictNotifications.length
     });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Failed to load bookings.' });
@@ -157,14 +280,7 @@ router.get('/', async (_req, res) => {
 
 router.patch('/notifications/read-all', async (_req, res) => {
   try {
-    const { error } = await supabaseAdmin
-      .from('notifications')
-      .update({ is_read: true, read_at: new Date().toISOString() })
-      .eq('audience', 'admin')
-      .eq('type', 'booking')
-      .eq('is_read', false);
-
-    if (error) throw error;
+    await markAdminBookingNotificationsRead();
 
     const notifications = await getRecentNotifications();
     res.json({
@@ -237,40 +353,27 @@ router.patch('/:id', async (req, res) => {
         updated_at: new Date().toISOString()
       })
       .eq('id', existingBooking.id)
-      .select(`
-        id,
-        booking_code,
-        service_type,
-        customer_name,
-        appointment_date,
-        appointment_time,
-        scheduled_at,
-        service_total,
-        payment_method,
-        payment_status,
-        booking_status,
-        pet_info,
-        appointment_info,
-        contact_info,
-        grooming_summary,
-        total_price_history,
-        service_details,
-        metadata
-      `)
+      .select('*')
       .single();
 
     if (updateError) throw updateError;
 
-    if (bookingStatus !== 'Pending Approval') {
-      const { error: notificationError } = await supabaseAdmin
-        .from('notifications')
-        .update({ is_read: true, read_at: new Date().toISOString() })
-        .eq('audience', 'admin')
-        .eq('type', 'booking')
-        .eq('entity_id', existingBooking.id)
-        .eq('is_read', false);
+    const { data: allBookings, error: allBookingsError } = await supabaseAdmin
+      .from('bookings')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-      if (notificationError) throw notificationError;
+    if (allBookingsError) throw allBookingsError;
+
+    const conflictMap = buildBookingConflictMap(allBookings || []);
+    const conflictNotifications = buildConflictNotifications(allBookings || [], conflictMap);
+
+    if (bookingStatus !== 'Pending Approval') {
+      try {
+        await markAdminBookingNotificationsRead({ entityId: existingBooking.id });
+      } catch (notificationError) {
+        console.warn('Booking saved but notification state was not updated:', notificationError.message || notificationError);
+      }
     }
 
     const [notifications, unreadCount] = await Promise.all([
@@ -279,9 +382,9 @@ router.patch('/:id', async (req, res) => {
     ]);
 
     res.json({
-      booking: mapBooking(updatedBooking),
-      notifications,
-      unreadCount
+      booking: mapBooking(updatedBooking, conflictMap.get(updatedBooking.id)),
+      notifications: [...conflictNotifications, ...notifications].slice(0, 10),
+      unreadCount: unreadCount + conflictNotifications.length
     });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Failed to update booking.' });

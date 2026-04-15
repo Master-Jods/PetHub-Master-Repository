@@ -32,6 +32,23 @@ app.get('/api/health', (_req, res) => {
 });
 
 const port = process.env.PORT || 4000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Bookings API running on port ${port}`);
 });
+
+server.on('error', (error) => {
+  console.error('Backend-Admin server failed:', error);
+  process.exit(1);
+});
+
+const shutdown = () => {
+  server.close(() => {
+    process.exit(0);
+  });
+};
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+
+// Keep the process attached in environments that aggressively exit after startup.
+process.stdin.resume();

@@ -534,6 +534,18 @@
   flex-shrink: 0;
 }
 
+.petcafe-item-sold {
+  color: #ff7a00;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.petcafe-item-sold i {
+  margin-right: 6px;
+}
+
 .petcafe-item-serves {
   color: #666;
   font-size: 0.9rem;
@@ -565,6 +577,13 @@
 .petcafe-add-cart-btn:hover:not(:disabled) {
   background-color: #d42c87 !important;
   transform: translateY(-2px);
+}
+
+.petcafe-add-cart-btn:disabled,
+.petcafe-cart-quantity-btn:disabled {
+  background-color: #c8ccd2 !important;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .petcafe-no-results {

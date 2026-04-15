@@ -267,34 +267,49 @@ function Inventory() {
   const [stockDrafts, setStockDrafts] = useState({});
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const loadInventory = async () => {
-      setLoading(true);
-      setError('');
+  const loadInventory = async ({ showLoader = true } = {}) => {
+    if (showLoader) setLoading(true);
+    setError('');
 
-      try {
-        const response = await fetch(`${API_BASE_URL}/inventory`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch inventory.');
-        }
-
-        const payload = await response.json();
-        const fetchedProducts = payload.products ?? [];
-        const normalizedProducts = fetchedProducts.map((item) => ({
-          ...item,
-          imagePath: item.imagePath || item.image,
-          image: resolveInventoryImage(item.imagePath || item.image),
-        }));
-        setProducts(normalizedProducts);
-        setStockDrafts(Object.fromEntries(normalizedProducts.map((item) => [item.id, String(item.stock ?? 0)])));
-      } catch (fetchError) {
-        setError(toFriendlyMessage(fetchError.message, 'We couldn’t load the inventory right now.'));
-      } finally {
-        setLoading(false);
+    try {
+      const response = await fetch(`${API_BASE_URL}/inventory`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch inventory.');
       }
+
+      const payload = await response.json();
+      const fetchedProducts = payload.products ?? [];
+      const normalizedProducts = fetchedProducts.map((item) => ({
+        ...item,
+        imagePath: item.imagePath || item.image,
+        image: resolveInventoryImage(item.imagePath || item.image),
+      }));
+      setProducts(normalizedProducts);
+      setStockDrafts(Object.fromEntries(normalizedProducts.map((item) => [item.id, String(item.stock ?? 0)])));
+    } catch (fetchError) {
+      setError(toFriendlyMessage(fetchError.message, 'We couldn’t load the inventory right now.'));
+    } finally {
+      if (showLoader) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadInventory({ showLoader: true });
+
+    const intervalId = window.setInterval(() => {
+      loadInventory({ showLoader: false });
+    }, 30000);
+
+    const handleWindowFocus = () => {
+      loadInventory({ showLoader: false });
     };
 
-    loadInventory();
+    window.addEventListener('focus', handleWindowFocus);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', handleWindowFocus);
+    };
   }, []);
 
   const categories = useMemo(() => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Button, Modal, Badge, Toast, ToastContainer, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { fetchCatalogProducts } from '../backend/services/catalogService';
 import { SHIPPING_OPTIONS, getShippingFee } from '../constants/fulfillment';
 import './Petcafe.css';
 
@@ -261,7 +262,10 @@ const Petcafe = () => {
     }
   ];
 
-  const [filteredItems, setFilteredItems] = useState(menuItems);
+  const [menuCatalog, setMenuCatalog] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState('');
 
   const categories = [
     { id: 'all', name: 'View All' },
@@ -272,7 +276,48 @@ const Petcafe = () => {
   ];
 
   useEffect(() => {
-    let filtered = menuItems;
+    let active = true;
+
+    const loadCatalog = async () => {
+      setCatalogLoading(true);
+      setCatalogError('');
+
+      try {
+        const nextItems = await fetchCatalogProducts('Pet Menu');
+        if (!active) return;
+        setMenuCatalog(nextItems);
+      } catch (_error) {
+        if (!active) return;
+        setMenuCatalog([]);
+        setCatalogError('Hindi namin ma-load ang latest Pet Menu items ngayon. Pakisubukan ulit maya-maya.');
+      } finally {
+        if (active) {
+          setCatalogLoading(false);
+        }
+      }
+    };
+
+    loadCatalog();
+
+    const refreshOnFocus = () => {
+      if (document.visibilityState === 'visible') {
+        void loadCatalog();
+      }
+    };
+    const poller = window.setInterval(() => {
+      void loadCatalog();
+    }, 30000);
+    document.addEventListener('visibilitychange', refreshOnFocus);
+
+    return () => {
+      active = false;
+      window.clearInterval(poller);
+      document.removeEventListener('visibilitychange', refreshOnFocus);
+    };
+  }, []);
+
+  useEffect(() => {
+    let filtered = [...menuCatalog];
     if (activeCategory !== 'all') {
       filtered = filtered.filter(item => item.category === activeCategory);
     }
@@ -281,7 +326,7 @@ const Petcafe = () => {
       filtered = filtered.filter(item => item.name.toLowerCase().includes(keyword));
     }
     setFilteredItems(filtered);
-  }, [activeCategory, searchTerm]);
+  }, [activeCategory, searchTerm, menuCatalog]);
 
   const handleCategoryClick = (categoryId) => setActiveCategory(categoryId);
 
@@ -397,12 +442,23 @@ const Petcafe = () => {
             </div>
           </div>
 
+          {catalogError && (
+            <div className="petcafe-no-results">
+              <p>{catalogError}</p>
+            </div>
+          )}
+
           {/* Items Grid */}
           <div className="petcafe-menu-grid">
-            {filteredItems.length > 0 ? (
+            {catalogLoading ? (
+              <div className="petcafe-no-results">
+                <p>Loading Pet Menu items...</p>
+              </div>
+            ) : filteredItems.length > 0 ? (
               filteredItems.map(item => {
                 const displayPrice = getDisplayPrice(item);
                 const variantName = getSelectedVariantName(item);
+                const isOutOfStock = Number(item.stock || 0) <= 0;
 
                 return (
                   <div key={item.id} className="petcafe-item-col d-flex justify-content-center">
@@ -464,13 +520,17 @@ const Petcafe = () => {
                         )}
 
                         <p className="petcafe-item-price">{displayPrice}</p>
+                        <div className="petcafe-item-sold">
+                          <i className="fas fa-fire"></i> {Number(item.sold || 0).toLocaleString()} sold
+                        </div>
 
                         <div className="petcafe-item-buttons">
                           <Button
                             className="petcafe-add-cart-btn"
+                            disabled={isOutOfStock}
                             onClick={() => addToCart(item, selectedVariant[item.id])}
                           >
-                            Add to Cart
+                            {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
                           </Button>
                         </div>
                       </Card.Body>
@@ -545,6 +605,7 @@ const Petcafe = () => {
                       <Button
                         className="petcafe-cart-quantity-btn"
                         onClick={() => updateQuantity(item.id, item.variantId, 1)}
+                        disabled={Number(item.quantity || 0) >= Number(item.stock || 0)}
                       >
                         +
                       </Button>

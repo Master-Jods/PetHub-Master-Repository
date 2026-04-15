@@ -12,6 +12,7 @@ const POLL_INTERVAL_MS = 30000;
 const RECORDS_PER_PAGE = 10;
 
 const formatCurrency = (amount) => `PHP ${Number(amount || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const getBookingStatusClass = (status) => `bookings-status-badge bookings-status-${String(status || 'pending-approval').toLowerCase().replace(/\s+/g, '-')}`;
 const getPetPhotoUrl = (petInfo = {}) => petInfo.photoUrl || petInfo.photo || petInfo.imageUrl || petInfo.image || '';
 const getPetPhotoFilename = (booking) => {
   const rawName = booking.petInfo?.name || booking.bookingId || 'pet-photo';
@@ -93,6 +94,12 @@ const mapBooking = (booking) => ({
   totalPriceHistory: booking.totalPriceHistory || booking.total_price_history || [],
   paymentProof: booking.paymentProof || booking.payment_proof || '',
   paymentProofName: booking.paymentProofName || booking.payment_proof_name || '',
+  note: booking.note || '',
+  specialRequests: booking.specialRequests || booking.special_requests || '',
+  hasScheduleConflict: Boolean(booking.hasScheduleConflict || booking.has_schedule_conflict),
+  scheduleConflictCount: Number(booking.scheduleConflictCount ?? booking.schedule_conflict_count ?? 0),
+  conflictingBookingIds: booking.conflictingBookingIds || booking.conflicting_booking_ids || [],
+  conflictingBookingCodes: booking.conflictingBookingCodes || booking.conflicting_booking_codes || [],
 });
 
 function Bookings({ onNotificationCountChange }) {
@@ -177,7 +184,6 @@ function Bookings({ onNotificationCountChange }) {
 
   const getDraftValues = (booking) => drafts[booking.id] || {
     paymentStatus: booking.paymentStatus,
-    bookingStatus: booking.bookingStatus,
     serviceTotal: booking.serviceTotal
   };
 
@@ -186,7 +192,6 @@ function Bookings({ onNotificationCountChange }) {
     if (!draft) return false;
 
     return draft.paymentStatus !== booking.paymentStatus
-      || draft.bookingStatus !== booking.bookingStatus
       || Number(draft.serviceTotal) !== Number(booking.serviceTotal);
   };
 
@@ -195,7 +200,6 @@ function Bookings({ onNotificationCountChange }) {
       ...prev,
       [booking.id]: {
         paymentStatus: prev[booking.id]?.paymentStatus ?? booking.paymentStatus,
-        bookingStatus: prev[booking.id]?.bookingStatus ?? booking.bookingStatus,
         serviceTotal: prev[booking.id]?.serviceTotal ?? booking.serviceTotal,
         [key]: value
       }
@@ -233,7 +237,7 @@ function Bookings({ onNotificationCountChange }) {
         },
         body: JSON.stringify({
           paymentStatus: draft.paymentStatus,
-          bookingStatus: draft.bookingStatus,
+          bookingStatus: booking.bookingStatus,
           serviceTotal: Number(draft.serviceTotal)
         })
       });
@@ -368,11 +372,23 @@ function Bookings({ onNotificationCountChange }) {
                   const pendingChanges = hasPendingChanges(booking);
 
                   return (
-                    <tr key={booking.id} className="bookings-table__row">
+                    <tr
+                      key={booking.id}
+                      className={`bookings-table__row ${booking.hasScheduleConflict ? 'bookings-table__row--conflict' : ''}`}
+                    >
                       <td className="bookings-table__cell">{booking.serviceType}</td>
                       <td className="bookings-table__cell">{booking.customer}</td>
                       <td className="bookings-table__cell">{booking.bookingId}</td>
-                      <td className="bookings-table__cell">{formatDateTime(booking.appointmentDate, booking.appointmentTime)}</td>
+                      <td className="bookings-table__cell">
+                        <div className="bookings-slot-cell">
+                          <span>{formatDateTime(booking.appointmentDate, booking.appointmentTime)}</span>
+                          {booking.hasScheduleConflict && (
+                            <span className="bookings-conflict-badge">
+                              Conflict{booking.scheduleConflictCount > 1 ? ` (${booking.scheduleConflictCount})` : ''}
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="bookings-table__cell">
                         <button
                           type="button"
@@ -397,15 +413,9 @@ function Bookings({ onNotificationCountChange }) {
                         </select>
                       </td>
                       <td className="bookings-table__cell">
-                        <select
-                          className="bookings-payment-select"
-                          value={draft.bookingStatus}
-                          onChange={(event) => handleDraftChange(booking, 'bookingStatus', event.target.value)}
-                        >
-                          {BOOKING_STATUS_OPTIONS.map((status) => (
-                            <option key={status}>{status}</option>
-                          ))}
-                        </select>
+                        <span className={getBookingStatusClass(booking.bookingStatus)}>
+                          {booking.bookingStatus}
+                        </span>
                       </td>
                       <td className="bookings-table__cell">
                         <div className="bookings-table-actions">
@@ -509,7 +519,22 @@ function Bookings({ onNotificationCountChange }) {
                   <h4>Appointment Info</h4>
                   <p><strong>Date:</strong> {selectedBooking.appointmentInfo.date || 'N/A'}</p>
                   <p><strong>Time:</strong> {selectedBooking.appointmentInfo.time || 'N/A'}</p>
+                  {selectedBooking.hasScheduleConflict && (
+                    <p className="bookings-conflict-note">
+                      This booking shares the same day and time with other customer bookings.
+                    </p>
+                  )}
                 </div>
+
+                {(selectedBooking.note || selectedBooking.specialRequests) && (
+                  <div className="bookings-summary-card">
+                    <h4>Special Notes</h4>
+                    {selectedBooking.note && <p><strong>Booking Note:</strong> {selectedBooking.note}</p>}
+                    {selectedBooking.specialRequests && (
+                      <p><strong>Special Requests:</strong> {selectedBooking.specialRequests}</p>
+                    )}
+                  </div>
+                )}
 
                 <div className="bookings-summary-card">
                   <h4>Contact Info</h4>

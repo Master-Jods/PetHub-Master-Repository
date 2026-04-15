@@ -11,7 +11,9 @@
     "db:migrate:shared-legacy": "node scripts/run-sql-file.mjs database/migrations/20260406_migrate_legacy_customer_admin.sql",
     "db:migrate:profile-cleanup": "node scripts/run-sql-file.mjs database/migrations/20260406_profile_cleanup.sql",
     "db:migrate:profile-trigger": "node scripts/run-sql-file.mjs database/migrations/20260406_profile_trigger.sql",
-    "db:migrate:announcements": "node scripts/run-sql-file.mjs database/migrations/20260406_announcements.sql"
+    "db:migrate:announcements": "node scripts/run-sql-file.mjs database/migrations/20260406_announcements.sql",
+    "db:migrate:inventory-stock": "node scripts/run-sql-file.mjs database/migrations/20260413_inventory_stock_on_orders.sql",
+    "db:migrate:customer-order-rpc": "node scripts/run-sql-file.mjs database/migrations/20260415_customer_order_inventory_rpc.sql"
   },
   "dependencies": {
     "pg": "^8.20.0"

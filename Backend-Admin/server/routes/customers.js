@@ -39,18 +39,18 @@ router.get('/', async (_req, res) => {
     const [profilesResult, petsResult, ordersResult, bookingsResult] = await Promise.all([
       supabaseAdmin
         .from('profiles')
-        .select('user_id, email, first_name, last_name, display_name, phone, status, created_at')
+        .select('*')
         .eq('role', 'customer')
         .order('created_at', { ascending: false }),
       supabaseAdmin
         .from('pets')
-        .select('id, user_id, name, species, breed, created_at'),
+        .select('*'),
       supabaseAdmin
         .from('orders')
-        .select('id, user_id, order_code, total, status, order_date, created_at'),
+        .select('*'),
       supabaseAdmin
         .from('bookings')
-        .select('id, user_id, scheduled_at, created_at'),
+        .select('*'),
     ]);
 
     if (profilesResult.error) throw profilesResult.error;

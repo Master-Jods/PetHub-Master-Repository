@@ -30,6 +30,7 @@ const Checkout = () => {
     shippingOption: checkoutPreferences.shippingOption || DEFAULT_FULFILLMENT.shippingOption
   });
   const [proofOfPayment, setProofOfPayment] = useState(null);
+  const [proofOfPaymentDataUrl, setProofOfPaymentDataUrl] = useState('');
   const [proofFileName, setProofFileName] = useState('');
   const [orderComplete, setOrderComplete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,10 +74,16 @@ const Checkout = () => {
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = typeof reader.result === 'string' ? reader.result : '';
       setProofOfPayment(file);
+      setProofOfPaymentDataUrl(dataUrl);
       setProofFileName(file.name);
-    }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
@@ -153,23 +160,10 @@ const Checkout = () => {
             hour: 'numeric',
             minute: '2-digit',
           }),
-          title: formData.paymentMethod === 'gcash' ? 'Payment Confirmed' : 'Payment Pending',
+          title: formData.paymentMethod === 'gcash' ? 'Payment Proof Submitted' : 'Awaiting Approval',
           details: formData.paymentMethod === 'gcash'
-            ? 'GCash proof submitted. Waiting for verification.'
-            : 'Cash payment selected. Please pay upon handoff/pickup.',
-        },
-        {
-          time: new Date(orderedAt).toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-          }),
-          title: 'Preparing Order',
-          details: formData.fulfillmentMethod === 'pickup'
-            ? 'Your order is being prepared for pickup.'
-            : 'Your order is being prepared for delivery.',
+            ? 'GCash proof submitted. Please wait for admin approval.'
+            : 'Cash payment selected. Please wait for admin approval before your order is confirmed.',
         },
       ];
 
@@ -184,7 +178,7 @@ const Checkout = () => {
         baseTotal: subtotal,
         totalAmount: total,
         currency: 'PHP',
-        status: 'Order Placed',
+        status: 'Pending',
         requestStatus: 'Pending Request',
         paymentStatus: formData.paymentMethod === 'gcash' ? 'Paid' : 'Pending',
         deliveryStatus: 'Processing',
@@ -196,9 +190,10 @@ const Checkout = () => {
           ? `${formData.address}, ${formData.city} ${formData.zipCode}`.trim()
           : '',
         eta,
-        proofOfPayment: proofFileName,
+        proofOfPayment: proofOfPaymentDataUrl,
         trackingUpdates,
         timeline: trackingUpdates,
+        metadata: proofFileName ? { proofOfPaymentName: proofFileName } : {},
       });
 
       setConfirmedOrderNumber(savedOrder?.order_number || orderNumber);
@@ -222,13 +217,14 @@ const Checkout = () => {
                 <path d="M25 40L35 50L55 30" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h2 className="happy-tails-order-title">Order Confirmed!</h2>
+            <h2 className="happy-tails-order-title">Order Submitted</h2>
             <p className="happy-tails-order-message">
               Thank you for your purchase.
+              Your order is pending admin approval.
               {formData.fulfillmentMethod === 'pickup'
-                ? ' Your pet menu and supplies will be prepared for pickup.'
-                : ' We will prepare your order for delivery based on the selected shipping area.'}
-              {formData.paymentMethod === 'gcash' && ' We will verify your payment proof within 24 hours.'}
+                ? ' We’ll confirm first before preparing it for pickup.'
+                : ' We’ll confirm first before preparing it for delivery.'}
+              {formData.paymentMethod === 'gcash' && ' We will review your payment proof before confirming the order.'}
             </p>
             <p className="happy-tails-order-number">Order #{confirmedOrderNumber || 'N/A'}</p>
             <Button className="happy-tails-back-to-shop" onClick={() => navigate('/shop')}>

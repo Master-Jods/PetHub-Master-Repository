@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, ProgressBar, Form } from 'react-bootstrap';
 import { useAuth } from '../backend/context/AuthContext';
-import { createProfileBooking } from '../backend/services/profileDataService';
+import { createProfileBooking, updateProfileBooking } from '../backend/services/profileDataService';
 import './BookingConfirmation.css';
 
 const BookingConfirmation = () => {
@@ -318,7 +318,7 @@ const BookingConfirmation = () => {
         contact: bookingData.contact || '',
       };
 
-      await createProfileBooking(authUser.id, {
+      const bookingPayload = {
         service: leadService?.variant && leadService.variant !== 'Included'
           ? `${leadService.name} (${leadService.variant})`
           : (leadService?.name || 'Grooming Appointment'),
@@ -332,11 +332,17 @@ const BookingConfirmation = () => {
         petBirthday: bookingData.pet?.birthday || null,
         date: rawDate,
         time: rawTime,
-        status: 'Processing',
+        bookingStatus: 'Pending Approval',
         priceLabel: formatCurrency(bookingData.totalPrice || 0),
         note: bookingData.services?.map((s) => s.name).join(', ') || null,
         metadata: bookingMetadata,
-      });
+      };
+
+      if (location.state?.mode === 'reschedule' && location.state?.booking?.id) {
+        await updateProfileBooking(authUser.id, location.state.booking.id, bookingPayload);
+      } else {
+        await createProfileBooking(authUser.id, bookingPayload);
+      }
     } catch (error) {
       alert(error?.message || 'Unable to save booking right now. Please try again.');
       setIsConfirming(false);

@@ -102,9 +102,10 @@ function normalizeFulfillmentMethod(value, deliveryMethod) {
 
 function normalizeBookingStatus(value) {
   const text = String(value || "").trim().toLowerCase();
-  if (!text || text === "pending" || text === "pending approval" || text === "in process" || text === "in-process") {
+  if (!text || text === "pending" || text === "in process" || text === "in-process") {
     return "Processing";
   }
+  if (text === "pending approval") return "Pending Approval";
   if (text === "completed") return "Completed";
   if (text === "cancelled" || text === "canceled") return "Cancelled";
   if (text === "confirmed") return "Confirmed";
@@ -118,12 +119,14 @@ function normalizeOrderDeliveryStatus(row) {
   if (explicitLower === "cancelled" || explicitLower === "canceled") return "Cancelled";
   if (explicitLower === "completed") return "Completed";
   if (explicitLower === "out for delivery") return "Out for Delivery";
-  if (explicitLower === "processing") return "Processing";
 
   const status = String(row.status || "").trim().toLowerCase();
   if (status === "cancelled") return "Cancelled";
   if (status === "delivered" || status === "order received") return "Completed";
   if (status === "out for delivery" || status === "rider picked up") return "Out for Delivery";
+  if (status === "preparing order") return "Preparing Order";
+  if (status === "order placed" || status === "pending") return "Processing";
+  if (explicitLower === "processing") return "Processing";
   return explicit || "Processing";
 }
 
@@ -394,7 +397,7 @@ export async function fetchProfileDashboard(userId) {
     supabase
       .from("bookings")
       .select(
-        "id, booking_code, service, service_type, pet_name, pet_breed, scheduled_at, booking_status, service_total, price_label, note, reviewed, created_at, updated_at"
+        "id, booking_code, service, service_type, pet_name, pet_breed, scheduled_at, booking_status, service_total, price_label, note, reviewed, appointment_info, pet_info, metadata, service_details, created_at, updated_at"
       )
       .eq("user_id", userId)
       .order("scheduled_at", { ascending: false })
@@ -423,6 +426,10 @@ export async function fetchProfileDashboard(userId) {
     price: row.price_label || formatCurrency(row.service_total),
     note: row.note || "",
     reviewed: Boolean(row.reviewed),
+    appointmentInfo: row.appointment_info || {},
+    petInfo: row.pet_info || {},
+    metadata: row.metadata || {},
+    serviceDetails: row.service_details || {},
     scheduledAtRaw: row.scheduled_at,
   }));
 
@@ -457,6 +464,7 @@ export async function fetchProfileDashboard(userId) {
     total: formatCurrency(row.total || row.base_total, row.currency || "PHP"),
     status: row.status || "Pending",
     deliveryStatus: normalizeOrderDeliveryStatus(row),
+    requestStatus: row.request_status || "Pending Request",
     paymentMethod: normalizePaymentMethod(row.payment_method, row.payment_status),
     fulfillmentMethod: normalizeFulfillmentMethod(row.fulfillment_method, row.delivery_method),
     riderName: row.rider_snapshot?.name || "Not assigned",
@@ -478,6 +486,9 @@ export async function fetchProfileDashboard(userId) {
     message: row.message || "",
     time: toRelativeTime(row.created_at),
     read: Boolean(row.is_read),
+    tone: String(row.title || row.message || "").toLowerCase().includes("cancel")
+      ? "cancelled"
+      : "default",
   }));
   const recentActivity = buildRecentActivity(
     notificationsResult.rows,
@@ -611,7 +622,7 @@ export async function createProfileBooking(userId, payload) {
       entity_type: "booking",
       entity_id: data.id,
       title: "Booking Submitted",
-      message: `Your ${bookingRow.service_type} booking has been submitted.`,
+      message: `Your ${bookingRow.service_type} booking was submitted and is pending admin approval.`,
       metadata: {
         bookingCode: bookingCode,
         serviceType: bookingRow.service_type,
@@ -700,11 +711,31 @@ export async function createProfileOrder(userId, payload) {
     updated_at: nowIso,
   };
 
-  const { data, error } = await supabase
-    .from("orders")
-    .insert(orderRow)
-    .select("id, order_code")
-    .single();
+  let data = null;
+  let error = null;
+
+  const { data: rpcData, error: rpcError } = await supabase.rpc("create_customer_order", {
+    order_payload: {
+      ...orderRow,
+      user_id: userId,
+    },
+  });
+
+  if (!rpcError) {
+    data = rpcData;
+  } else {
+    const rpcText = `${rpcError?.message || ""} ${rpcError?.details || ""}`.toLowerCase();
+    const rpcMissing =
+      rpcText.includes("could not find the function") ||
+      rpcText.includes("function public.create_customer_order") ||
+      rpcText.includes("does not exist");
+
+    if (rpcMissing) {
+      throw new Error("Order checkout is not fully configured yet. Run the customer order inventory migration first.");
+    }
+
+    throw new Error(rpcError.message);
+  }
 
   if (error) throw new Error(error.message);
 
@@ -716,7 +747,7 @@ export async function createProfileOrder(userId, payload) {
       entity_type: "order",
       entity_id: data.id,
       title: "Order Placed",
-      message: `Your order ${orderCode} has been placed successfully.`,
+      message: `Your order ${orderCode} was submitted and is pending admin approval.`,
       metadata: {
         orderCode,
         category: orderRow.category,
@@ -742,6 +773,121 @@ export async function createProfileOrder(userId, payload) {
     id: data.id,
     order_number: data.order_code,
     order_code: data.order_code,
+  };
+}
+
+export async function updateProfileBooking(userId, bookingId, payload) {
+  if (!supabase) throw new Error("Supabase is not configured.");
+  if (!userId || !bookingId) throw new Error("Missing booking update details.");
+
+  const scheduledAt = payload.scheduledAt || buildScheduledAt(payload.date, payload.time);
+  const { profile } = await getCustomerContext(userId);
+  const customerName = payload.customerName || profile?.display_name || buildDisplayName(profile);
+  const customerEmail = payload.customerEmail || profile?.email || "";
+  const customerPhone = payload.customerPhone || profile?.phone || "";
+  const nowIso = new Date().toISOString();
+  const serviceType = mapBookingServiceType(payload.serviceType, payload.service);
+  const metadata = payload.metadata || {};
+  const paymentMethod = resolveBookingPaymentMethod(
+    serviceType,
+    payload.paymentMethod || metadata.paymentMethod,
+    payload.paymentStatus
+  );
+
+  const petInfo = {
+    name: payload.petName || "",
+    type: payload.petType || "",
+    breed: payload.petBreed || "",
+    birthday: payload.petBirthday || metadata.petBirthday || null,
+    size: metadata.petSize || "",
+    photoUrl: metadata.petPhotoDataUrl || null,
+    photoName: metadata.petPhotoName || "",
+  };
+
+  const bookingRow = {
+    service: payload.service || "Service Booking",
+    service_type: serviceType,
+    scheduled_at: scheduledAt,
+    customer_name: customerName || "Customer",
+    customer_email: customerEmail,
+    customer_phone: customerPhone,
+    pet_name: payload.petName || null,
+    pet_breed: payload.petBreed || null,
+    pet_info: petInfo,
+    appointment_info: {
+      date: payload.date || "",
+      time: payload.time || "",
+    },
+    contact_info: {
+      owner: customerName || "Customer",
+      phone: customerPhone || "",
+      email: customerEmail || "",
+    },
+    service_details: metadata,
+    grooming_summary: payload.groomingSummary || {},
+    metadata,
+    service_total: Number(payload.totalAmount || parseCurrencyLabel(payload.priceLabel)),
+    price_label: payload.priceLabel || null,
+    payment_method: paymentMethod,
+    payment_status: payload.paymentStatus || "Pending",
+    booking_status: payload.bookingStatus || "Pending Approval",
+    note: payload.note || null,
+    reviewed: Boolean(payload.reviewed || false),
+    updated_at: nowIso,
+  };
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .update(bookingRow)
+    .eq("user_id", userId)
+    .eq("id", bookingId)
+    .select("id, booking_code, service, service_type, pet_name, pet_breed, scheduled_at, booking_status, price_label, note, reviewed")
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  await insertNotifications([
+    {
+      user_id: userId,
+      audience: "customer",
+      type: "booking",
+      entity_type: "booking",
+      entity_id: data.id,
+      title: "Booking Rescheduled",
+      message: `Your ${bookingRow.service_type} booking was rescheduled and is pending admin approval.`,
+      metadata: {
+        bookingCode: data.booking_code,
+        serviceType: bookingRow.service_type,
+      },
+    },
+    {
+      user_id: null,
+      audience: "admin",
+      type: "booking",
+      entity_type: "booking",
+      entity_id: data.id,
+      title: "Booking Rescheduled",
+      message: `${customerName} rescheduled a ${bookingRow.service_type} booking`,
+      metadata: {
+        bookingCode: data.booking_code,
+        customerName,
+        serviceType: bookingRow.service_type,
+      },
+    },
+  ]);
+
+  return {
+    id: data.id,
+    booking_code: data.booking_code,
+    service: data.service,
+    service_type: data.service_type,
+    pet_name: data.pet_name,
+    pet_breed: data.pet_breed,
+    scheduled_at: data.scheduled_at,
+    status: data.booking_status,
+    price_label: data.price_label,
+    note: data.note,
+    reviewed: data.reviewed,
   };
 }
 

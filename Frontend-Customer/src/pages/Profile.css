@@ -66,6 +66,62 @@ body {
   background-color: var(--gray-50);
 }
 
+.profile-notice {
+  max-width: 1200px;
+  margin: 20px auto 0;
+  padding: 14px 16px;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.profile-notice.cancelled {
+  background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
+  border-color: rgba(239, 68, 68, 0.28);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.08);
+}
+
+.profile-notice-content {
+  min-width: 0;
+}
+
+.profile-notice-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+}
+
+.profile-notice.cancelled .profile-notice-title {
+  color: var(--red-error);
+}
+
+.profile-notice-message {
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.5;
+}
+
+.profile-notice-close {
+  border: none;
+  background: transparent;
+  color: var(--gray-500);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.profile-notice-close:hover {
+  color: var(--red-error);
+}
+
 /* ========== WELCOME BANNER ========== */
 .welcome-banner {
   background: linear-gradient(135deg, var(--pink-light) 0%, #fff5fa 100%);
@@ -412,6 +468,11 @@ body {
   color: var(--orange-warning);
 }
 
+.status.pending-approval {
+  background-color: #fce7f3;
+  color: #be185d;
+}
+
 .status.out-for-delivery {
   background-color: var(--blue-soft);
   color: #0c7c90;
@@ -523,6 +584,26 @@ body {
   background-color: var(--gray-50);
 }
 
+.booking-card.cancelled-booking {
+  background: linear-gradient(180deg, #fff5f5 0%, #fffafa 100%);
+  border-color: rgba(239, 68, 68, 0.28);
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.06);
+}
+
+.booking-card.cancelled-booking:hover {
+  border-color: rgba(220, 38, 38, 0.5);
+  box-shadow: 0 16px 28px rgba(239, 68, 68, 0.12);
+}
+
+.booking-card.cancelled-booking .booking-datetime {
+  background-color: #fff1f2;
+}
+
+.booking-card.cancelled-booking .booking-header h3,
+.booking-card.cancelled-booking .price-value {
+  color: #b91c1c;
+}
+
 .booking-header {
   display: flex;
   justify-content: space-between;
@@ -571,6 +652,11 @@ body {
 .status-badge.processing {
   background-color: var(--orange-light);
   color: var(--orange-warning);
+}
+
+.status-badge.pending-approval {
+  background-color: #fce7f3;
+  color: #be185d;
 }
 
 .status-badge.completed {
@@ -643,6 +729,17 @@ body {
   color: var(--gray-400);
   font-style: italic;
   margin-bottom: 20px;
+}
+
+.booking-cancelled-note {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff1f2;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(239, 68, 68, 0.18);
 }
 
 .booking-actions {

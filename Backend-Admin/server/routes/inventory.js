@@ -4,6 +4,24 @@ import { supabaseAdmin } from '../lib/supabaseAdmin.js';
 const router = Router();
 const inventoryImageBucket = process.env.SUPABASE_INVENTORY_BUCKET || 'inventory-images';
 
+const normalizeProductKey = (value) =>
+  String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[^a-z0-9 ]/g, '');
+
+const isCompletedOrder = (row = {}) => {
+  const status = String(row.status ?? '').trim().toLowerCase();
+  const deliveryStatus = String(row.delivery_status ?? '').trim().toLowerCase();
+
+  return (
+    status === 'delivered' ||
+    status === 'order received' ||
+    deliveryStatus === 'completed'
+  );
+};
+
 const normalizeVariation = (variation) => ({
   id: variation?.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   name: variation?.name ?? '',
@@ -41,7 +59,8 @@ const uploadInventoryImage = async (image, productName) => {
     });
 
   if (error) {
-    throw new Error('Failed to upload inventory image.');
+    console.warn('Inventory image upload failed, storing inline image instead:', error.message || error);
+    return image;
   }
 
   const { data } = supabaseAdmin.storage.from(inventoryImageBucket).getPublicUrl(filePath);
@@ -74,7 +93,7 @@ const isValidProduct = (product) =>
   Number.isFinite(product.stock) &&
   product.stock >= 0;
 
-const mapProduct = (row) => ({
+const mapProduct = (row, soldCount = 0) => ({
   id: row.id,
   productType: row.product_type,
   name: row.name,
@@ -87,22 +106,107 @@ const mapProduct = (row) => ({
   image: row.image_url ?? row.image ?? '',
   imagePath: row.image_url ?? row.image ?? '',
   variations: Array.isArray(row.variations) ? row.variations : [],
+  soldCount: Number(soldCount || 0),
   createdAt: row.created_at,
   updatedAt: row.updated_at,
 });
 
-router.get('/', async (_req, res) => {
+async function loadSoldCountMaps() {
   const { data, error } = await supabaseAdmin
-    .from('inventory_items')
-    .select('*')
-    .order('product_type', { ascending: true })
-    .order('name', { ascending: true });
+    .from('orders')
+    .select('items, status, delivery_status');
 
   if (error) {
-    return res.status(500).json({ error: 'Failed to fetch inventory.' });
+    throw error;
   }
 
-  return res.json({ products: data.map(mapProduct) });
+  const soldByProductId = new Map();
+  const soldByName = new Map();
+
+  for (const row of data || []) {
+    if (!isCompletedOrder(row)) continue;
+
+    for (const item of Array.isArray(row.items) ? row.items : []) {
+      const quantity = Math.max(0, Number(item?.quantity ?? 0));
+      if (!quantity) continue;
+
+      const productId = item?.productId ? String(item.productId) : '';
+      const productKey = normalizeProductKey(item?.name);
+
+      if (productId) {
+        soldByProductId.set(productId, (soldByProductId.get(productId) || 0) + quantity);
+      }
+
+      if (productKey) {
+        soldByName.set(productKey, (soldByName.get(productKey) || 0) + quantity);
+      }
+    }
+  }
+
+  return { soldByProductId, soldByName };
+}
+
+function resolveSoldCount(row, soldMaps) {
+  if (!soldMaps) return 0;
+
+  const byId = soldMaps.soldByProductId.get(String(row.id));
+  if (typeof byId === 'number') {
+    return byId;
+  }
+
+  return soldMaps.soldByName.get(normalizeProductKey(row.name)) || 0;
+}
+
+router.get('/', async (_req, res) => {
+  try {
+    const [{ data, error }, soldMaps] = await Promise.all([
+      supabaseAdmin
+        .from('inventory_items')
+        .select('*')
+        .order('product_type', { ascending: true })
+        .order('name', { ascending: true }),
+      loadSoldCountMaps(),
+    ]);
+
+    if (error) {
+      return res.status(500).json({ error: 'Failed to fetch inventory.' });
+    }
+
+    return res.json({
+      products: (data || []).map((row) => mapProduct(row, resolveSoldCount(row, soldMaps))),
+    });
+  } catch {
+    return res.status(500).json({ error: 'Failed to fetch inventory.' });
+  }
+});
+
+router.get('/catalog', async (req, res) => {
+  try {
+    let query = supabaseAdmin
+      .from('inventory_items')
+      .select('*')
+      .eq('is_active', true)
+      .order('name', { ascending: true });
+
+    if (req.query.productType) {
+      query = query.eq('product_type', req.query.productType);
+    }
+
+    const [{ data, error }, soldMaps] = await Promise.all([
+      query,
+      loadSoldCountMaps(),
+    ]);
+
+    if (error) {
+      return res.status(500).json({ error: 'Failed to fetch catalog.' });
+    }
+
+    return res.json({
+      products: (data || []).map((row) => mapProduct(row, resolveSoldCount(row, soldMaps))),
+    });
+  } catch {
+    return res.status(500).json({ error: 'Failed to fetch catalog.' });
+  }
 });
 
 router.post('/', async (req, res) => {

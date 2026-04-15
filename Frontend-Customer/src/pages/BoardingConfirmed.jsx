@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, ProgressBar } from 'react-bootstrap';
 import { useAuth } from '../backend/context/AuthContext';
-import { createProfileBooking } from '../backend/services/profileDataService';
+import { createProfileBooking, updateProfileBooking } from '../backend/services/profileDataService';
 import './BoardingConfirmed.css';
 
 const BoardingConfirmed = () => {
@@ -18,15 +18,16 @@ const BoardingConfirmed = () => {
     serviceType: '',
     checkInDate: '',
     checkInTime: '',
-    checkOutDate: '',
-    checkOutTime: '',
     contact: '',
     totalPrice: 0
   });
 
+  const getPetTypeBadgeClass = (value) => String(value || 'pet').toLowerCase();
+  const getPetTypeInitial = (value) => String(value || 'P').charAt(0);
+
   useEffect(() => {
     if (location.state) {
-      const { selectedPets, serviceType, checkInDate, checkInTime, checkOutDate, checkOutTime } = location.state;
+      const { selectedPets, serviceType, checkInDate, checkInTime } = location.state;
       
       // Calculate price based on service type and pet
       const totalPrice = calculateTotalPrice(selectedPets, serviceType);
@@ -39,8 +40,6 @@ const BoardingConfirmed = () => {
         serviceType: serviceType || '',
         checkInDate: checkInDate || '',
         checkInTime: checkInTime || '',
-        checkOutDate: checkOutDate || '',
-        checkOutTime: checkOutTime || '',
         contact: contact,
         totalPrice: totalPrice
       });
@@ -93,7 +92,7 @@ const BoardingConfirmed = () => {
       const firstPet = bookingData.pets?.[0] || null;
       const timeForSchedule = bookingData.checkInTime || location.state?.checkInTime || '';
 
-      await createProfileBooking(authUser.id, {
+      const bookingPayload = {
         service: bookingData.serviceType === 'OVERNIGHT' ? 'Pet Boarding (Overnight)' : 'Pet Boarding (Daycare)',
         serviceType: 'boarding',
         customerName: firstPet?.parentName || null,
@@ -105,7 +104,7 @@ const BoardingConfirmed = () => {
         petBirthday: firstPet?.birthday || null,
         date: bookingData.checkInDate,
         time: timeForSchedule,
-        status: 'Processing',
+        bookingStatus: 'Pending Approval',
         priceLabel: `PHP ${Number(bookingData.totalPrice || 0).toFixed(2)}`,
         note: bookingData.serviceType === 'OVERNIGHT' ? '24-hour stay' : '3-hour daycare stay',
         metadata: {
@@ -113,11 +112,15 @@ const BoardingConfirmed = () => {
           pets: bookingData.pets,
           checkInDate: bookingData.checkInDate,
           checkInTime: timeForSchedule,
-          checkOutDate: bookingData.checkOutDate,
-          checkOutTime: bookingData.checkOutTime,
           contact: bookingData.contact,
         },
-      });
+      };
+
+      if (location.state?.mode === 'reschedule' && location.state?.booking?.id) {
+        await updateProfileBooking(authUser.id, location.state.booking.id, bookingPayload);
+      } else {
+        await createProfileBooking(authUser.id, bookingPayload);
+      }
     } catch (error) {
       alert(error?.message || 'Unable to save booking right now. Please try again.');
       setIsConfirming(false);
@@ -226,8 +229,8 @@ const BoardingConfirmed = () => {
                       <div className="ht-boarding-confirmation-detail-content">
                         {bookingData.pets.map((pet, index) => (
                           <div key={index} className="ht-boarding-confirmation-pet-item">
-                            <div className={`ht-boarding-confirmation-pet-avatar ht-boarding-confirmation-pet-${pet.type.toLowerCase()}`}>
-                              {pet.type.charAt(0)}
+                            <div className={`ht-boarding-confirmation-pet-avatar ht-boarding-confirmation-pet-${getPetTypeBadgeClass(pet.type)}`}>
+                              {getPetTypeInitial(pet.type)}
                             </div>
                             <div className="ht-boarding-confirmation-pet-details">
                               <div className="ht-boarding-confirmation-pet-name">{pet.name}</div>
@@ -253,18 +256,6 @@ const BoardingConfirmed = () => {
                           <span className="ht-boarding-confirmation-detail-label">Check-in:</span>
                           <span className="ht-boarding-confirmation-detail-value">
                             {formatDateForDisplay(bookingData.checkInDate)}
-                          </span>
-                        </div>
-                        <div className="ht-boarding-confirmation-detail-item">
-                          <span className="ht-boarding-confirmation-detail-label">Check-out:</span>
-                          <span className="ht-boarding-confirmation-detail-value">
-                            {formatDateForDisplay(bookingData.checkOutDate)}
-                          </span>
-                        </div>
-                        <div className="ht-boarding-confirmation-detail-item">
-                          <span className="ht-boarding-confirmation-detail-label">Check-out Time:</span>
-                          <span className="ht-boarding-confirmation-detail-value">
-                            {formatTimeForDisplay(bookingData.checkOutTime)}
                           </span>
                         </div>
                       </div>

@@ -1,10 +1,10 @@
 // BookPawty.jsx - WITH OWN CONFIRMATION PAGE INSIDE THE COMPONENT
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, ProgressBar, Form, Modal, Alert } from 'react-bootstrap';
 import { useAuth } from '../backend/context/AuthContext';
 import { supabase } from '../backend/supabaseClient';
-import { createProfileBooking } from '../backend/services/profileDataService';
+import { createProfileBooking, updateProfileBooking } from '../backend/services/profileDataService';
 import gcashQr from '../assets/gcashqr.jpg';
 import './BookPawty.css';
 
@@ -45,6 +45,8 @@ const parsePetNotes = (value) => {
   }
 };
 
+const getPetTypeInitial = (value) => String(value || 'P').charAt(0);
+
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -56,6 +58,7 @@ function readFileAsDataUrl(file) {
 
 const BookPawty = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user: authUser, profile: authProfile } = useAuth();
   const [activeStep, setActiveStep] = useState(1);
   const steps = ['Select Pet', 'Party Details', 'Payment'];
@@ -223,6 +226,36 @@ const BookPawty = () => {
 
     void loadPets();
   }, [authUser?.id, ownerDefaults]);
+
+  useEffect(() => {
+    const booking = location.state?.booking;
+    if (booking) {
+      setServiceType('Birthday Party');
+      setPartyDate(booking.metadata?.partyDate || booking.appointmentInfo?.date || '');
+      setPartyTime(booking.metadata?.partyTime || booking.appointmentInfo?.time || '');
+      setGuests(booking.metadata?.guests || '1-5');
+      setCakeFlavor(booking.metadata?.cakeFlavor || 'squash-banana');
+      setPastaChoice(booking.metadata?.pastaChoice || 'baked-mac');
+      setBannerName(booking.metadata?.bannerName || '');
+      setHatColor(booking.metadata?.hatColor || 'blue');
+      setSpecialRequests(booking.metadata?.specialRequests || '');
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    const booking = location.state?.booking;
+    const preferredPetName = location.state?.petName || booking?.petName || booking?.petInfo?.name || '';
+    if (!preferredPetName || pets.length === 0) return;
+
+    setPets((prev) => {
+      const next = prev.map((pet) => ({
+        ...pet,
+        selected: pet.name === preferredPetName,
+      }));
+      const changed = next.some((pet, index) => pet.selected !== prev[index]?.selected);
+      return changed ? next : prev;
+    });
+  }, [location.state, pets.length]);
 
   const handleAddPet = () => {
     setIsEditing(false);
@@ -590,7 +623,7 @@ const BookPawty = () => {
         paymentProofName = paymentProof.name || '';
       }
 
-      await createProfileBooking(authUser.id, {
+      const bookingPayload = {
         service: 'Birthday Pawty Package',
         serviceType: 'bdaypawty',
         customerName: selectedPet?.parentName || null,
@@ -602,7 +635,7 @@ const BookPawty = () => {
         petBirthday: selectedPet.birthday || null,
         date: partyDate,
         time: partyTime,
-        status: 'Processing',
+        bookingStatus: 'Pending Approval',
         priceLabel: 'PHP 2,000.00',
         paymentMethod,
         paymentStatus: 'Pending',
@@ -624,7 +657,13 @@ const BookPawty = () => {
           paymentProofDataUrl,
           paymentProofName,
         },
-      });
+      };
+
+      if (location.state?.mode === 'reschedule' && location.state?.booking?.id) {
+        await updateProfileBooking(authUser.id, location.state.booking.id, bookingPayload);
+      } else {
+        await createProfileBooking(authUser.id, bookingPayload);
+      }
 
       setShowConfirmation(true);
       setActiveStep(4);
@@ -700,7 +739,7 @@ const BookPawty = () => {
   <div className="ht-pawty-step-circle">
     <span>4</span>
   </div>
-  <span className="ht-pawty-step-label">Confirmed</span>
+  <span className="ht-pawty-step-label">Submitted</span>
 </div>
               </div>
             </div>
@@ -714,9 +753,10 @@ const BookPawty = () => {
               <Card className="ht-pawty-confirmation-card">
                 <Card.Body>
                   <div className="ht-pawty-checkmark-large ht-pawty-checkmark-green">✓</div> {/* Added green class */}
-                  <h2 className="ht-pawty-confirmation-title">Appointment Confirmed!</h2>
+                  <h2 className="ht-pawty-confirmation-title">Booking Submitted</h2>
                   <p className="ht-pawty-confirmation-message">
-                    Thank you for booking a birthday pawty for {selectedPet?.name || 'your pet'}!
+                    Thank you for booking a birthday pawty for {selectedPet?.name || 'your pet'}.
+                    Please wait for admin approval before treating the schedule as confirmed.
                   </p>
                   <Button 
                     className="ht-pawty-back-home-btn"
@@ -767,7 +807,7 @@ const BookPawty = () => {
                               />
                             ) : (
                               <div className={`ht-pawty-pet-avatar ${getPetTypeClass(pet.type)}`}>
-                                {pet.type.charAt(0)}
+                                {getPetTypeInitial(pet.type)}
                               </div>
                             )}
                             <div className="ht-pawty-pet-info">
@@ -1306,7 +1346,7 @@ const BookPawty = () => {
                               />
                             ) : (
                               <div className={`ht-pawty-pet-avatar ${getPetTypeClass(selectedPet.type)}`}>
-                                {selectedPet.type.charAt(0)}
+                                {getPetTypeInitial(selectedPet.type)}
                               </div>
                             )}
                             <div className="ht-pawty-summary-pet-info">

@@ -39,12 +39,12 @@ const AppointmentConfirmed = () => {
 
                 {/* Main Title */}
                 <h1 className="appt-confirmed-title">
-                  Appointment Confirmed!
+                  Booking Submitted
                 </h1>
 
                 {/* Message */}
                 <p className="appt-confirmed-message">
-                  Your grooming appointment has been successfully scheduled.
+                  Your grooming booking was submitted and is pending admin approval. Please wait for confirmation before treating the schedule as final.
                 </p>
 
                 {/* Back to Home Button */}

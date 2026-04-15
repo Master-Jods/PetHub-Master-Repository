@@ -43,14 +43,14 @@ const BoardingAppointmentConfirmed = () => {
 
                 {/* Main Title */}
                 <h1 className="ht-boarding-appt-confirmed-title">
-                  Boarding Booking Confirmed!
+                  Boarding Booking Submitted
                 </h1>
 
                 {/* Message */}
                 <p className="ht-boarding-appt-confirmed-message">
-                  Your pet's boarding stay has been successfully scheduled at Happy Tails.
+                  Your pet&apos;s boarding booking is pending admin approval.
                   <br />
-                  Our team will contact you shortly to confirm availability and details.
+                  Please wait for confirmation before treating the schedule as final.
                 </p>
 
                 {/* Button Container */}

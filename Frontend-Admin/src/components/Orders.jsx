@@ -122,7 +122,15 @@ const mapOrder = (order) => ({
   rider: order.rider || null,
   timeline: normalizeTimeline(order.timeline, order.deliveryMethod || order.delivery_method || 'Store Pickup', order.status),
   proofOfPayment: order.proofOfPayment || order.proof_of_payment || ''
+  ,
+  proofOfPaymentName: order.proofOfPaymentName || order.proof_of_payment_name || ''
 });
+
+const isImageProof = (value) => String(value || '').startsWith('data:image/')
+  || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(String(value || ''));
+
+const isPdfProof = (value) => String(value || '').startsWith('data:application/pdf')
+  || /\.pdf$/i.test(String(value || ''));
 
 function Orders({ onNotificationCountChange }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -259,7 +267,8 @@ function Orders({ onNotificationCountChange }) {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to update order (${response.status})`);
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload.message || 'We couldn’t update this order right now.');
     }
 
     const payload = await response.json();
@@ -491,8 +500,8 @@ function Orders({ onNotificationCountChange }) {
       return {
         ...currentOrder,
         requestStatus: 'Accepted',
+        status: 'Order Placed',
         timeline: acceptedTimeline,
-        status: getStatusFromTimeline(acceptedTimeline),
         rejectionReason: ''
       };
     });
@@ -767,8 +776,33 @@ function Orders({ onNotificationCountChange }) {
                         <div className="orders-proof-card">
                           <strong>GCash Proof of Payment</strong>
                           <div className="orders-proof-placeholder">
-                            <span className="orders-proof-icon">IMG</span>
-                            <p>{selectedOrder.proofOfPayment || 'Awaiting uploaded proof of payment screenshot.'}</p>
+                            {selectedOrder.proofOfPayment ? (
+                              <>
+                                {isImageProof(selectedOrder.proofOfPayment) && (
+                                  <img
+                                    src={selectedOrder.proofOfPayment}
+                                    alt={selectedOrder.proofOfPaymentName || 'Proof of payment'}
+                                    className="orders-proof-preview"
+                                  />
+                                )}
+                                {isPdfProof(selectedOrder.proofOfPayment) && (
+                                  <div className="orders-proof-file">PDF proof uploaded</div>
+                                )}
+                                {!isImageProof(selectedOrder.proofOfPayment) && !isPdfProof(selectedOrder.proofOfPayment) && (
+                                  <div className="orders-proof-file">Proof of payment uploaded</div>
+                                )}
+                                <a
+                                  href={selectedOrder.proofOfPayment}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="orders-proof-link"
+                                >
+                                  View {selectedOrder.proofOfPaymentName || 'Proof of Payment'}
+                                </a>
+                              </>
+                            ) : (
+                              <p>Awaiting uploaded proof of payment screenshot.</p>
+                            )}
                           </div>
                         </div>
                       )}

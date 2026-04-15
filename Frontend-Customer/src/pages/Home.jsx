@@ -7,45 +7,9 @@ import logoImage from '../assets/logo.png';
 import { isSupabaseConfigured, supabase } from '../backend/supabaseClient';
 import './Home.css';
 
-const fallbackAnnouncements = [
-  {
-    id: 1,
-    category: 'Breed Meetup',
-    tag: 'Community Event',
-    meta: 'Small Breeds',
-    title: 'Breed Meetup',
-    description: 'Meet, play, and socialize',
-    note: 'Photo spots • Play time • New friends',
-    highlight: 'SATURDAY',
-    footer: 'Happy Tails Community Day'
-  },
-  {
-    id: 2,
-    category: 'Holiday Promo',
-    tag: 'Seasonal Offer',
-    meta: 'Limited Time',
-    title: 'Holiday Promo',
-    description: 'Treats, bundles, and savings',
-    note: 'Special deals • Add-ons • Gift picks',
-    highlight: 'UP TO 20% OFF',
-    footer: 'Valid this holiday weekend'
-  },
-  {
-    id: 3,
-    category: 'Shop Announcement',
-    tag: 'Store Update',
-    meta: 'New Arrivals',
-    title: 'Shop Update',
-    description: 'Fresh finds now in store',
-    note: 'Restocks • New drops • Store reminders',
-    highlight: 'NEW THIS WEEK',
-    footer: 'Visit Happy Tails Shop'
-  }
-];
-
 const Home = () => {
   const navigate = useNavigate();
-  const [announcements, setAnnouncements] = useState(fallbackAnnouncements);
+  const [announcements, setAnnouncements] = useState([]);
   const communityReviews = [
     {
       id: 1,
@@ -91,7 +55,7 @@ const Home = () => {
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
 
-      if (!isMounted || error || !Array.isArray(data) || data.length === 0) {
+      if (!isMounted || error || !Array.isArray(data)) {
         return;
       }
 
@@ -277,37 +241,39 @@ const Home = () => {
         </Container>
       </section>
 
-      <section className="home-announcements-section">
-        <Container>
-          <div className="home-announcements-shell">
-            <div className="home-announcements-intro">
-              <h2>Events & Announcements</h2>
-              <p>
-                Join our meetups, holiday specials, and in-store activities.
-              </p>
-            </div>
+      {announcements.length > 0 && (
+        <section className="home-announcements-section">
+          <Container>
+            <div className="home-announcements-shell">
+              <div className="home-announcements-intro">
+                <h2>Events & Announcements</h2>
+                <p>
+                  Join our meetups, holiday specials, and in-store activities.
+                </p>
+              </div>
 
-            <Row className="g-4">
-              {announcements.map((item) => (
-                <Col lg={4} md={6} key={item.id}>
-                  <article className="home-announcement-event-card">
-                    <div className="home-announcement-poster-mark"></div>
-                    <div className="home-announcement-pill-row">
-                      <span className="home-announcement-category">{item.category}</span>
-                    </div>
-                    <span className="home-announcement-meta">{item.meta}</span>
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
-                    <div className="home-announcement-highlight">{item.highlight}</div>
-                    <div className="home-announcement-note">{item.note}</div>
-                    <div className="home-announcement-footer">{item.footer}</div>
-                  </article>
-                </Col>
-              ))}
-            </Row>
-          </div>
-        </Container>
-      </section>
+              <Row className="g-4">
+                {announcements.map((item) => (
+                  <Col lg={4} md={6} key={item.id}>
+                    <article className="home-announcement-event-card">
+                      <div className="home-announcement-poster-mark"></div>
+                      <div className="home-announcement-pill-row">
+                        <span className="home-announcement-category">{item.category}</span>
+                      </div>
+                      <span className="home-announcement-meta">{item.meta}</span>
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                      <div className="home-announcement-highlight">{item.highlight}</div>
+                      <div className="home-announcement-note">{item.note}</div>
+                      <div className="home-announcement-footer">{item.footer}</div>
+                    </article>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Pampering Section */}
       <section className="home-pampering-section">

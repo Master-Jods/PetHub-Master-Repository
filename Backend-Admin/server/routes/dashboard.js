@@ -110,6 +110,51 @@ const buildActivityItem = (title, message, timestamp, icon) => ({
   createdAt: timestamp,
 });
 
+async function markDashboardNotificationsRead(filters = {}) {
+  let query = supabaseAdmin
+    .from('notifications')
+    .update({ is_read: true, read_at: new Date().toISOString() })
+    .eq('audience', 'admin')
+    .eq('is_read', false);
+
+  if (filters.type) {
+    query = query.eq('type', filters.type);
+  } else {
+    query = query.in('type', ['booking', 'order']);
+  }
+
+  if (filters.entityId) {
+    query = query.eq('entity_id', filters.entityId);
+  }
+
+  let { error } = await query;
+
+  if (!error) return;
+
+  if (!String(error.message || '').toLowerCase().includes('read_at')) {
+    throw error;
+  }
+
+  query = supabaseAdmin
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('audience', 'admin')
+    .eq('is_read', false);
+
+  if (filters.type) {
+    query = query.eq('type', filters.type);
+  } else {
+    query = query.in('type', ['booking', 'order']);
+  }
+
+  if (filters.entityId) {
+    query = query.eq('entity_id', filters.entityId);
+  }
+
+  ({ error } = await query);
+  if (error) throw error;
+}
+
 async function getNotifications() {
   const { data, error } = await supabaseAdmin
     .from('notifications')
@@ -157,22 +202,22 @@ router.get('/', async (_req, res) => {
       reviewsResult,
     ] = await Promise.all([
       getNotifications(),
-      supabaseAdmin.from('profiles').select('user_id, created_at', { count: 'exact' }).eq('role', 'customer'),
+      supabaseAdmin.from('profiles').select('*', { count: 'exact' }).eq('role', 'customer'),
       supabaseAdmin
         .from('bookings')
-        .select('id, booking_code, customer_name, service, service_type, scheduled_at, appointment_date, appointment_time, service_total, booking_status, pet_info, appointment_info, contact_info, grooming_summary, created_at, updated_at')
+        .select('*')
         .order('scheduled_at', { ascending: true }),
       supabaseAdmin
         .from('orders')
-        .select('id, order_code, customer_name, category, request_status, status, total, order_date, created_at, updated_at')
+        .select('*')
         .order('created_at', { ascending: false }),
       supabaseAdmin
         .from('inventory_items')
-        .select('id, name, stock, updated_at')
+        .select('*')
         .order('stock', { ascending: true }),
       supabaseAdmin
         .from('reviews')
-        .select('review_code, rating, created_at')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(10),
     ]);
@@ -258,14 +303,7 @@ router.get('/', async (_req, res) => {
 
 router.patch('/notifications/read-all', async (_req, res) => {
   try {
-    const { error } = await supabaseAdmin
-      .from('notifications')
-      .update({ is_read: true, read_at: new Date().toISOString() })
-      .eq('audience', 'admin')
-      .in('type', ['booking', 'order'])
-      .eq('is_read', false);
-
-    if (error) throw error;
+    await markDashboardNotificationsRead();
 
     const notificationsData = await getNotifications();
     res.json({
@@ -285,15 +323,7 @@ router.patch('/notifications/:type/:id/read', async (req, res) => {
   }
 
   try {
-    const { error } = await supabaseAdmin
-      .from('notifications')
-      .update({ is_read: true, read_at: new Date().toISOString() })
-      .eq('audience', 'admin')
-      .eq('type', type)
-      .eq('entity_id', id)
-      .eq('is_read', false);
-
-    if (error) throw error;
+    await markDashboardNotificationsRead({ type, entityId: id });
 
     const notificationsData = await getNotifications();
     res.json(notificationsData);

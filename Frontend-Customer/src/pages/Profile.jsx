@@ -24,6 +24,22 @@ const splitFullName = (fullName) => {
   return { firstName, lastName };
 };
 
+function getCustomerOrderStage(order) {
+  const requestStatus = String(order?.requestStatus || '').trim();
+  const status = String(order?.status || '').trim();
+
+  if (status === 'Cancelled' || order?.deliveryStatus === 'Cancelled') return 'Cancelled';
+  if (requestStatus === 'Pending Request') return 'Waiting for Admin Approval';
+  if (status === 'Order Received') return 'Order Received';
+  if (status === 'Delivered') return 'Delivered';
+  if (status === 'Out for Delivery') return 'Out for Delivery';
+  if (status === 'Rider Picked Up') return 'Rider Picked Up';
+  if (status === 'Preparing Order') return 'Preparing Order';
+  if (status === 'Order Placed') return 'Order Placed';
+  if (requestStatus === 'Accepted') return 'Order Placed';
+  return 'Waiting for Admin Approval';
+}
+
 const Profile = () => {
   const navigate = useNavigate();
   const {
@@ -47,6 +63,7 @@ const Profile = () => {
   const [expandedTracking, setExpandedTracking] = useState({});
   const [showReviewPicker, setShowReviewPicker] = useState(false);
   const [recentActivity, setRecentActivity] = useState([]);
+  const [profileNotice, setProfileNotice] = useState(null);
   const [user, setUser] = useState({
     name: 'Pet Parent',
     email: '',
@@ -126,7 +143,10 @@ const Profile = () => {
   const [userReviews, setUserReviews] = useState([]);
 
   const completedOrders = useMemo(
-    () => orderHistory.filter((order) => (order.deliveryStatus || '').toLowerCase() === 'completed'),
+    () => orderHistory.filter((order) => {
+      const stage = getCustomerOrderStage(order);
+      return stage === 'Delivered' || stage === 'Order Received';
+    }),
     [orderHistory]
   );
 
@@ -200,23 +220,74 @@ const Profile = () => {
     };
   }, [authLoading, authUser]);
 
+  useEffect(() => {
+    if (!profileNotice) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      setProfileNotice(null);
+    }, 5000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [profileNotice]);
+
 
   // Navigation functions
   const handleReschedule = (bookingId) => {
     const booking = upcomingBookings.find(b => b.id === bookingId);
-    
+    if (!booking) return;
+
+    const selectedPet = {
+      id: booking.petInfo?.id || booking.petName || booking.id,
+      name: booking.petName,
+      type: booking.petInfo?.type || 'Dog',
+      size: booking.petInfo?.size || 'Medium',
+      breed: booking.petBreed,
+      birthday: booking.petInfo?.birthday || '',
+      parentName: user.name || '',
+      parentPhone: user.phone || '',
+      parentEmail: user.email || '',
+      parentAddress: authProfile?.address || '',
+    };
+
     switch(booking.serviceType) {
       case 'grooming':
-        navigate('/booking', { state: { service: 'grooming', booking } });
+        navigate('/schedule', {
+          state: {
+            mode: 'reschedule',
+            booking,
+            selectedPets: [selectedPet],
+            petCount: 1,
+            selectedServices: booking.metadata?.services || [],
+            schedule: {
+              date: booking.date,
+              time: booking.time,
+              rawDate: booking.appointmentInfo?.date || '',
+            },
+          },
+        });
         break;
       case 'boarding':
-        navigate('/boarding/book', { state: { booking } });
+        navigate('/boarding/book', { state: { mode: 'reschedule', booking, step: 2 } });
         break;
-      case 'petcafe':
-        navigate('/petcafe', { state: { booking } });
+      case 'birthday party':
+      case 'bdaypawty':
+        navigate('/bookpawty', { state: { mode: 'reschedule', booking } });
         break;
       default:
-        navigate('/booking', { state: { booking } });
+        navigate('/schedule', {
+          state: {
+            mode: 'reschedule',
+            booking,
+            selectedPets: [selectedPet],
+            petCount: 1,
+            selectedServices: booking.metadata?.services || [],
+            schedule: {
+              date: booking.date,
+              time: booking.time,
+              rawDate: booking.appointmentInfo?.date || '',
+            },
+          },
+        });
     }
   };
 
@@ -224,6 +295,8 @@ const Profile = () => {
     if (!(await siteConfirm('Are you sure you want to cancel this booking?'))) {
       return;
     }
+
+    const booking = upcomingBookings.find((item) => item.id === bookingId);
 
     if (authUser?.id) {
       try {
@@ -234,26 +307,91 @@ const Profile = () => {
       }
     }
 
+    const cancelledAt = new Date().toISOString();
+    const cancellationMessage = booking
+      ? `Your booking ${booking.id} was cancelled.`
+      : 'Your booking was cancelled.';
+
     setUpcomingBookings((prev) => prev.filter((b) => b.id !== bookingId));
+    if (booking) {
+      setPastBookings((prev) => [
+        {
+          ...booking,
+          status: 'Cancelled',
+          updatedAt: cancelledAt,
+        },
+        ...prev,
+      ]);
+    }
+    setNotifications((prev) => [
+      {
+        id: `cancelled-booking-${bookingId}-${Date.now()}`,
+        title: 'Booking Cancelled',
+        message: cancellationMessage,
+        time: 'just now',
+        read: false,
+        tone: 'cancelled',
+      },
+      ...prev,
+    ]);
+    setRecentActivity((prev) => [
+      {
+        id: `cancelled-booking-activity-${bookingId}-${Date.now()}`,
+        text: booking ? `cancelled ${booking.service}${booking.petName ? ` for ${booking.petName}` : ''}` : 'cancelled booking',
+        time: 'just now',
+        at: cancelledAt,
+      },
+      ...prev,
+    ]);
+    setProfileNotice({
+      tone: 'cancelled',
+      title: 'Booking Cancelled',
+      message: cancellationMessage,
+    });
     alert('Booking cancelled successfully!');
   };
 
   const handleBookAgain = (pastBooking) => {
+    const selectedPet = {
+      id: pastBooking.petInfo?.id || pastBooking.petName || pastBooking.id,
+      name: pastBooking.petName,
+      type: pastBooking.petInfo?.type || 'Dog',
+      size: pastBooking.petInfo?.size || 'Medium',
+      breed: pastBooking.petBreed,
+      birthday: pastBooking.petInfo?.birthday || '',
+      parentName: user.name || '',
+      parentPhone: user.phone || '',
+      parentEmail: user.email || '',
+      parentAddress: authProfile?.address || '',
+    };
+
     switch(pastBooking.serviceType) {
       case 'grooming':
-        navigate('/booking', { state: { service: 'grooming', petName: pastBooking.petName } });
+        navigate('/schedule', {
+          state: {
+            mode: 'book-again',
+            selectedPets: [selectedPet],
+            petCount: 1,
+            selectedServices: pastBooking.metadata?.services || [],
+          },
+        });
         break;
       case 'boarding':
-        navigate('/boarding/book', { state: { petName: pastBooking.petName } });
+        navigate('/boarding/book', { state: { mode: 'book-again', booking: pastBooking, step: 2 } });
         break;
+      case 'birthday party':
       case 'bdaypawty':
-        navigate('/bookpawty', { state: { petName: pastBooking.petName } });
-        break;
-      case 'petcafe':
-        navigate('/petcafe', { state: { petName: pastBooking.petName } });
+        navigate('/bookpawty', { state: { mode: 'book-again', booking: pastBooking } });
         break;
       default:
-        navigate('/booking');
+        navigate('/schedule', {
+          state: {
+            mode: 'book-again',
+            selectedPets: [selectedPet],
+            petCount: 1,
+            selectedServices: pastBooking.metadata?.services || [],
+          },
+        });
     }
   };
 
@@ -264,6 +402,7 @@ const Profile = () => {
     setEditingReviewId(null);
     setShowReviewPicker(false);
     setShowReviewForm(true);
+    setActiveTab('reviews');
   };
 
   const handleEditReview = (reviewId) => {
@@ -393,7 +532,12 @@ const Profile = () => {
 
   const handleCancelOrder = async (order) => {
     if (!order) return;
-    if (order.deliveryStatus === 'Completed' || order.deliveryStatus === 'Cancelled') return;
+    const currentStage = getCustomerOrderStage(order);
+    if (currentStage === 'Delivered' || currentStage === 'Order Received' || currentStage === 'Cancelled') return;
+    if (order.requestStatus !== 'Pending Request') {
+      alert('This order can only be cancelled while it is still pending admin approval.');
+      return;
+    }
 
     if (!(await siteConfirm('Are you sure you want to cancel this order?'))) {
       return;
@@ -521,6 +665,7 @@ const Profile = () => {
     if (!normalized || normalized === 'pending' || normalized === 'in process' || normalized === 'in-process') {
       return 'Processing';
     }
+    if (normalized === 'pending approval') return 'Pending Approval';
     if (normalized === 'completed') return 'Completed';
     if (normalized === 'cancelled' || normalized === 'canceled') return 'Cancelled';
     if (normalized === 'out for delivery') return 'Out for Delivery';
@@ -531,42 +676,38 @@ const Profile = () => {
   const getBookingStatusClass = (status) =>
     normalizeBookingStatus(status).toLowerCase().replace(/\s+/g, '-');
 
+  const getSafeStatusClass = (value, fallback = 'unknown') =>
+    String(value || fallback).toLowerCase().replace(/\s+/g, '-');
+
   const getBookingStatusLabel = (status) => normalizeBookingStatus(status);
 
-  const baseOrderTimeline = ['Order Placed', 'Payment Confirmed', 'Preparing Order', 'Out for Delivery', 'Completed'];
+  const pickupOrderTimeline = ['Waiting for Admin Approval', 'Order Placed', 'Preparing Order', 'Order Received'];
+  const deliveryOrderTimeline = ['Waiting for Admin Approval', 'Order Placed', 'Preparing Order', 'Rider Picked Up', 'Out for Delivery', 'Delivered'];
+
+  const getOrderTimeline = (order) =>
+    String(order?.fulfillmentMethod || '').toLowerCase() === 'pickup'
+      ? pickupOrderTimeline
+      : deliveryOrderTimeline;
 
   const getTrackingConfig = (order) => {
-    if (order.deliveryStatus === 'Cancelled') {
+    const customerStage = getCustomerOrderStage(order);
+    const baseTimeline = getOrderTimeline(order);
+
+    if (customerStage === 'Cancelled') {
       const cancelledAtStep = order.cancelledStage || 'Preparing Order';
-      const cutoffIndex = Math.max(baseOrderTimeline.indexOf(cancelledAtStep), 0);
-      const timeline = [...baseOrderTimeline.slice(0, cutoffIndex + 1), 'Cancelled'];
-      return { timeline, currentStepIndex: timeline.length - 1 };
+      const cutoffIndex = Math.max(baseTimeline.indexOf(cancelledAtStep), 0);
+      const timeline = [...baseTimeline.slice(0, cutoffIndex + 1), 'Cancelled'];
+      return { timeline, currentStepIndex: timeline.length - 1, customerStage };
     }
 
-    let currentStepIndex = 0;
-    switch (order.deliveryStatus) {
-      case 'Pending':
-        currentStepIndex = 1;
-        break;
-      case 'Processing':
-        currentStepIndex = 2;
-        break;
-      case 'Out for Delivery':
-        currentStepIndex = 3;
-        break;
-      case 'Completed':
-        currentStepIndex = 4;
-        break;
-      default:
-        currentStepIndex = 0;
-    }
-
-    return { timeline: baseOrderTimeline, currentStepIndex };
+    const currentStepIndex = Math.max(baseTimeline.indexOf(customerStage), 0);
+    return { timeline: baseTimeline, currentStepIndex, customerStage };
   };
 
-  const getOrderFilterKey = (deliveryStatus) => {
-    if (deliveryStatus === 'Completed') return 'completed';
-    if (deliveryStatus === 'Cancelled') return 'cancelled';
+  const getOrderFilterKey = (order) => {
+    const customerStage = getCustomerOrderStage(order);
+    if (customerStage === 'Delivered' || customerStage === 'Order Received') return 'completed';
+    if (customerStage === 'Cancelled') return 'cancelled';
     return 'inprocess';
   };
 
@@ -583,37 +724,48 @@ const Profile = () => {
   };
 
   const getTrackingHeadline = (order, currentStep) => {
-    if (order.deliveryStatus === 'Completed') {
-      return 'Delivered successfully';
+    const customerStage = getCustomerOrderStage(order);
+    if (customerStage === 'Delivered' || customerStage === 'Order Received') {
+      return customerStage === 'Order Received' ? 'Ready for pickup was received successfully' : 'Delivered successfully';
     }
-    if (order.deliveryStatus === 'Cancelled') {
+    if (customerStage === 'Cancelled') {
       return `Order cancelled at ${order.cancelledStage || 'processing stage'}`;
     }
-    if (order.deliveryStatus === 'Out for Delivery') {
+    if (customerStage === 'Out for Delivery') {
       return `${order.riderName} is on the way to your address`;
+    }
+    if (customerStage === 'Waiting for Admin Approval') {
+      return 'Your order is waiting for admin approval';
+    }
+    if (customerStage === 'Order Placed') {
+      return 'Your order has been accepted and placed';
     }
     return `Current stage: ${currentStep}`;
   };
 
   const getTrackingEtaLabel = (order) => {
-    if (order.deliveryStatus === 'Completed') return 'Delivered';
-    if (order.deliveryStatus === 'Cancelled') return 'N/A';
+    const customerStage = getCustomerOrderStage(order);
+    if (customerStage === 'Delivered' || customerStage === 'Order Received') return customerStage;
+    if (customerStage === 'Cancelled') return 'N/A';
     return order.eta || 'Updating...';
   };
 
   const getTrackingLocation = (order) => {
-    if (order.deliveryStatus === 'Completed') return 'Delivered';
-    if (order.deliveryStatus === 'Cancelled') return 'Cancelled';
-    if (order.deliveryStatus === 'Out for Delivery') return 'Out for Delivery';
-    if (order.deliveryStatus === 'Processing') return 'Preparing Dispatch';
-    return 'Order Received';
+    const customerStage = getCustomerOrderStage(order);
+    if (customerStage === 'Delivered' || customerStage === 'Order Received') return customerStage;
+    if (customerStage === 'Cancelled') return 'Cancelled';
+    if (customerStage === 'Out for Delivery') return 'Out for Delivery';
+    if (customerStage === 'Rider Picked Up') return 'Rider Picked Up';
+    if (customerStage === 'Preparing Order') return 'Preparing Order';
+    if (customerStage === 'Order Placed') return 'Order Placed';
+    return 'Pending Approval';
   };
 
   const filteredOrders = useMemo(() => {
     if (orderFilter === 'all') {
       return orderHistory;
     }
-    return orderHistory.filter((order) => getOrderFilterKey(order.deliveryStatus) === orderFilter);
+    return orderHistory.filter((order) => getOrderFilterKey(order) === orderFilter);
   }, [orderFilter, orderHistory]);
 
   const availableReviewBookings = useMemo(
@@ -788,6 +940,23 @@ const Profile = () => {
 	            </div>
           </div>
 
+          {profileNotice && (
+            <div className={`profile-notice ${profileNotice.tone || 'info'}`} role="status" aria-live="polite">
+              <div className="profile-notice-content">
+                <div className="profile-notice-title">{profileNotice.title}</div>
+                <div className="profile-notice-message">{profileNotice.message}</div>
+              </div>
+              <button
+                type="button"
+                className="profile-notice-close"
+                onClick={() => setProfileNotice(null)}
+                aria-label="Dismiss notice"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
           <div className="profile-content-area">
             {/* Stats Cards */}
             <div className="stats-grid">
@@ -880,17 +1049,19 @@ const Profile = () => {
           <button className="view-link" onClick={() => setActiveTab('orders')}>View all</button>
         </div>
         <div className="preview-items">
-          {completedOrders.slice(0, 2).map(order => (
+          {completedOrders.slice(0, 2).map(order => {
+            const customerStage = getCustomerOrderStage(order);
+            return (
             <div key={order.id} className="preview-item">
               <div className="preview-info">
                 <div className="preview-title">{order.id}</div>
                 <div className="preview-subtitle">{order.items.length} items · {order.date}</div>
               </div>
-              <span className={`status ${order.deliveryStatus.toLowerCase().replace(/\s+/g, '-')}`}>
-                {order.deliveryStatus}
+              <span className={`status ${getSafeStatusClass(customerStage, 'completed')}`}>
+                {customerStage}
               </span>
             </div>
-          ))}
+          )})}
         </div>
       </div>
     </div>
@@ -973,7 +1144,10 @@ const Profile = () => {
                   {pastBookings.length > 0 ? (
                     <div className="bookings-list">
                       {pastBookings.map(booking => (
-                        <div key={booking.id} className="booking-card past">
+                        <div
+                          key={booking.id}
+                          className={`booking-card past ${String(booking.status).toLowerCase() === 'cancelled' ? 'cancelled-booking' : ''}`}
+                        >
                           <div className="booking-header">
                             <div>
                               <h3>{booking.service}</h3>
@@ -982,7 +1156,9 @@ const Profile = () => {
                                 <span className="pet-breed">{booking.petBreed}</span>
                               </div>
                             </div>
-                            <span className="status-badge completed">Completed</span>
+                            <span className={`status-badge ${getBookingStatusClass(booking.status)}`}>
+                              {getBookingStatusLabel(booking.status)}
+                            </span>
                           </div>
                           
                           <div className="booking-datetime">
@@ -996,6 +1172,12 @@ const Profile = () => {
                             <span className="price-label">Paid</span>
                             <span className="price-value">{booking.price}</span>
                           </div>
+
+                          {String(booking.status).toLowerCase() === 'cancelled' && (
+                            <div className="booking-cancelled-note">
+                              This booking was cancelled. You can book the same service again anytime.
+                            </div>
+                          )}
                           
                           {booking.rating && (
                             <div className="rating-display">
@@ -1008,7 +1190,7 @@ const Profile = () => {
                             <button className="btn-secondary" onClick={() => handleBookAgain(booking)}>
                               Book Again
                             </button>
-                            {!booking.reviewed && (
+                            {String(booking.status).toLowerCase() === 'completed' && !booking.reviewed && (
                               <button className="btn-outline" onClick={() => handleLeaveReview(booking)}>
                                 Leave Review
                               </button>
@@ -1033,7 +1215,7 @@ const Profile = () => {
                   <p className="section-subtitle">Track your deliveries and view completed orders</p>
 
                   <div className="order-filter-tabs">
-                    {orderFilterTabs.map((tab) => (
+                          {orderFilterTabs.map((tab) => (
                       <button
                         key={tab.id}
                         className={`order-filter-btn ${orderFilter === tab.id ? 'active' : ''}`}
@@ -1043,7 +1225,7 @@ const Profile = () => {
                         <span className="order-filter-count">
                           {tab.id === 'all'
                             ? orderHistory.length
-                            : orderHistory.filter((order) => getOrderFilterKey(order.deliveryStatus) === tab.id).length}
+                            : orderHistory.filter((order) => getOrderFilterKey(order) === tab.id).length}
                         </span>
                       </button>
                     ))}
@@ -1052,9 +1234,9 @@ const Profile = () => {
                   {filteredOrders.length > 0 ? (
                     <div className="orders-list">
                       {filteredOrders.map(order => {
-                        const { timeline, currentStepIndex } = getTrackingConfig(order);
-                        const isCompleted = order.deliveryStatus === 'Completed';
-                        const isCancelled = order.deliveryStatus === 'Cancelled';
+                        const { timeline, currentStepIndex, customerStage } = getTrackingConfig(order);
+                        const isCompleted = customerStage === 'Delivered' || customerStage === 'Order Received';
+                        const isCancelled = customerStage === 'Cancelled';
                         const paymentLabel = order.paymentMethod || (order.status === 'Paid' ? 'GCash' : 'Cash');
                         const fulfillmentLabel = order.fulfillmentMethod || (String(order.riderName || '').toLowerCase().includes('pickup') ? 'Pickup' : 'Delivery');
                         const showTracking = !!expandedTracking[order.id];
@@ -1070,8 +1252,8 @@ const Profile = () => {
                           <div className="order-header">
                             <div className="order-id">Order #{order.id}</div>
                             <div className="order-date">{order.date}</div>
-                            <span className={`order-status ${order.deliveryStatus.toLowerCase().replace(/\s+/g, '-')}`}>
-                              {order.deliveryStatus}
+                            <span className={`order-status ${getSafeStatusClass(customerStage)}`}>
+                              {customerStage || 'Unknown'}
                             </span>
                           </div>
 
@@ -1173,7 +1355,7 @@ const Profile = () => {
                             <button className="btn-outline" onClick={() => toggleTracking(order.id)}>
                               {showTracking ? 'Hide Tracking' : 'View Tracking'}
                             </button>
-                            {!isCompleted && !isCancelled && (
+                            {!isCompleted && !isCancelled && order.requestStatus === 'Pending Request' && (
                               <button className="btn-outline" onClick={() => handleCancelOrder(order)}>
                                 Cancel
                               </button>
@@ -1495,8 +1677,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-
-
-
-

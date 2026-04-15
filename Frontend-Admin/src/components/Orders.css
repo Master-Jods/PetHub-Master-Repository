@@ -539,7 +539,8 @@
 
 .orders-proof-placeholder {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
   border: 1px dashed #f3b8d8;
   border-radius: 12px;
@@ -565,6 +566,31 @@
   margin: 0;
   color: #5e5e5e;
   font-size: 13px;
+}
+
+.orders-proof-preview {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 10px;
+  border: 1px solid #ffd0e5;
+  background: #fff;
+  object-fit: cover;
+}
+
+.orders-proof-file {
+  color: #5e5e5e;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.orders-proof-link {
+  color: #d7267f;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.orders-proof-link:hover {
+  text-decoration: underline;
 }
 
 .orders-rider-row {

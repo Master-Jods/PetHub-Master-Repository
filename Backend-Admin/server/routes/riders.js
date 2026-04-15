@@ -15,7 +15,7 @@ router.get('/', async (_req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('riders')
-      .select('rider_code, name, contact, vehicle, plate_number')
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
         vehicle,
         plate_number: plateNumber
       })
-      .select('rider_code, name, contact, vehicle, plate_number')
+      .select('*')
       .single();
 
     if (error) throw error;

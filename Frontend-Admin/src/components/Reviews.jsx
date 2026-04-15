@@ -16,7 +16,6 @@ const mapReview = (review) => ({
   date: review.date || review.review_date || '',
   petName: review.petName || review.pet_name || 'N/A',
   review: review.review || review.review_text || '',
-  adminResponse: review.adminResponse || review.admin_response || '',
   wouldRecommend: Boolean(review.wouldRecommend ?? review.would_recommend),
   transaction: review.transaction || {
     reference: review.reference || '',
@@ -34,12 +33,9 @@ function Reviews() {
   const [categoryFilter, setCategoryFilter] = useState('All Reviews');
   const [starFilter, setStarFilter] = useState('All Ratings');
   const [reviews, setReviews] = useState([]);
-  const [responseDrafts, setResponseDrafts] = useState({});
-  const [editingResponses, setEditingResponses] = useState({});
   const [selectedReview, setSelectedReview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [savingReviewId, setSavingReviewId] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -55,8 +51,6 @@ function Reviews() {
         const payload = await response.json();
         const nextReviews = Array.isArray(payload.reviews) ? payload.reviews.map(mapReview) : [];
         setReviews(nextReviews);
-        setResponseDrafts(Object.fromEntries(nextReviews.map((review) => [review.id, review.adminResponse])));
-        setEditingResponses(Object.fromEntries(nextReviews.map((review) => [review.id, !review.adminResponse])));
         setError('');
       } catch (fetchError) {
         setError(fetchError.message || 'Unable to load reviews.');
@@ -107,42 +101,6 @@ function Reviews() {
       fiveStarCount
     };
   }, [reviews]);
-
-  const handleDraftChange = (reviewId, value) => {
-    setResponseDrafts((prev) => ({ ...prev, [reviewId]: value }));
-  };
-
-  const handleSaveResponse = async (reviewId) => {
-    const nextResponse = (responseDrafts[reviewId] || '').trim();
-    setSavingReviewId(reviewId);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ adminResponse: nextResponse })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update review (${response.status})`);
-      }
-
-      const payload = await response.json();
-      const updatedReview = mapReview(payload.review);
-
-      setReviews((prev) => prev.map((review) => (review.id === reviewId ? updatedReview : review)));
-      setResponseDrafts((prev) => ({ ...prev, [reviewId]: updatedReview.adminResponse }));
-      setEditingResponses((prev) => ({ ...prev, [reviewId]: false }));
-      setSelectedReview((prev) => (prev && prev.id === reviewId ? updatedReview : prev));
-      setError('');
-    } catch (saveError) {
-      setError(saveError.message || 'Unable to save review response.');
-    } finally {
-      setSavingReviewId('');
-    }
-  };
 
   return (
     <div className="reviews-container">
@@ -244,57 +202,6 @@ function Reviews() {
                 <span>{review.date}</span>
                 <span>{review.category}</span>
                 <span>Pet: {review.petName}</span>
-              </div>
-
-              <div className="review-response-block">
-                <label htmlFor={review.id}>Admin Response</label>
-                {editingResponses[review.id] ? (
-                  <>
-                    <textarea
-                      id={review.id}
-                      rows="3"
-                      placeholder="Write a response for this review..."
-                      value={responseDrafts[review.id] || ''}
-                      onChange={(event) => handleDraftChange(review.id, event.target.value)}
-                    />
-                    <div className="review-response-actions">
-                      {review.adminResponse && (
-                        <button
-                          type="button"
-                          className="review-secondary-btn"
-                          onClick={() => {
-                            setResponseDrafts((prev) => ({ ...prev, [review.id]: review.adminResponse }));
-                            setEditingResponses((prev) => ({ ...prev, [review.id]: false }));
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        className="review-save-btn"
-                        onClick={() => handleSaveResponse(review.id)}
-                        disabled={savingReviewId === review.id}
-                      >
-                        {savingReviewId === review.id ? 'Saving...' : review.adminResponse ? 'Update Response' : 'Send Response'}
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="review-response-preview">
-                    <span className="review-response-tag">Responded</span>
-                    <p>{review.adminResponse}</p>
-                    <div className="review-response-actions">
-                      <button
-                        type="button"
-                        className="review-secondary-btn"
-                        onClick={() => setEditingResponses((prev) => ({ ...prev, [review.id]: true }))}
-                      >
-                        Edit Response
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
               </article>
             ))}

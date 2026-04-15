@@ -17,6 +17,7 @@ This folder currently contains database migrations and direct PostgreSQL/Supabas
 - `npm run db:migrate:shared-legacy`
 - `npm run db:migrate:profile-cleanup`
 - `npm run db:migrate:profile-trigger`
+- `npm run db:migrate:inventory-stock`
 
 ## Shared Database Setup
 
@@ -25,8 +26,9 @@ For the new merged database:
 1. Run `npm run db:migrate:shared-schema`
 2. Run `npm run db:migrate:profile-cleanup` if your DB was created before the profile cleanup
 3. Run `npm run db:migrate:profile-trigger` so new auth users automatically get profile rows
-4. If you are migrating old data, load the old customer tables into `legacy_customer` and the old admin tables into `legacy_admin`
-5. Run `npm run db:migrate:shared-legacy`
+4. Run `npm run db:migrate:inventory-stock` so inventory stock is deducted automatically whenever a customer places an order
+5. If you are migrating old data, load the old customer tables into `legacy_customer` and the old admin tables into `legacy_admin`
+6. Run `npm run db:migrate:shared-legacy`
 
 Files:
 
@@ -34,3 +36,4 @@ Files:
 - `database/migrations/20260406_migrate_legacy_customer_admin.sql`
 - `database/migrations/20260406_profile_cleanup.sql`
 - `database/migrations/20260406_profile_trigger.sql`
+- `database/migrations/20260413_inventory_stock_on_orders.sql`

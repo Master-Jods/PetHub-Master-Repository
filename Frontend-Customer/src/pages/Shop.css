@@ -841,6 +841,32 @@
   transform: translateY(-2px);
 }
 
+.happy-tails-modal-add-cart:disabled {
+  background-color: #c8ccd2 !important;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.happy-tails-quantity-btn:disabled {
+  background-color: #c8ccd2 !important;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.happy-tails-out-of-stock-badge {
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e9ecef;
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* Cart Modal - Updated with Remove button */
 .happy-tails-cart-modal .modal-dialog {
   max-width: 500px;

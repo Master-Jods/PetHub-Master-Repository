@@ -42,57 +42,113 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('happyTailsCheckoutPreferences', JSON.stringify(checkoutPreferences));
   }, [checkoutPreferences]);
 
-  const showAddedToCartToast = (productName) => {
-    setToastMessage(`Successfully added ${productName} to cart!`);
+  const showCartToast = (message) => {
+    setToastMessage(message);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
 
-  const addToCart = (product, variantId = null) => {
+  const showAddedToCartToast = (productName, quantity = 1) => {
+    const quantityLabel = quantity > 1 ? `${quantity} items` : '1 item';
+    showCartToast(`Successfully added ${quantityLabel} of ${productName} to cart!`);
+  };
+
+  const showStockLimitToast = (productName, stock) => {
+    if (stock <= 0) {
+      showCartToast(`${productName} is currently out of stock.`);
+      return;
+    }
+
+    showCartToast(`Only ${stock} item${stock === 1 ? '' : 's'} left for ${productName}.`);
+  };
+
+  const addToCart = (product, variantId = null, requestedQuantity = 1) => {
     const selectedVariantId = variantId || (product.variants && product.variants[0]?.id) || null;
     const variantData = product.variants?.find(v => v.id === selectedVariantId) || null;
-    
+    const availableStock = Math.max(0, Number(product.stock ?? 0));
     const price = variantData ? variantData.price : product.basePrice;
     const variantName = variantData 
       ? (variantData.flavor || variantData.scent || variantData.type || variantData.color || variantData.size) 
       : 'Standard';
+    const quantityToAdd = Math.max(1, Number(requestedQuantity || 1));
+
+    if (availableStock <= 0) {
+      showStockLimitToast(product.name, 0);
+      return;
+    }
+
+    let didAdd = false;
+    let addedQuantity = 0;
+    let reachedStockLimit = false;
 
     setCart(prevCart => {
       const existingItem = prevCart.find(item => 
         item.id === product.id && item.variantId === selectedVariantId
       );
+      const existingQuantity = Number(existingItem?.quantity || 0);
+      const remainingStock = Math.max(0, availableStock - existingQuantity);
+
+      if (remainingStock <= 0) {
+        reachedStockLimit = true;
+        return prevCart;
+      }
+
+      const finalQuantityToAdd = Math.min(quantityToAdd, remainingStock);
+      didAdd = finalQuantityToAdd > 0;
+      addedQuantity = finalQuantityToAdd;
+      reachedStockLimit = finalQuantityToAdd < quantityToAdd || remainingStock === finalQuantityToAdd;
 
       if (existingItem) {
         return prevCart.map(item =>
           item.id === product.id && item.variantId === selectedVariantId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, stock: availableStock, quantity: item.quantity + finalQuantityToAdd }
             : item
         );
       } else {
         return [...prevCart, {
           ...product,
-          quantity: 1,
+          stock: availableStock,
+          quantity: finalQuantityToAdd,
           variantId: selectedVariantId,
           variantName,
           price
         }];
       }
     });
-    
-    showAddedToCartToast(product.name);
+
+    if (didAdd) {
+      showAddedToCartToast(product.name, addedQuantity);
+      if (reachedStockLimit && addedQuantity < quantityToAdd) {
+        showStockLimitToast(product.name, availableStock);
+      }
+      return;
+    }
+
+    showStockLimitToast(product.name, availableStock);
   };
 
   const updateQuantity = (itemId, variantId, change) => {
+    let limitMessage = '';
+
     setCart(prevCart => 
       prevCart.map(item => {
         if (item.id === itemId && item.variantId === variantId) {
           const newQuantity = item.quantity + change;
+          const maxStock = Math.max(0, Number(item.stock ?? 0));
           if (newQuantity < 1) return item;
+          if (maxStock > 0 && newQuantity > maxStock) {
+            limitMessage = `${item.name} only has ${maxStock} item${maxStock === 1 ? '' : 's'} available.`;
+            return { ...item, quantity: maxStock };
+          }
           return { ...item, quantity: newQuantity };
         }
         return item;
       })
     );
+
+    if (limitMessage) {
+      showCartToast(limitMessage);
+    }
   };
 
   const removeFromCart = (itemId, variantId) => {

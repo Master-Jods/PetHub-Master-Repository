@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button, Form, Modal, Badge, Toast, ToastCont
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../backend/context/AuthContext';
+import { fetchCatalogProducts } from '../backend/services/catalogService';
 import AuthModal from '../components/AuthModal';
 import { SHIPPING_OPTIONS, getShippingFee } from '../constants/fulfillment';
 import './Shop.css';
@@ -1011,7 +1012,10 @@ const Shop = () => {
     }
   ];
 
-  const [products, setProducts] = useState(initialProducts);
+  const [catalogProducts, setCatalogProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState('');
 
   const categories = [
     { id: 'all', name: 'View All' },
@@ -1023,7 +1027,48 @@ const Shop = () => {
   ];
 
   useEffect(() => {
-    let filtered = initialProducts;
+    let active = true;
+
+    const loadCatalog = async () => {
+      setCatalogLoading(true);
+      setCatalogError('');
+
+      try {
+        const nextProducts = await fetchCatalogProducts('Pet Shop');
+        if (!active) return;
+        setCatalogProducts(nextProducts);
+      } catch (_error) {
+        if (!active) return;
+        setCatalogProducts([]);
+        setCatalogError('Hindi namin ma-load ang latest Pet Shop items ngayon. Pakisubukan ulit maya-maya.');
+      } finally {
+        if (active) {
+          setCatalogLoading(false);
+        }
+      }
+    };
+
+    loadCatalog();
+
+    const refreshOnFocus = () => {
+      if (document.visibilityState === 'visible') {
+        void loadCatalog();
+      }
+    };
+    const poller = window.setInterval(() => {
+      void loadCatalog();
+    }, 30000);
+    document.addEventListener('visibilitychange', refreshOnFocus);
+
+    return () => {
+      active = false;
+      window.clearInterval(poller);
+      document.removeEventListener('visibilitychange', refreshOnFocus);
+    };
+  }, []);
+
+  useEffect(() => {
+    let filtered = [...catalogProducts];
     
     // Apply category filter
     if (category && category !== 'all') {
@@ -1053,7 +1098,7 @@ const Shop = () => {
     }
     
     setProducts(filtered);
-  }, [category, sortBy, searchTerm, selectedPetType]);
+  }, [category, sortBy, searchTerm, selectedPetType, catalogProducts]);
 
   const handleCategoryClick = (catId) => {
     navigate(`/shop/${catId}`);
@@ -1068,13 +1113,14 @@ const Shop = () => {
   };
 
   const handleQuantityChange = (change) => {
-    setQuantity(prev => Math.max(1, Math.min(99, prev + change)));
+    const maxQuantity = Math.max(1, Number(quickViewProduct?.stock || 1));
+    setQuantity(prev => Math.max(1, Math.min(maxQuantity, prev + change)));
   };
 
   const handleQuickViewAddToCart = () => {
     if (quickViewProduct) {
       const selectedVariantId = selectedVariant[quickViewProduct.id];
-      addToCart(quickViewProduct, selectedVariantId);
+      addToCart(quickViewProduct, selectedVariantId, quantity);
       setQuickViewProduct(null);
     }
   };
@@ -1236,7 +1282,13 @@ const Shop = () => {
         </div>
 
         {/* Search Results Count */}
-        {searchTerm && (
+        {catalogError && (
+          <div className="happy-tails-no-results">
+            <p>{catalogError}</p>
+          </div>
+        )}
+
+        {searchTerm && !catalogLoading && (
           <div className="happy-tails-search-results">
             <p className="happy-tails-search-count">
               Found {products.length} product{products.length !== 1 ? 's' : ''}
@@ -1246,10 +1298,15 @@ const Shop = () => {
 
         {/* Products Grid */}
         <Row className="happy-tails-products-grid justify-content-center">
-          {products.length > 0 ? (
+          {catalogLoading ? (
+            <div className="happy-tails-no-results">
+              <p>Loading Pet Shop items...</p>
+            </div>
+          ) : products.length > 0 ? (
             products.map(product => {
               const displayPrice = getDisplayPrice(product);
               const variantName = getSelectedVariantName(product);
+              const isOutOfStock = Number(product.stock || 0) <= 0;
               
               return (
                 <Col key={product.id} md={3} sm={6} className="happy-tails-product-col d-flex justify-content-center">
@@ -1318,9 +1375,10 @@ const Shop = () => {
                       <div className="happy-tails-product-buttons">
                         <Button 
                           className="happy-tails-add-cart-btn"
+                          disabled={isOutOfStock}
                           onClick={() => addToCart(product, selectedVariant[product.id])}
                         >
-                          Add to Cart
+                          {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
                         </Button>
                         <Button 
                           variant="outline"
@@ -1369,6 +1427,9 @@ const Shop = () => {
                     />
                   </div>
                   <div className="happy-tails-quick-view-details">
+                    {Number(quickViewProduct.stock || 0) <= 0 && (
+                      <div className="happy-tails-out-of-stock-badge">Out of Stock</div>
+                    )}
                     <div className="happy-tails-quick-view-header">
                       <h3>{quickViewProduct.name}</h3>
                       <div className="happy-tails-quick-view-sold">
@@ -1447,6 +1508,7 @@ const Shop = () => {
                           <Button 
                             className="happy-tails-quantity-btn"
                             onClick={() => handleQuantityChange(1)}
+                            disabled={quantity >= Math.max(1, Number(quickViewProduct.stock || 1)) || Number(quickViewProduct.stock || 0) <= 0}
                           >
                             +
                           </Button>
@@ -1467,8 +1529,11 @@ const Shop = () => {
                 <Button 
                   className="happy-tails-modal-add-cart"
                   onClick={handleQuickViewAddToCart}
+                  disabled={Number(quickViewProduct.stock || 0) <= 0}
                 >
-                  Add to Cart ({formatCurrency(getSelectedVariantPrice(quickViewProduct) * quantity)})
+                  {Number(quickViewProduct.stock || 0) <= 0
+                    ? 'Out of Stock'
+                    : `Add to Cart (${formatCurrency(getSelectedVariantPrice(quickViewProduct) * quantity)})`}
                 </Button>
               </Modal.Footer>
             </>
@@ -1537,6 +1602,7 @@ const Shop = () => {
                         <Button 
                           className="happy-tails-cart-quantity-btn"
                           onClick={() => updateQuantity(item.id, item.variantId, 1)}
+                          disabled={Number(item.quantity || 0) >= Number(item.stock || 0)}
                         >
                           +
                         </Button>
