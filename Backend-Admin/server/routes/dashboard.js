@@ -3,6 +3,41 @@ import { supabaseAdmin } from '../lib/supabaseAdmin.js';
 
 const router = Router();
 
+const DASHBOARD_CUSTOMER_COLUMNS = 'created_at';
+const DASHBOARD_BOOKING_COLUMNS = [
+  'id',
+  'booking_code',
+  'service',
+  'service_type',
+  'customer_name',
+  'customer_phone',
+  'customer_email',
+  'scheduled_at',
+  'appointment_date',
+  'appointment_time',
+  'appointment_info',
+  'booking_status',
+  'service_total',
+  'pet_info',
+  'contact_info',
+  'grooming_summary',
+  'created_at',
+  'updated_at',
+].join(', ');
+const DASHBOARD_ORDER_COLUMNS = [
+  'id',
+  'order_code',
+  'customer_name',
+  'category',
+  'status',
+  'request_status',
+  'order_date',
+  'created_at',
+  'updated_at',
+].join(', ');
+const DASHBOARD_INVENTORY_COLUMNS = 'id, name, stock, updated_at';
+const DASHBOARD_REVIEW_COLUMNS = 'id, rating, created_at';
+
 const toLocaleTime = (value) => {
   if (!value) return '';
   const parsed = new Date(value);
@@ -195,90 +230,126 @@ router.get('/', async (_req, res) => {
 
     const [
       notificationsData,
-      customersResult,
-      bookingsResult,
-      ordersResult,
-      inventoryResult,
-      reviewsResult,
+      totalCustomersResult,
+      currentMonthCustomersResult,
+      previousMonthCustomersResult,
+      todayBookingsResult,
+      pendingOrdersCountResult,
+      lowStockInventoryResult,
+      pendingBookingsResult,
+      pendingOrdersPreviewResult,
+      recentCompletedOrdersResult,
+      recentCompletedBookingsResult,
+      positiveReviewsResult,
     ] = await Promise.all([
       getNotifications(),
-      supabaseAdmin.from('profiles').select('*', { count: 'exact' }).eq('role', 'customer'),
+      supabaseAdmin.from('profiles').select('user_id', { count: 'exact', head: true }).eq('role', 'customer'),
+      supabaseAdmin
+        .from('profiles')
+        .select('user_id', { count: 'exact', head: true })
+        .eq('role', 'customer')
+        .gte('created_at', currentMonthStart.toISOString()),
+      supabaseAdmin
+        .from('profiles')
+        .select('user_id', { count: 'exact', head: true })
+        .eq('role', 'customer')
+        .gte('created_at', previousMonthStart.toISOString())
+        .lt('created_at', currentMonthStart.toISOString()),
       supabaseAdmin
         .from('bookings')
-        .select('*')
+        .select(DASHBOARD_BOOKING_COLUMNS)
+        .neq('booking_status', 'Cancelled')
+        .gte('scheduled_at', todayStart.toISOString())
+        .lte('scheduled_at', todayEnd.toISOString())
         .order('scheduled_at', { ascending: true }),
       supabaseAdmin
         .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false }),
+        .select('id', { count: 'exact', head: true })
+        .eq('request_status', 'Pending Request'),
       supabaseAdmin
         .from('inventory_items')
-        .select('*')
+        .select(DASHBOARD_INVENTORY_COLUMNS)
+        .gt('stock', 0)
+        .lt('stock', 10)
         .order('stock', { ascending: true }),
       supabaseAdmin
-        .from('reviews')
-        .select('*')
+        .from('bookings')
+        .select('id, customer_name, service_type, created_at')
+        .eq('booking_status', 'Pending Approval')
         .order('created_at', { ascending: false })
-        .limit(10),
+        .limit(2),
+      supabaseAdmin
+        .from('orders')
+        .select('id, customer_name, category, request_status, created_at')
+        .eq('request_status', 'Pending Request')
+        .order('created_at', { ascending: false })
+        .limit(2),
+      supabaseAdmin
+        .from('orders')
+        .select('order_code, status, updated_at, created_at')
+        .in('status', ['Delivered', 'Order Received'])
+        .order('updated_at', { ascending: false })
+        .limit(3),
+      supabaseAdmin
+        .from('bookings')
+        .select('service_type, customer_name, updated_at, created_at, booking_status')
+        .eq('booking_status', 'Completed')
+        .order('updated_at', { ascending: false })
+        .limit(3),
+      supabaseAdmin
+        .from('reviews')
+        .select('rating, created_at')
+        .gte('rating', 4)
+        .order('created_at', { ascending: false })
+        .limit(3),
     ]);
 
-    if (customersResult.error) throw customersResult.error;
-    if (bookingsResult.error) throw bookingsResult.error;
-    if (ordersResult.error) throw ordersResult.error;
-    if (inventoryResult.error) throw inventoryResult.error;
-    if (reviewsResult.error) throw reviewsResult.error;
+    if (totalCustomersResult.error) throw totalCustomersResult.error;
+    if (currentMonthCustomersResult.error) throw currentMonthCustomersResult.error;
+    if (previousMonthCustomersResult.error) throw previousMonthCustomersResult.error;
+    if (todayBookingsResult.error) throw todayBookingsResult.error;
+    if (pendingOrdersCountResult.error) throw pendingOrdersCountResult.error;
+    if (lowStockInventoryResult.error) throw lowStockInventoryResult.error;
+    if (pendingBookingsResult.error) throw pendingBookingsResult.error;
+    if (pendingOrdersPreviewResult.error) throw pendingOrdersPreviewResult.error;
+    if (recentCompletedOrdersResult.error) throw recentCompletedOrdersResult.error;
+    if (recentCompletedBookingsResult.error) throw recentCompletedBookingsResult.error;
+    if (positiveReviewsResult.error) throw positiveReviewsResult.error;
 
-    const customers = customersResult.data || [];
-    const bookings = bookingsResult.data || [];
-    const orders = ordersResult.data || [];
-    const inventoryItems = inventoryResult.data || [];
-    const reviews = reviewsResult.data || [];
-
-    const currentMonthCustomers = customers.filter((customer) => {
-      const date = normalizeDate(customer.created_at);
-      return date && date >= currentMonthStart;
-    }).length;
-    const previousMonthCustomers = customers.filter((customer) => {
-      const date = normalizeDate(customer.created_at);
-      return date && date >= previousMonthStart && date < currentMonthStart;
-    }).length;
+    const totalCustomers = totalCustomersResult.count || 0;
+    const currentMonthCustomers = currentMonthCustomersResult.count || 0;
+    const previousMonthCustomers = previousMonthCustomersResult.count || 0;
+    const todayBookings = todayBookingsResult.data || [];
+    const pendingOrders = pendingOrdersCountResult.count || 0;
+    const inventoryItems = lowStockInventoryResult.data || [];
+    const pendingBookings = pendingBookingsResult.data || [];
+    const pendingOrderRows = pendingOrdersPreviewResult.data || [];
+    const recentCompletedOrders = recentCompletedOrdersResult.data || [];
+    const recentCompletedBookings = recentCompletedBookingsResult.data || [];
+    const reviews = positiveReviewsResult.data || [];
 
     const customerGrowth = previousMonthCustomers > 0
       ? Math.round(((currentMonthCustomers - previousMonthCustomers) / previousMonthCustomers) * 100)
       : currentMonthCustomers > 0 ? 100 : 0;
 
-    const todayBookings = bookings.filter((booking) => {
-      const date = normalizeDate(booking.scheduled_at || booking.appointment_date);
-      return date && date >= todayStart && date <= todayEnd && booking.booking_status !== 'Cancelled';
-    });
-
-    const pendingOrders = orders.filter((order) => order.request_status === 'Pending Request').length;
-
     const schedule = todayBookings
-      .sort((a, b) => new Date(a.scheduled_at || 0) - new Date(b.scheduled_at || 0))
       .slice(0, 5)
       .map(mapScheduleItem);
 
     const alerts = [
       ...inventoryItems.filter((item) => Number(item.stock || 0) > 0 && Number(item.stock || 0) < 10).slice(0, 3).map(buildLowStockAlert),
-      ...bookings.filter((booking) => booking.booking_status === 'Pending Approval').slice(0, 2).map((row) => buildPendingAlert(row, 'booking')),
-      ...orders.filter((order) => order.request_status === 'Pending Request').slice(0, 2).map((row) => buildPendingAlert(row, 'order')),
+      ...pendingBookings.map((row) => buildPendingAlert(row, 'booking')),
+      ...pendingOrderRows.map((row) => buildPendingAlert(row, 'order')),
     ]
       .sort((a, b) => String(b.time).localeCompare(String(a.time)))
       .slice(0, 5);
 
     const recentActivity = [
-      ...orders
-        .filter((order) => order.status === 'Delivered' || order.status === 'Order Received')
-        .slice(0, 3)
+      ...recentCompletedOrders
         .map((order) => buildActivityItem('Order Completed', `${order.order_code} has been delivered`, order.updated_at || order.created_at, '✅')),
-      ...bookings
-        .filter((booking) => booking.booking_status === 'Completed')
-        .slice(0, 3)
+      ...recentCompletedBookings
         .map((booking) => buildActivityItem('Booking Completed', `${booking.service_type} for ${booking.customer_name} is complete`, booking.updated_at || booking.created_at, '✅')),
       ...reviews
-        .filter((review) => Number(review.rating || 0) >= 4)
-        .slice(0, 3)
         .map((review) => buildActivityItem('Customer Feedback', `New ${review.rating}-star review received`, review.created_at, '⭐')),
     ]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -287,7 +358,7 @@ router.get('/', async (_req, res) => {
     res.json({
       ...notificationsData,
       stats: {
-        totalCustomers: customers.length,
+        totalCustomers,
         customerGrowth,
         todayBookings: todayBookings.length,
         pendingOrders,

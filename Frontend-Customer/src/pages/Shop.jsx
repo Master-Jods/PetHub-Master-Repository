@@ -1057,7 +1057,7 @@ const Shop = () => {
     };
     const poller = window.setInterval(() => {
       void loadCatalog();
-    }, 30000);
+    }, 120000);
     document.addEventListener('visibilitychange', refreshOnFocus);
 
     return () => {

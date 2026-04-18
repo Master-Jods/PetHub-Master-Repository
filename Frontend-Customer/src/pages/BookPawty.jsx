@@ -229,6 +229,9 @@ const BookPawty = () => {
 
   useEffect(() => {
     const booking = location.state?.booking;
+    if (location.state?.step) {
+      setActiveStep(location.state.step);
+    }
     if (booking) {
       setServiceType('Birthday Party');
       setPartyDate(booking.metadata?.partyDate || booking.appointmentInfo?.date || '');

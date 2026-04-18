@@ -5,6 +5,32 @@ const router = Router();
 
 const PAYMENT_STATUS_OPTIONS = ['Pending', 'Paid', 'Refunded'];
 const BOOKING_STATUS_OPTIONS = ['Pending Approval', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'];
+const BOOKING_LIST_COLUMNS = [
+  'id',
+  'booking_code',
+  'service_type',
+  'service',
+  'customer_name',
+  'created_at',
+  'scheduled_at',
+  'appointment_date',
+  'appointment_time',
+  'service_total',
+  'payment_method',
+  'payment_status',
+  'booking_status',
+  'pet_info',
+  'appointment_info',
+  'contact_info',
+  'grooming_summary',
+  'total_price_history',
+  'note',
+].join(', ');
+const BOOKING_DETAIL_COLUMNS = [
+  BOOKING_LIST_COLUMNS,
+  'service_details',
+  'metadata',
+].join(', ');
 
 const CONFLICT_EXCLUDED_STATUSES = new Set(['cancelled', 'completed']);
 
@@ -255,7 +281,7 @@ router.get('/', async (_req, res) => {
   try {
     const { data: bookings, error } = await supabaseAdmin
       .from('bookings')
-      .select('*')
+      .select(BOOKING_LIST_COLUMNS)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -275,6 +301,29 @@ router.get('/', async (_req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message || 'Failed to load bookings.' });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const booking = await findBookingByIdentifier(req.params.id, BOOKING_DETAIL_COLUMNS);
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found.' });
+    }
+
+    const conflictSeedRows = await supabaseAdmin
+      .from('bookings')
+      .select('id, booking_code, appointment_date, appointment_time, appointment_info, scheduled_at, booking_status')
+      .order('created_at', { ascending: false });
+
+    if (conflictSeedRows.error) throw conflictSeedRows.error;
+
+    const conflictMap = buildBookingConflictMap(conflictSeedRows.data || []);
+    res.json({
+      booking: mapBooking(booking, conflictMap.get(booking.id)),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Failed to load booking details.' });
   }
 });
 

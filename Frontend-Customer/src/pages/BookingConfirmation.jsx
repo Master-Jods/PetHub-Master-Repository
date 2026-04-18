@@ -315,6 +315,7 @@ const BookingConfirmation = () => {
       const bookingMetadata = {
         schedule: bookingData.schedule || null,
         services: bookingData.services || [],
+        serviceSelections: location.state?.selectedServices || {},
         contact: bookingData.contact || '',
       };
 

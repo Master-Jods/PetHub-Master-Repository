@@ -4,6 +4,20 @@ import { buildProfileName } from '../lib/profileHelpers.js';
 
 const router = Router();
 
+const CUSTOMER_PROFILE_COLUMNS = [
+  'user_id',
+  'email',
+  'first_name',
+  'last_name',
+  'display_name',
+  'phone',
+  'status',
+  'created_at',
+].join(', ');
+const CUSTOMER_PET_COLUMNS = 'user_id, name, species, breed';
+const CUSTOMER_ORDER_COLUMNS = 'user_id, order_code, status, total, order_date, created_at';
+const CUSTOMER_BOOKING_COLUMNS = 'user_id, scheduled_at, created_at';
+
 const mapCustomer = (profile, pets = [], orders = [], lastActive = null) => ({
   customerId: profile.user_id,
   name: buildProfileName(profile),
@@ -39,18 +53,18 @@ router.get('/', async (_req, res) => {
     const [profilesResult, petsResult, ordersResult, bookingsResult] = await Promise.all([
       supabaseAdmin
         .from('profiles')
-        .select('*')
+        .select(CUSTOMER_PROFILE_COLUMNS)
         .eq('role', 'customer')
         .order('created_at', { ascending: false }),
       supabaseAdmin
         .from('pets')
-        .select('*'),
+        .select(CUSTOMER_PET_COLUMNS),
       supabaseAdmin
         .from('orders')
-        .select('*'),
+        .select(CUSTOMER_ORDER_COLUMNS),
       supabaseAdmin
         .from('bookings')
-        .select('*'),
+        .select(CUSTOMER_BOOKING_COLUMNS),
     ]);
 
     if (profilesResult.error) throw profilesResult.error;

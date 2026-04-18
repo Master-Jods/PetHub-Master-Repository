@@ -8,7 +8,7 @@ const SERVICE_TABS = ['All', 'Grooming', 'Boarding', 'Birthday Party'];
 const PAYMENT_STATUS_OPTIONS = ['Pending', 'Paid', 'Refunded'];
 const BOOKING_STATUS_OPTIONS = ['Pending Approval', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'];
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
-const POLL_INTERVAL_MS = 30000;
+const POLL_INTERVAL_MS = 60000;
 const RECORDS_PER_PAGE = 10;
 
 const formatCurrency = (amount) => `PHP ${Number(amount || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -112,6 +112,7 @@ function Bookings({ onNotificationCountChange }) {
   const [serviceFilter, setServiceFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const [drafts, setDrafts] = useState({});
   const [savingBookingId, setSavingBookingId] = useState('');
   const [totalEditModal, setTotalEditModal] = useState({ open: false, bookingId: '', value: '' });
@@ -184,6 +185,7 @@ function Bookings({ onNotificationCountChange }) {
 
   const getDraftValues = (booking) => drafts[booking.id] || {
     paymentStatus: booking.paymentStatus,
+    bookingStatus: booking.bookingStatus,
     serviceTotal: booking.serviceTotal
   };
 
@@ -192,6 +194,7 @@ function Bookings({ onNotificationCountChange }) {
     if (!draft) return false;
 
     return draft.paymentStatus !== booking.paymentStatus
+      || draft.bookingStatus !== booking.bookingStatus
       || Number(draft.serviceTotal) !== Number(booking.serviceTotal);
   };
 
@@ -200,6 +203,7 @@ function Bookings({ onNotificationCountChange }) {
       ...prev,
       [booking.id]: {
         paymentStatus: prev[booking.id]?.paymentStatus ?? booking.paymentStatus,
+        bookingStatus: prev[booking.id]?.bookingStatus ?? booking.bookingStatus,
         serviceTotal: prev[booking.id]?.serviceTotal ?? booking.serviceTotal,
         [key]: value
       }
@@ -237,7 +241,7 @@ function Bookings({ onNotificationCountChange }) {
         },
         body: JSON.stringify({
           paymentStatus: draft.paymentStatus,
-          bookingStatus: booking.bookingStatus,
+          bookingStatus: draft.bookingStatus,
           serviceTotal: Number(draft.serviceTotal)
         })
       });
@@ -271,14 +275,32 @@ function Bookings({ onNotificationCountChange }) {
     }
   };
 
-  const handleViewDetails = (booking) => {
+  const handleViewDetails = async (booking) => {
+    setDetailsLoading(true);
     setSelectedBooking(booking);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/bookings/${booking.bookingId || booking.id}`);
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.message || `Failed to fetch booking details (${response.status})`);
+      }
+
+      if (payload.booking) {
+        setSelectedBooking(mapBooking(payload.booking));
+      }
+    } catch (fetchError) {
+      setError(fetchError.message || 'Unable to load booking details.');
+    } finally {
+      setDetailsLoading(false);
+    }
   };
 
   const handleNotificationClick = (notificationId) => {
     const matchingBooking = bookings.find((booking) => booking.id === String(notificationId) || booking.bookingId === String(notificationId));
     if (matchingBooking) {
-      setSelectedBooking(matchingBooking);
+      void handleViewDetails(matchingBooking);
     }
   };
 
@@ -413,9 +435,15 @@ function Bookings({ onNotificationCountChange }) {
                         </select>
                       </td>
                       <td className="bookings-table__cell">
-                        <span className={getBookingStatusClass(booking.bookingStatus)}>
-                          {booking.bookingStatus}
-                        </span>
+                        <select
+                          className={`bookings-status-select ${getBookingStatusClass(draft.bookingStatus)}`}
+                          value={draft.bookingStatus}
+                          onChange={(event) => handleDraftChange(booking, 'bookingStatus', event.target.value)}
+                        >
+                          {BOOKING_STATUS_OPTIONS.map((status) => (
+                            <option key={status}>{status}</option>
+                          ))}
+                        </select>
                       </td>
                       <td className="bookings-table__cell">
                         <div className="bookings-table-actions">
@@ -484,6 +512,9 @@ function Bookings({ onNotificationCountChange }) {
             </div>
 
             <div className="bookings-modal__body">
+              {detailsLoading && (
+                <div className="bookings-feedback">Loading booking details...</div>
+              )}
               <div className="bookings-modal__summary-grid">
                 <div className="bookings-summary-card">
                   <h4>Pet Info</h4>

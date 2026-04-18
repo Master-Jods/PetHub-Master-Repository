@@ -15,6 +15,32 @@ const DELIVERY_ZONE_RATES = {
   'Gulang-gulang/Bocohan': 120,
   'Domoit/Ibabang Dupay/Red-V/Marketview/Ilayang Dupay/Silangang Mayao/Mayao Parada/Cotta/Isabang': 150
 };
+const ORDER_LIST_COLUMNS = [
+  'id',
+  'order_code',
+  'category',
+  'customer_name',
+  'customer_email',
+  'customer_phone',
+  'order_date',
+  'items',
+  'base_total',
+  'total',
+  'status',
+  'request_status',
+  'rejection_reason',
+  'payment_method',
+  'payment_status',
+  'delivery_method',
+  'delivery_zone',
+  'delivery_fee',
+  'shipping_address',
+  'eta',
+  'rider_snapshot',
+  'timeline',
+  'proof_of_payment',
+  'metadata',
+].join(', ');
 
 const normalizeNullableText = (value) => {
   if (value === undefined) return undefined;
@@ -152,7 +178,7 @@ router.get('/', async (_req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('orders')
-      .select('*')
+      .select(ORDER_LIST_COLUMNS)
       .order('created_at', { ascending: false });
 
     if (error) throw error;

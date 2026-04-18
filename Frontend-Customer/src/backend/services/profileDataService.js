@@ -374,44 +374,49 @@ async function insertNotifications(rows) {
 export async function fetchProfileDashboard(userId) {
   if (!supabase || !userId) return null;
 
-  const profileResult = await loadProfileDetails(userId);
-  const petsResult = await safeSelectRows(
-    supabase
-      .from("pets")
-      .select("id, name, species, breed, birth_date")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: true })
-  );
-
-  const notificationsResult = await safeSelectRows(
-    supabase
-      .from("notifications")
-      .select("id, title, message, is_read, created_at, type, entity_type, entity_id, audience")
-      .eq("user_id", userId)
-      .in("audience", ["customer", "all"])
-      .order("created_at", { ascending: false })
-      .limit(100)
-  );
-
-  const bookingsResult = await safeSelectRows(
-    supabase
-      .from("bookings")
-      .select(
-        "id, booking_code, service, service_type, pet_name, pet_breed, scheduled_at, booking_status, service_total, price_label, note, reviewed, appointment_info, pet_info, metadata, service_details, created_at, updated_at"
-      )
-      .eq("user_id", userId)
-      .order("scheduled_at", { ascending: false })
-  );
-
-  const ordersResult = await loadOrderRows(userId);
-
-  const reviewsResult = await safeSelectRows(
-    supabase
-      .from("reviews")
-      .select("id, booking_id, order_id, service, pet_name, pet_breed, review_date, rating, comment, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-  );
+  const [
+    profileResult,
+    petsResult,
+    notificationsResult,
+    bookingsResult,
+    ordersResult,
+    reviewsResult,
+  ] = await Promise.all([
+    loadProfileDetails(userId),
+    safeSelectRows(
+      supabase
+        .from("pets")
+        .select("id, name, species, breed, birth_date")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: true })
+    ),
+    safeSelectRows(
+      supabase
+        .from("notifications")
+        .select("id, title, message, is_read, created_at, type, entity_type, entity_id, audience")
+        .eq("user_id", userId)
+        .in("audience", ["customer", "all"])
+        .order("created_at", { ascending: false })
+        .limit(30)
+    ),
+    safeSelectRows(
+      supabase
+        .from("bookings")
+        .select(
+          "id, booking_code, service, service_type, pet_name, pet_breed, scheduled_at, booking_status, service_total, price_label, note, reviewed, appointment_info, pet_info, metadata, service_details, created_at, updated_at"
+        )
+        .eq("user_id", userId)
+        .order("scheduled_at", { ascending: false })
+    ),
+    loadOrderRows(userId),
+    safeSelectRows(
+      supabase
+        .from("reviews")
+        .select("id, booking_id, order_id, service, pet_name, pet_breed, review_date, rating, comment, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+    ),
+  ]);
 
   const bookings = bookingsResult.rows.map((row) => ({
     id: row.id,

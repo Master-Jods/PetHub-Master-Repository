@@ -298,7 +298,7 @@ function Inventory() {
 
     const intervalId = window.setInterval(() => {
       loadInventory({ showLoader: false });
-    }, 30000);
+    }, 60000);
 
     const handleWindowFocus = () => {
       loadInventory({ showLoader: false });

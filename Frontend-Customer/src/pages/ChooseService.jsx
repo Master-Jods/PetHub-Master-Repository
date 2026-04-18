@@ -167,6 +167,20 @@ const ChooseService = () => {
 
   useEffect(() => {
     if (currentPet) {
+      const presetSelections = location.state?.selectedServices;
+      if (presetSelections && typeof presetSelections === 'object') {
+        setSelectedServices({
+          groomingType: presetSelections.groomingType || '',
+          haircut: presetSelections.haircut || '',
+          alaCarte: Array.isArray(presetSelections.alaCarte) ? presetSelections.alaCarte : [],
+          doggySpaScent: presetSelections.doggySpaScent || '',
+          facePawChoice: presetSelections.facePawChoice || '',
+          petHairColor: presetSelections.petHairColor || '',
+          fullGrooming: Boolean(presetSelections.fullGrooming),
+        });
+        return;
+      }
+
       setSelectedServices({
         groomingType: '',
         haircut: '',
@@ -176,7 +190,7 @@ const ChooseService = () => {
         petHairColor: ''
       });
     }
-  }, [currentPet]);
+  }, [currentPet, location.state]);
 
   const getCurrentPetPrices = () => {
     if (!currentPet) return null;

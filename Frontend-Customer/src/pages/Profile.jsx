@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SidebarProfile from '../components/SidebarProfile';
 import { useAuth } from '../backend/context/AuthContext';
+import { supabase } from '../backend/supabaseClient';
 import {
   cancelProfileBooking,
   cancelProfileOrder,
@@ -14,6 +15,9 @@ import {
 import './Profile.css';
 import { siteConfirm } from '../utils/siteConfirm';
 
+const ENABLE_PROFILE_REALTIME = true;
+const PROFILE_DASHBOARD_CACHE_PREFIX = 'happytails_profile_dashboard_cache:';
+
 const splitFullName = (fullName) => {
   const trimmed = fullName.trim();
   if (!trimmed) return { firstName: '', lastName: '' };
@@ -22,6 +26,122 @@ const splitFullName = (fullName) => {
   const firstName = parts.shift() || '';
   const lastName = parts.join(' ');
   return { firstName, lastName };
+};
+
+const emptyGroomingSelections = () => ({
+  groomingType: '',
+  haircut: '',
+  alaCarte: [],
+  doggySpaScent: '',
+  facePawChoice: '',
+  petHairColor: '',
+});
+
+const deriveGroomingSelections = (booking) => {
+  const storedSelections = booking?.metadata?.serviceSelections;
+  if (storedSelections && typeof storedSelections === 'object') {
+    return {
+      ...emptyGroomingSelections(),
+      ...storedSelections,
+      alaCarte: Array.isArray(storedSelections.alaCarte) ? storedSelections.alaCarte : [],
+    };
+  }
+
+  const derived = emptyGroomingSelections();
+  const formattedServices = Array.isArray(booking?.metadata?.services) ? booking.metadata.services : [];
+  const petType = String(booking?.petInfo?.type || booking?.petType || '').toLowerCase();
+
+  for (const service of formattedServices) {
+    const name = String(service?.name || '').trim();
+    const variant = String(service?.variant || '').trim();
+
+    if (name === 'Full Grooming') {
+      if (petType === 'cat') {
+        derived.groomingType = 'fullGrooming';
+        derived.fullGrooming = true;
+      } else if (variant === 'Premium') {
+        derived.groomingType = 'premium';
+      } else if (variant === 'Deluxe') {
+        derived.groomingType = 'deluxe';
+      }
+    } else if (name === 'Haircut Style' && variant) {
+      derived.haircut = variant;
+    } else if (name === 'Bath & blowdry') {
+      derived.alaCarte.push('bath');
+    } else if (name === 'Nail clip with nail file') {
+      derived.alaCarte.push('nail');
+    } else if (name.startsWith('Face/Paw trim')) {
+      derived.alaCarte.push('facePaw');
+      const match = name.match(/-\s*(.+)$/);
+      derived.facePawChoice = match?.[1]?.trim() || derived.facePawChoice;
+    } else if (name === 'Dematting') {
+      derived.alaCarte.push('dematting');
+    } else if (name.startsWith('Doggy spa')) {
+      derived.alaCarte.push('doggySpa');
+      const match = name.match(/\((.+)\)/);
+      derived.doggySpaScent = match?.[1]?.trim() || derived.doggySpaScent;
+    } else if (name.startsWith('Pet hair color')) {
+      derived.alaCarte.push('hairColor');
+      const match = name.match(/-\s*(.+)$/);
+      derived.petHairColor = match?.[1]?.trim() || derived.petHairColor;
+    }
+  }
+
+  return derived;
+};
+
+const applyDashboardSnapshot = ({
+  dashboard,
+  authUser,
+  setSettingsForm,
+  setUser,
+  setNotifications,
+  setUpcomingBookings,
+  setPastBookings,
+  setOrderHistory,
+  setUserReviews,
+  setRecentActivity,
+}) => {
+  if (!dashboard) return;
+
+  if (dashboard.profile) {
+    const firstName = dashboard.profile.first_name?.trim() || '';
+    const lastName = dashboard.profile.last_name?.trim() || '';
+    const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+    const fallbackName = authUser?.email ? authUser.email.split('@')[0] : 'Pet Parent';
+    const resolvedName = fullName || fallbackName;
+
+    setSettingsForm((prev) => ({
+      ...prev,
+      fullName: resolvedName,
+      email: authUser?.email || '',
+      phone: dashboard.profile.phone || '',
+      username: dashboard.profile.username || prev.username || fallbackName.toLowerCase().replace(/\s+/g, ''),
+      address: dashboard.profile.address ?? prev.address,
+      city: dashboard.profile.city ?? prev.city,
+      bio: dashboard.profile.bio ?? prev.bio,
+    }));
+
+    setUser((prev) => ({
+      ...prev,
+      name: resolvedName,
+      email: authUser?.email || '',
+      phone: dashboard.profile.phone || '',
+      avatar: dashboard.profile.avatar_url || prev.avatar,
+    }));
+  }
+
+  setNotifications(dashboard.notifications || []);
+  setUpcomingBookings(dashboard.upcomingBookings || []);
+  setPastBookings(dashboard.pastBookings || []);
+  setOrderHistory(dashboard.orders || []);
+  setUserReviews(dashboard.reviews || []);
+  setRecentActivity(dashboard.recentActivity || []);
+  setUser((prev) => ({
+    ...prev,
+    petCount: Array.isArray(dashboard.pets) ? dashboard.pets.length : 0,
+    pets: dashboard.pets || [],
+  }));
 };
 
 function getCustomerOrderStage(order) {
@@ -93,6 +213,7 @@ const Profile = () => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const dashboardReloadTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -160,54 +281,59 @@ const Profile = () => {
     [upcomingBookings.length, pastBookings.length, completedOrders.length, userReviews.length]
   );
 
+  useEffect(() => () => {
+    if (dashboardReloadTimeoutRef.current) {
+      window.clearTimeout(dashboardReloadTimeoutRef.current);
+    }
+  }, []);
+
   useEffect(() => {
     if (authLoading || !authUser?.id) return;
 
     let isMounted = true;
+    const cacheKey = `${PROFILE_DASHBOARD_CACHE_PREFIX}${authUser.id}`;
+
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed === 'object') {
+          applyDashboardSnapshot({
+            dashboard: parsed,
+            authUser,
+            setSettingsForm,
+            setUser,
+            setNotifications,
+            setUpcomingBookings,
+            setPastBookings,
+            setOrderHistory,
+            setUserReviews,
+            setRecentActivity,
+          });
+        }
+      }
+    } catch (_error) {
+      sessionStorage.removeItem(cacheKey);
+    }
 
     const loadDashboardData = async () => {
       try {
         const dashboard = await fetchProfileDashboard(authUser.id);
         if (!isMounted || !dashboard) return;
 
-        if (dashboard.profile) {
-          const firstName = dashboard.profile.first_name?.trim() || '';
-          const lastName = dashboard.profile.last_name?.trim() || '';
-          const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
-          const fallbackName = authUser.email ? authUser.email.split('@')[0] : 'Pet Parent';
-          const resolvedName = fullName || fallbackName;
-
-          setSettingsForm((prev) => ({
-            ...prev,
-            fullName: resolvedName,
-            email: authUser.email || '',
-            phone: dashboard.profile.phone || '',
-            username: dashboard.profile.username || prev.username || fallbackName.toLowerCase().replace(/\s+/g, ''),
-            address: dashboard.profile.address ?? prev.address,
-            city: dashboard.profile.city ?? prev.city,
-            bio: dashboard.profile.bio ?? prev.bio,
-          }));
-
-          setUser((prev) => ({
-            ...prev,
-            name: resolvedName,
-            email: authUser.email || '',
-            phone: dashboard.profile.phone || '',
-            avatar: dashboard.profile.avatar_url || prev.avatar,
-          }));
-        }
-
-        setNotifications(dashboard.notifications);
-        setUpcomingBookings(dashboard.upcomingBookings);
-        setPastBookings(dashboard.pastBookings);
-        setOrderHistory(dashboard.orders);
-        setUserReviews(dashboard.reviews);
-        setRecentActivity(dashboard.recentActivity || []);
-        setUser((prev) => ({
-          ...prev,
-          petCount: dashboard.pets.length,
-          pets: dashboard.pets,
-        }));
+        applyDashboardSnapshot({
+          dashboard,
+          authUser,
+          setSettingsForm,
+          setUser,
+          setNotifications,
+          setUpcomingBookings,
+          setPastBookings,
+          setOrderHistory,
+          setUserReviews,
+          setRecentActivity,
+        });
+        sessionStorage.setItem(cacheKey, JSON.stringify(dashboard));
       } catch (error) {
         console.error('Unable to load profile dashboard data:', error?.message || error);
       }
@@ -219,6 +345,68 @@ const Profile = () => {
       isMounted = false;
     };
   }, [authLoading, authUser]);
+
+  useEffect(() => {
+    if (!ENABLE_PROFILE_REALTIME) return undefined;
+    if (!authUser?.id || !supabase) return undefined;
+
+    const scheduleReload = () => {
+      if (dashboardReloadTimeoutRef.current) {
+        window.clearTimeout(dashboardReloadTimeoutRef.current);
+      }
+
+      dashboardReloadTimeoutRef.current = window.setTimeout(async () => {
+        try {
+          const dashboard = await fetchProfileDashboard(authUser.id);
+          if (!dashboard) return;
+          applyDashboardSnapshot({
+            dashboard,
+            authUser,
+            setSettingsForm,
+            setUser,
+            setNotifications,
+            setUpcomingBookings,
+            setPastBookings,
+            setOrderHistory,
+            setUserReviews,
+            setRecentActivity,
+          });
+          sessionStorage.setItem(`${PROFILE_DASHBOARD_CACHE_PREFIX}${authUser.id}`, JSON.stringify(dashboard));
+        } catch (error) {
+          console.error('Unable to refresh profile dashboard data:', error?.message || error);
+        }
+      }, 250);
+    };
+
+    const channel = supabase
+      .channel(`profile-live-${authUser.id}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'bookings',
+        filter: `user_id=eq.${authUser.id}`,
+      }, scheduleReload)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'orders',
+        filter: `user_id=eq.${authUser.id}`,
+      }, scheduleReload)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${authUser.id}`,
+      }, scheduleReload)
+      .subscribe();
+
+    return () => {
+      if (dashboardReloadTimeoutRef.current) {
+        window.clearTimeout(dashboardReloadTimeoutRef.current);
+      }
+      supabase.removeChannel(channel);
+    };
+  }, [authUser?.id]);
 
   useEffect(() => {
     if (!profileNotice) return undefined;
@@ -365,14 +553,17 @@ const Profile = () => {
       parentAddress: authProfile?.address || '',
     };
 
+    const groomingSelections = deriveGroomingSelections(pastBooking);
+
     switch(pastBooking.serviceType) {
       case 'grooming':
         navigate('/schedule', {
           state: {
             mode: 'book-again',
+            booking: pastBooking,
             selectedPets: [selectedPet],
             petCount: 1,
-            selectedServices: pastBooking.metadata?.services || [],
+            selectedServices: groomingSelections,
           },
         });
         break;
@@ -381,15 +572,16 @@ const Profile = () => {
         break;
       case 'birthday party':
       case 'bdaypawty':
-        navigate('/bookpawty', { state: { mode: 'book-again', booking: pastBooking } });
+        navigate('/bookpawty', { state: { mode: 'book-again', booking: pastBooking, step: 2 } });
         break;
       default:
         navigate('/schedule', {
           state: {
             mode: 'book-again',
+            booking: pastBooking,
             selectedPets: [selectedPet],
             petCount: 1,
-            selectedServices: pastBooking.metadata?.services || [],
+            selectedServices: groomingSelections,
           },
         });
     }

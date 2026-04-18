@@ -59,7 +59,8 @@
 
 .bookings-search__input,
 .bookings-filter__select,
-.bookings-payment-select {
+.bookings-payment-select,
+.bookings-status-select {
   padding: 10px 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -78,7 +79,8 @@
 
 .bookings-search__input:focus,
 .bookings-filter__select:focus,
-.bookings-payment-select:focus {
+.bookings-payment-select:focus,
+.bookings-status-select:focus {
   border-color: #f53799;
 }
 
@@ -143,6 +145,13 @@
 .bookings-payment-select {
   width: 100%;
   min-width: 132px;
+}
+
+.bookings-status-select {
+  width: 100%;
+  min-width: 150px;
+  font-weight: 700;
+  border-radius: 999px;
 }
 
 .bookings-status-badge {
