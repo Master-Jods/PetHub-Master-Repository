@@ -16,6 +16,7 @@
     "db:migrate:customer-order-rpc": "node scripts/run-sql-file.mjs database/migrations/20260415_customer_order_inventory_rpc.sql"
   },
   "dependencies": {
+    "cors": "^2.8.6",
     "pg": "^8.20.0"
   }
 }
