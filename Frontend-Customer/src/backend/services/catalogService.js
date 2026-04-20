@@ -1,4 +1,5 @@
-const DEFAULT_API_ROOT = 'http://localhost:4000';
+const DEFAULT_API_ROOT = 'https://pethub-customer-api.onrender.com';
+const assetUrlMap = import.meta.glob('../../assets/*', { eager: true, import: 'default' });
 
 const CATEGORY_TO_SLUG = {
   'Pet Food & Treats': 'pet-food-treats',
@@ -38,10 +39,19 @@ function toPetType(value) {
 function toImagePath(value) {
   const text = String(value || '').trim();
   if (!text) return '';
-  if (text.startsWith('http://') || text.startsWith('https://') || text.startsWith('data:') || text.startsWith('/')) {
+
+  if (text.startsWith('http://') || text.startsWith('https://') || text.startsWith('data:')) {
     return text;
   }
-  return `/src/assets/${text}`;
+
+  const normalizedName = text.replace(/^\.?\/*src\/assets\//, '').replace(/^\.?\/*assets\//, '');
+  const matchedAssetPath = Object.keys(assetUrlMap).find((assetPath) => assetPath.endsWith(`/${normalizedName}`));
+
+  if (matchedAssetPath) {
+    return assetUrlMap[matchedAssetPath];
+  }
+
+  return '';
 }
 
 function toVariantLabelKey(name) {
