@@ -4,6 +4,7 @@ import './Grooming.css';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../backend/context/AuthContext';
 import groomingPic from '../assets/groomingpic.jpg';
+import { assetUrl } from '../utils/assets';
 
 const Grooming = () => {
   const navigate = useNavigate();
@@ -116,7 +117,7 @@ const Grooming = () => {
             <div className="grooming-package-card">
               <div className="grooming-card-header">
                 <img 
-                  src="/src/assets/cat-grooming.jpg" 
+                  src={assetUrl('cat-grooming.jpg')} 
                   alt="Cat Grooming" 
                   className="grooming-card-image"
                 />
@@ -142,7 +143,7 @@ const Grooming = () => {
               <div className="grooming-most-popular-badge">MOST POPULAR</div>
               <div className="grooming-card-header">
                 <img 
-                  src="/src/assets/dog-deluxe.jpg" 
+                  src={assetUrl('dog-deluxe.jpg')} 
                   alt="Dog Grooming Deluxe" 
                   className="grooming-card-image"
                 />
@@ -170,7 +171,7 @@ const Grooming = () => {
             <div className="grooming-package-card">
               <div className="grooming-card-header">
                 <img 
-                  src="/src/assets/dog-premium.jpg" 
+                  src={assetUrl('dog-premium.jpg')} 
                   alt="Dog Grooming Premium" 
                   className="grooming-card-image"
                 />
@@ -464,7 +465,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/leigh.jpg" 
+                          src={assetUrl('leigh.jpg')} 
                           alt="Leigh" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -479,7 +480,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/milo.jpg" 
+                          src={assetUrl('milo.jpg')} 
                           alt="Milo" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -494,7 +495,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/snowy.jpg" 
+                          src={assetUrl('snowy.jpg')} 
                           alt="Snowy" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -511,7 +512,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/coco.jpg" 
+                          src={assetUrl('coco.jpg')} 
                           alt="Coco" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -526,7 +527,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/piero.jpg" 
+                          src={assetUrl('piero.jpg')} 
                           alt="Piero" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -541,7 +542,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/shadow.jpg" 
+                          src={assetUrl('shadow.jpg')} 
                           alt="Shadow" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -635,7 +636,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/bella.jpg" 
+                          src={assetUrl('bella.jpg')} 
                           alt="Bella" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -650,7 +651,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/chloe.jpg" 
+                          src={assetUrl('chloe.jpg')} 
                           alt="Chloe" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -665,7 +666,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/fifteen.jpg" 
+                          src={assetUrl('fifteen.jpg')} 
                           alt="Fifteen" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -682,7 +683,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/ranne.jpg" 
+                          src={assetUrl('ranne.jpg')} 
                           alt="Ranne" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -697,7 +698,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/sissy.jpg" 
+                          src={assetUrl('sissy.jpg')} 
                           alt="Sissy" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -712,7 +713,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/louis.jpg" 
+                          src={assetUrl('louis.jpg')} 
                           alt="Louis" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -806,7 +807,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/charm.jpg" 
+                          src={assetUrl('charm.jpg')} 
                           alt="Charm" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -821,7 +822,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/choco.jpg" 
+                          src={assetUrl('choco.jpg')} 
                           alt="Choco" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -836,7 +837,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/ekko.jpg" 
+                          src={assetUrl('ekko.jpg')} 
                           alt="Ekko" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -853,7 +854,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/miller.jpg" 
+                          src={assetUrl('miller.jpg')} 
                           alt="Miller" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -868,7 +869,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/pinky.jpg" 
+                          src={assetUrl('pinky.jpg')} 
                           alt="Pinky" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -883,7 +884,7 @@ const Grooming = () => {
                     <div className="grooming-photo-card">
                       <div className="grooming-photo-square">
                         <img 
-                          src="/src/assets/totie.jpg" 
+                          src={assetUrl('totie.jpg')} 
                           alt="Totie" 
                           className="grooming-gallery-photo"
                           onError={(e) => {
@@ -931,4 +932,3 @@ const Grooming = () => {
 };
 
 export default Grooming;
-

@@ -6,6 +6,7 @@ import homepagePic from '../assets/homepagepic.jpg';
 import logoImage from '../assets/logo.png';
 import { isSupabaseConfigured, supabase } from '../backend/supabaseClient';
 import './Home.css';
+import { assetUrl } from '../utils/assets';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -282,7 +283,7 @@ const Home = () => {
             <Col lg={6}>
               <div className="home-pampering-image-placeholder">
               <img 
-                src="/src/assets/doggg.webp" 
+                src={assetUrl('doggg.webp')} 
                 alt="Happy dog being pampered at Happy Tails" 
                 className="home-pampering-image"
               />
@@ -323,7 +324,7 @@ const Home = () => {
               <div 
                 className="home-category-card home-cat-card"
                 style={{ 
-                  backgroundImage: 'url(/src/assets/shopcat.jpg)',
+                  backgroundImage: `url(${assetUrl('shopcat.jpg')})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -345,7 +346,7 @@ const Home = () => {
               <div 
                 className="home-category-card home-dog-card"
                 style={{ 
-                  backgroundImage: 'url(/src/assets/shopdog.jpg)',
+                  backgroundImage: `url(${assetUrl('shopdog.jpg')})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -377,7 +378,7 @@ const Home = () => {
               <div className="home-product-card">
                 <div className="home-product-image home-product-1">
                   <img 
-                    src="/src/assets/best1.jpg" 
+                    src={assetUrl('best1.jpg')} 
                     alt="Happy Tails Knott Bone Pet Dental Treats" 
                     className="home-product-actual-image"
                   />
@@ -396,7 +397,7 @@ const Home = () => {
               <div className="home-product-card">
                 <div className="home-product-image home-product-2">
                   <img 
-                    src="/src/assets/best2.jpg" 
+                    src={assetUrl('best2.jpg')} 
                     alt="Animal Science Worm Rid Tablet" 
                     className="home-product-actual-image"
                   />
@@ -415,7 +416,7 @@ const Home = () => {
               <div className="home-product-card">
                 <div className="home-product-image home-product-3">
                   <img 
-                    src="/src/assets/best3.jpg" 
+                    src={assetUrl('best3.jpg')} 
                     alt="Happy Tails Knott Bone Pet Dental Treats (Laser)" 
                     className="home-product-actual-image"
                   />
@@ -457,7 +458,7 @@ const Home = () => {
             <Col lg={6}>
               <div className="home-favorite-image-placeholder">
                 <img 
-                  src="/src/assets/bdayhome.jpg" 
+                  src={assetUrl('bdayhome.jpg')} 
                   alt="Pet birthday party celebration at Happy Tails" 
                   className="home-favorite-actual-image"
                 />
@@ -481,7 +482,7 @@ const Home = () => {
                 >
                   <div 
                     className="home-self-service-btn-bg"
-                    style={{ backgroundImage: 'url(/src/assets/shophome.jpg)' }}
+                    style={{ backgroundImage: `url(${assetUrl('shophome.jpg')})` }}
                   >
                     <div className="home-self-service-btn-overlay"></div>
                     <div className="home-self-service-btn-content">
@@ -498,7 +499,7 @@ const Home = () => {
                 >
                   <div 
                     className="home-self-service-btn-bg"
-                    style={{ backgroundImage: 'url(/src/assets/groominghome.jpg)' }}
+                    style={{ backgroundImage: `url(${assetUrl('groominghome.jpg')})` }}
                   >
                     <div className="home-self-service-btn-overlay"></div>
                     <div className="home-self-service-btn-content">
@@ -515,7 +516,7 @@ const Home = () => {
                 >
                   <div 
                     className="home-self-service-btn-bg"
-                    style={{ backgroundImage: 'url(/src/assets/hotelhome.jpg)' }}
+                    style={{ backgroundImage: `url(${assetUrl('hotelhome.jpg')})` }}
                   >
                     <div className="home-self-service-btn-overlay"></div>
                     <div className="home-self-service-btn-content">
@@ -532,7 +533,7 @@ const Home = () => {
                 >
                   <div 
                     className="home-self-service-btn-bg"
-                    style={{ backgroundImage: 'url(/src/assets/cafehome.jpg)' }}
+                    style={{ backgroundImage: `url(${assetUrl('cafehome.jpg')})` }}
                   >
                     <div className="home-self-service-btn-overlay"></div>
                     <div className="home-self-service-btn-content">

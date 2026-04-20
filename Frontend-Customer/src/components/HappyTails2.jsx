@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './HappyTails2.css';
 import { useAuth } from "../backend/context/AuthContext";
+import { assetUrl } from '../utils/assets';
 
 const HappyTails2 = () => {
   const navigate = useNavigate();
@@ -251,7 +252,7 @@ const HappyTails2 = () => {
             <Link to="/" className="ht2-logo-placeholder" onClick={handleNavLinkClick}>
               {/* Logo Image on LEFT side */}
               <img
-                src="/src/assets/logo.png"
+                src={assetUrl('logo.png')}
                 alt="HappyTails Logo"
                 className="ht2-logo-image"
               />

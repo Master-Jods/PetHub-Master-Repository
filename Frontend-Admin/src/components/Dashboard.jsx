@@ -4,7 +4,7 @@ import './Dashboard.css';
 import NotificationBell from './shared/NotificationBell';
 import { supabase } from '../supabaseClient';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://pethub-customer-api.onrender.com/api';
 
 const emptyDashboard = {
   notifications: [],

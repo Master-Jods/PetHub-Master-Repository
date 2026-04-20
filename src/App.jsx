@@ -1,7 +1,7 @@
 import React from 'react';
 
-const CUSTOMER_URL = import.meta.env.VITE_CUSTOMER_URL || 'http://localhost:5173';
-const ADMIN_URL = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174';
+const CUSTOMER_URL = import.meta.env.VITE_CUSTOMER_URL || 'https://pethub-customer.vercel.app';
+const ADMIN_URL = import.meta.env.VITE_ADMIN_URL || 'https://pethub-admin-three.vercel.app';
 
 function App() {
   const handleContinue = (href) => {

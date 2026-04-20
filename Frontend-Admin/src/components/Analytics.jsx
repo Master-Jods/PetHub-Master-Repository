@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import './Analytics.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://pethub-customer-api.onrender.com/api';
 
 const emptyAnalytics = {
   metrics: [],

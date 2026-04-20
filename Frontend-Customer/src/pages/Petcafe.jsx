@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { fetchCatalogProducts } from '../backend/services/catalogService';
 import { SHIPPING_OPTIONS, getShippingFee } from '../constants/fulfillment';
 import './Petcafe.css';
+import { assetUrl } from '../utils/assets';
 
 const Petcafe = () => {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const Petcafe = () => {
       price: "₱230.00",
       basePrice: 230,
       petType: "dog",
-      image: "/src/assets/chickenmacarons.jpg"
+      image: assetUrl('chickenmacarons.jpg')
     },
     {
       id: 2,
@@ -54,7 +55,7 @@ const Petcafe = () => {
       price: "₱250.00",
       basePrice: 250,
       petType: "dog",
-      image: "/src/assets/jell-o.png"
+      image: assetUrl('jell-o.png')
     },
     {
       id: 3,
@@ -63,7 +64,7 @@ const Petcafe = () => {
       price: "₱200.00",
       basePrice: 200,
       petType: "dog",
-      image: "/src/assets/assortedpawskewers.jpg",
+      image: assetUrl('assortedpawskewers.jpg'),
     },
     {
       id: 4,
@@ -72,7 +73,7 @@ const Petcafe = () => {
       price: "₱220.00",
       basePrice: 220,
       petType: "dog",
-      image: "/src/assets/sweetpotatomadeleines.jpg"
+      image: assetUrl('sweetpotatomadeleines.jpg')
     },
     {
       id: 5,
@@ -81,7 +82,7 @@ const Petcafe = () => {
       price: "₱250.00",
       basePrice: 250,
       petType: "dog",
-      image: "/src/assets/chickenminicookies.jpg"
+      image: assetUrl('chickenminicookies.jpg')
     },
     {
       id: 6,
@@ -90,7 +91,7 @@ const Petcafe = () => {
       price: "₱150.00",
       basePrice: 150,
       petType: "dog",
-      image: "/src/assets/mackerelmuffins.jpg"
+      image: assetUrl('mackerelmuffins.jpg')
     },
     {
       id: 7,
@@ -99,7 +100,7 @@ const Petcafe = () => {
       price: "₱280.00",
       basePrice: 280,
       petType: "dog",
-      image: "/src/assets/dogbento.png"
+      image: assetUrl('dogbento.png')
     },
     {
       id: 8,
@@ -108,7 +109,7 @@ const Petcafe = () => {
       price: "₱85.00",
       basePrice: 85,
       petType: "dog",
-      image: "/src/assets/pupcake.jpg",
+      image: assetUrl('pupcake.jpg'),
       hasVariants: true,
       variants: [
         { id: "carrot-peanut", flavor: "Carrot with Peanut Butter", price: 85.00 },
@@ -122,7 +123,7 @@ const Petcafe = () => {
       price: "₱70.00",
       basePrice: 70,
       petType: "dog",
-      image: "/src/assets/puppucino.jpg"
+      image: assetUrl('puppucino.jpg')
     },
     {
       id: 10,
@@ -131,7 +132,7 @@ const Petcafe = () => {
       price: "₱180.00",
       basePrice: 180,
       petType: "dog",
-      image: "/src/assets/petdognat.png",
+      image: assetUrl('petdognat.png'),
       hasVariants: true,
       variants: [
         { id: "chicken-liver", flavor: "Chicken Liver", price: 180.00 },
@@ -146,7 +147,7 @@ const Petcafe = () => {
       price: "₱50.00 - ₱70.00",
       basePrice: 50,
       petType: "dog",
-      image: "/src/assets/woofle.jpg",
+      image: assetUrl('woofle.jpg'),
       hasVariants: true,
       variants: [
         { id: "plain", flavor: "Plain", price: 50.00 },
@@ -162,7 +163,7 @@ const Petcafe = () => {
       price: "₱120.00 - ₱150.00",
       basePrice: 120,
       petType: "dog",
-      image: "/src/assets/pizza.png",
+      image: assetUrl('pizza.png'),
       hasVariants: true,
       variants: [
         { id: "small", flavor: "Small", price: 120.00 },
@@ -176,7 +177,7 @@ const Petcafe = () => {
       price: "₱290.00",
       basePrice: 290,
       petType: "cat",
-      image: "/src/assets/catbento.png"
+      image: assetUrl('catbento.png')
     },
     {
       id: 14,
@@ -185,7 +186,7 @@ const Petcafe = () => {
       price: "₱95.00",
       basePrice: 95,
       petType: "cat",
-      image: "/src/assets/catcupcake.jpg"
+      image: assetUrl('catcupcake.jpg')
     },
     {
       id: 15,
@@ -194,7 +195,7 @@ const Petcafe = () => {
       price: "₱35.00",
       basePrice: 35,
       petType: "all",
-      image: "/src/assets/partyhat.png"
+      image: assetUrl('partyhat.png')
     },
     {
       id: 16,
@@ -203,7 +204,7 @@ const Petcafe = () => {
       price: "₱250.00",
       basePrice: 250,
       petType: "all",
-      image: "/src/assets/banner.png"
+      image: assetUrl('banner.png')
     },
     {
       id: 17,
@@ -212,7 +213,7 @@ const Petcafe = () => {
       price: "₱5.00",
       basePrice: 5,
       petType: "all",
-      image: "/src/assets/candle.jpg"
+      image: assetUrl('candle.jpg')
     },
     {
       id: 18,
@@ -221,7 +222,7 @@ const Petcafe = () => {
       price: "₱18.00",
       basePrice: 18,
       petType: "all",
-      image: "/src/assets/numbercandle.jpg"
+      image: assetUrl('numbercandle.jpg')
     },
     {
       id: 19,
@@ -230,7 +231,7 @@ const Petcafe = () => {
       price: "₱150.00",
       basePrice: 150,
       petType: "dog",
-      image: "/src/assets/pawgurts.png",
+      image: assetUrl('pawgurts.png'),
       hasVariants: true,
       variants: [
         { id: "mango", flavor: "Mango", price: 150.00 },
@@ -249,7 +250,7 @@ const Petcafe = () => {
       price: "₱200.00",
       basePrice: 200,
       petType: "dog",
-      image: "/src/assets/pawskewerstofu.jpg",
+      image: assetUrl('pawskewerstofu.jpg'),
     },
     {
       id: 21,
@@ -258,7 +259,7 @@ const Petcafe = () => {
       price: "₱250.00",
       basePrice: 250,
       petType: "dog",
-      image: "/src/assets/pawskewerskwekkwek.jpg",
+      image: assetUrl('pawskewerskwekkwek.jpg'),
     }
   ];
 
@@ -364,7 +365,7 @@ const Petcafe = () => {
         <div className="petcafe-hero-background">
           <div
             className="petcafe-background-image"
-            style={{ backgroundImage: "url('/src/assets/petcafee.jpg')" }}
+            style={{ backgroundImage: `url(${assetUrl('petcafee.jpg')})` }}
           />
           <div className="petcafe-background-overlay"></div>
         </div>

@@ -7,7 +7,7 @@ import EditTotalModal from './shared/EditTotalModal';
 const SERVICE_TABS = ['All', 'Grooming', 'Boarding', 'Birthday Party'];
 const PAYMENT_STATUS_OPTIONS = ['Pending', 'Paid', 'Refunded'];
 const BOOKING_STATUS_OPTIONS = ['Pending Approval', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'];
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://pethub-customer-api.onrender.com/api';
 const POLL_INTERVAL_MS = 60000;
 const RECORDS_PER_PAGE = 10;
 

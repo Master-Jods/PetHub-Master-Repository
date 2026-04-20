@@ -12,4 +12,4 @@ Admin-facing HappyTails React app.
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
-- `VITE_API_BASE_URL` defaults to `http://localhost:4000/api`
+- `VITE_API_BASE_URL` defaults to `https://pethub-customer-api.onrender.com/api`

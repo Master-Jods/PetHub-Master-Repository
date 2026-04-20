@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './HappyTailsNavbar.css';
+import { assetUrl } from '../utils/assets';
 
 const HappyTailsNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -66,7 +67,7 @@ const HappyTailsNavbar = () => {
             <Link to="/" className="htn-logo-placeholder" onClick={handleNavLinkClick}>
               {/* Logo Image on LEFT side */}
               <img 
-                src="/src/assets/logo.png" 
+                src={assetUrl('logo.png')} 
                 alt="HappyTails Logo" 
                 className="htn-logo-image"
               />

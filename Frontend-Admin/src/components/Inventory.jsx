@@ -6,7 +6,7 @@ import { toFriendlyMessage } from '../utils/friendlyMessage';
 const PRODUCT_TYPES = ['Pet Shop', 'Pet Menu'];
 const PET_TYPES = ['All Pets', 'Dogs', 'Cats'];
 const STOCK_LEVELS = ['All Stock Levels', 'In Stock', 'Low Stock (<10)', 'Out of Stock'];
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://pethub-customer-api.onrender.com/api';
 
 const img = (file) => new URL(`../assets/${file}`, import.meta.url).href;
 

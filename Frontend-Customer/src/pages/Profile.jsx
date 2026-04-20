@@ -14,6 +14,7 @@ import {
 } from '../backend/services/profileDataService';
 import './Profile.css';
 import { siteConfirm } from '../utils/siteConfirm';
+import { assetUrl } from '../utils/assets';
 
 const ENABLE_PROFILE_REALTIME = true;
 const PROFILE_DASHBOARD_CACHE_PREFIX = 'happytails_profile_dashboard_cache:';
@@ -189,7 +190,7 @@ const Profile = () => {
     email: '',
     phone: '',
     memberSince: '2023',
-    avatar: '/src/assets/user-avatar.jpg',
+    avatar: assetUrl('user-avatar.jpg'),
     petCount: 0,
     pets: []
   });

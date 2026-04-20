@@ -12,3 +12,4 @@ Frontend-Admin/dist/
 Backend-Customer/node_modules/
 
 Backend-Admin/node_modules/
+.vercel

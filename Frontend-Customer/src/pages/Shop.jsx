@@ -7,6 +7,7 @@ import { fetchCatalogProducts } from '../backend/services/catalogService';
 import AuthModal from '../components/AuthModal';
 import { SHIPPING_OPTIONS, getShippingFee } from '../constants/fulfillment';
 import './Shop.css';
+import { assetUrl } from '../utils/assets';
 
 const Shop = () => {
   const { category } = useParams();
@@ -59,7 +60,7 @@ const Shop = () => {
       petType: "dog",
       description: "Dental cleaning treats that help reduce tartar and freshen breath. Available in multiple delicious flavors.",
       longDescription: "Knot Bone Dental Treats are specially designed to clean your dog's teeth while they chew. The unique texture helps scrape away plaque and tartar buildup, promoting better dental health. Made with natural ingredients and available in various flavors that dogs love.",
-      image: "/src/assets/id1.jpg",
+      image: assetUrl('id1.jpg'),
       hasVariants: true,
       variants: [
         { id: "milk", flavor: "Milk", price: 9.00 },
@@ -85,7 +86,7 @@ const Shop = () => {
       petType: "dog",
       description: "Dental hygiene treats in a reusable jar. Helps clean teeth and freshen breath with natural ingredients.",
       longDescription: "These dental treats come in a reusable jar that keeps them fresh. Formulated with natural ingredients that help reduce plaque and tartar buildup while freshening your dog's breath. Perfect for daily dental care routine.",
-      image: "/src/assets/id2.jpg",
+      image: assetUrl('id2.jpg'),
       hasVariants: true,
       variants: [
         { id: "chicken", flavor: "Chicken", price: 95.00 },
@@ -109,7 +110,7 @@ const Shop = () => {
       petType: "dog",
       description: "Soft and tasty snacks made with real chicken meat. High-protein treat perfect for training or rewarding your dog.",
       longDescription: "JerHigh Dog Treats are made with real chicken meat as the primary ingredient. These soft, chewy treats are perfect for training sessions or as occasional rewards. High in protein and free from artificial preservatives.",
-      image: "/src/assets/id3.jpg",
+      image: assetUrl('id3.jpg'),
       hasVariants: false,
     
       brand: "JerHigh",
@@ -125,7 +126,7 @@ const Shop = () => {
       petType: "cat",
       description: "Complete urinary health support for cats of all life stages. Original packaging ensures freshness and quality.",
       longDescription: "CatCare Urinary Health formula is specially designed to support urinary tract health in cats. Contains balanced minerals to maintain proper urine pH and prevent crystal formation. Suitable for cats of all ages.",
-      image: "/src/assets/id4.jpg",
+      image: assetUrl('id4.jpg'),
       hasVariants: false,
       
       brand: "CatCare",
@@ -141,7 +142,7 @@ const Shop = () => {
       petType: "dog",
       description: "Complete and balanced adult dog food with essential vitamins and minerals for daily vitality.",
       longDescription: "Vitality Value Meal provides complete nutrition for adult dogs. Formulated with high-quality protein, essential vitamins, and minerals to support your dog's overall health and energy levels.",
-      image: "/src/assets/id5.jpg",
+      image: assetUrl('id5.jpg'),
       hasVariants: false,
     
       brand: "Vitality",
@@ -157,7 +158,7 @@ const Shop = () => {
       petType: "dog",
       description: "Specialized wet food for small breed puppies aged 2-10 months. Supports healthy growth and development.",
       longDescription: "Royal Canin Mini Puppy formula is specifically designed for small breed puppies. Provides optimal nutrition for healthy growth, with the right balance of proteins, vitamins, and minerals for developing puppies.",
-      image: "/src/assets/id6.jpg",
+      image: assetUrl('id6.jpg'),
       hasVariants: false,
 
       brand: "Royal Canin",
@@ -173,7 +174,7 @@ const Shop = () => {
       petType: "cat",
       description: "Premium dry cat food with chicken recipe, formulated for Bengal cats and active felines.",
       longDescription: "Prof Bengal Kind Kibble is specially formulated for Bengal cats and other active breeds. Made with real chicken as the first ingredient, this premium dry food supports lean muscle mass and provides sustained energy.",
-      image: "/src/assets/id7.jpg",
+      image: assetUrl('id7.jpg'),
       hasVariants: false,
     
       brand: "Prof",
@@ -189,7 +190,7 @@ const Shop = () => {
       petType: "dog",
       description: "Crunchy bone-shaped biscuits for dogs. Helps clean teeth while providing a tasty snack.",
       longDescription: "Petplus Doggie Biscuits are crunchy bone-shaped treats that help clean teeth as dogs chew. Made with natural ingredients, they're perfect for rewarding your dog while promoting dental health.",
-      image: "/src/assets/id8.jpg",
+      image: assetUrl('id8.jpg'),
       hasVariants: false,
       
       brand: "Petplus",
@@ -205,7 +206,7 @@ const Shop = () => {
       petType: "dog",
       description: "Complete and balanced wet dog food in convenient canned format. Rich in protein and essential nutrients.",
       longDescription: "Pedigree wet dog food provides complete nutrition in a delicious canned format. Made with high-quality ingredients and fortified with essential vitamins and minerals for your dog's overall health.",
-      image: "/src/assets/id9.jpg",
+      image: assetUrl('id9.jpg'),
       hasVariants: true,
       variants: [
         { id: "puppy", flavor: "Puppy", price: 155.00 },
@@ -226,7 +227,7 @@ const Shop = () => {
       petType: "cat",
       description: "Specialized wet food for British Shorthair adult cats. Supports urinary health and maintains ideal weight.",
       longDescription: "Royal Canin British Shorthair formula is specially designed for the unique needs of British Shorthair cats. Supports urinary health, helps maintain ideal weight, and provides balanced nutrition.",
-      image: "/src/assets/id10.jpg",
+      image: assetUrl('id10.jpg'),
       hasVariants: false,
 
       brand: "Royal Canin",
@@ -244,7 +245,7 @@ const Shop = () => {
       petType: "dog",
       description: "Medicated soap for dogs that effectively eliminates ticks and fleas while cleaning and deodorizing.",
       longDescription: "Bayopet Anti Tick and Flea Soap is a medicated cleansing bar that helps eliminate ticks, fleas, and other parasites while cleaning and deodorizing your dog's coat. Gentle on skin yet effective against pests.",
-      image: "/src/assets/id11.jpg",
+      image: assetUrl('id11.jpg'),
       hasVariants: false,
     
       brand: "Bayopet",
@@ -260,7 +261,7 @@ const Shop = () => {
       petType: "dog",
       description: "Premium conditioner for dogs that softens fur, reduces tangles, and leaves a pleasant scent.",
       longDescription: "St. Roche Dog Conditioner helps detangle and soften your dog's coat, making grooming easier. Leaves fur smooth, shiny, and pleasantly scented. Formulated to be gentle on sensitive skin.",
-      image: "/src/assets/id12.jpg",
+      image: assetUrl('id12.jpg'),
       hasVariants: true,
       variants: [
         { id: "mother-nature", scent: "Mother Nature", price: 408.00 },
@@ -282,7 +283,7 @@ const Shop = () => {
       petType: "dog",
       description: "Natural shampoo with madre de cacao and guava extract. Cleans, conditions, and detangles pet fur.",
       longDescription: "Doggies Care 2-in-1 Shampoo and Conditioner combines cleansing and conditioning in one step. Made with natural madre de cacao and guava extract to promote healthy skin and coat. Economical gallon size.",
-      image: "/src/assets/id13.jpg",
+      image: assetUrl('id13.jpg'),
       hasVariants: true,
       variants: [
         { id: "bubblegum", scent: "Bubblegum", price: 349.00 },
@@ -305,7 +306,7 @@ const Shop = () => {
       petType: "dog",
       description: "Anti-tick, flea, and odor eliminator shampoo for all dog types. Promotes healthy skin and coat.",
       longDescription: "Bearing Dog Shampoo is a multi-purpose formula that eliminates ticks and fleas while removing odors. Suitable for all dog types and coat conditions. Promotes healthy skin and leaves coat clean and fresh.",
-      image: "/src/assets/id14.jpg",
+      image: assetUrl('id14.jpg'),
       hasVariants: true,
       variants: [
         { id: "all-dogs-150ml", type: "For All Dogs", size: "150ml", price: 158.00 },
@@ -331,7 +332,7 @@ const Shop = () => {
       petType: "all",
       description: "Stainless steel comb for removing mats, tangles, and loose fur from pets' coats.",
       longDescription: "This stainless steel grooming comb is designed to easily remove mats, tangles, and loose fur from your pet's coat. Durable construction with comfortable handle for easy grooming sessions.",
-      image: "/src/assets/id15.jpg",
+      image: assetUrl('id15.jpg'),
       hasVariants: true,
       variants: [
         { id: "blue", color: "Blue", price: 69.00 },
@@ -353,7 +354,7 @@ const Shop = () => {
       petType: "all",
       description: "Specialty toothpaste for pets that promotes dental health and fresh breath.",
       longDescription: "Bioline Pet Toothpaste is specially formulated for pets' dental care. Helps reduce plaque and tartar buildup while freshening breath. Available in flavors pets love.",
-      image: "/src/assets/id16.jpg",
+      image: assetUrl('id16.jpg'),
       hasVariants: true,
       variants: [
         { id: "beef", flavor: "Beef", petType: "dog", price: 95.00 },
@@ -377,7 +378,7 @@ const Shop = () => {
       petType: "all",
       description: "Gentle eye drop cleanser for pets that removes dirt and discharge while soothing irritation.",
       longDescription: "Eye Doctor is a gentle eye drop cleanser that helps remove dirt, debris, and discharge from your pet's eyes. Soothes irritation and helps maintain eye health.",
-      image: "/src/assets/id17.jpg",
+      image: assetUrl('id17.jpg'),
       hasVariants: true,
       variants: [
         { id: "30ml", size: "30ml", price: 85.00 },
@@ -397,7 +398,7 @@ const Shop = () => {
       petType: "cat",
       description: "Specialty shampoo formulated for cats with different coat and skin needs.",
       longDescription: "Bearing Cat Shampoo is specially formulated for feline skin and coat. Available in different formulas to address specific needs like shedding control, sensitive skin, or brightening.",
-      image: "/src/assets/id18.jpg",
+      image: assetUrl('id18.jpg'),
       hasVariants: true,
       variants: [
         { id: "shed-control", type: "Shed Control", price: 250.00 },
@@ -418,7 +419,7 @@ const Shop = () => {
       petType: "all",
       description: "Electric nail trimmer with extra filer for safe and easy pet nail grooming at home.",
       longDescription: "This electric nail trimmer makes pet nail grooming safe and easy. Includes an extra filer for smoothing edges. Quiet operation helps keep pets calm during grooming.",
-      image: "/src/assets/id19.jpg",
+      image: assetUrl('id19.jpg'),
       hasVariants: false,
   
       brand: "Pet Pedicure",
@@ -434,7 +435,7 @@ const Shop = () => {
       petType: "dog",
       description: "Long-lasting fragrance spray for dogs. Buy one get one free offer leaves your pet smelling fresh.",
       longDescription: "Pampered Pooch Sweet Scent is a long-lasting fragrance spray that keeps your dog smelling fresh between baths. Current promotion offers buy one get one free for double value.",
-      image: "/src/assets/id20.jpg",
+      image: assetUrl('id20.jpg'),
       hasVariants: false,
       promotion: "Buy 1 Take 1",
     
@@ -453,7 +454,7 @@ const Shop = () => {
       petType: "all",
       description: "Energy supplement powder that provides quick glucose boost for weak, recovering, or stressed pets.",
       longDescription: "Dextrovet Pet Dextrose Powder provides quick energy boost for weak, recovering, or stressed pets. Easily mixed with water or food to support energy levels during recovery or stressful situations.",
-      image: "/src/assets/id21.jpg",
+      image: assetUrl('id21.jpg'),
       hasVariants: false,
     
       brand: "Dextrovet",
@@ -469,7 +470,7 @@ const Shop = () => {
       petType: "all",
       description: "Over-the-counter antibiotic syrup for dogs and cats. Effective against various bacterial infections.",
       longDescription: "Pawpy DOX50 is an over-the-counter antibiotic syrup effective against various bacterial infections in dogs and cats. Always consult with a veterinarian for proper diagnosis and dosage.",
-      image: "/src/assets/id22.jpg",
+      image: assetUrl('id22.jpg'),
       hasVariants: false,
       note: "For Dogs & Cats",
 
@@ -486,7 +487,7 @@ const Shop = () => {
       petType: "all",
       description: "Multivitamin supplement for dogs and cats ages 6 months to 5 years old. Supports overall health and vitality.",
       longDescription: "Top Of My Game Multivitamins provide essential vitamins and minerals for pets aged 6 months to 5 years. Supports overall health, immune function, and vitality. Currently on sale with extended expiry.",
-      image: "/src/assets/id23.jpg",
+      image: assetUrl('id23.jpg'),
       hasVariants: false,
       promotion: "SALE",
       expiry: "October 2027",
@@ -505,7 +506,7 @@ const Shop = () => {
       petType: "cat",
       description: "Vitamin supplement specially formulated for cats and kittens to support immune system and growth.",
       longDescription: "LC Vit Plus is specially formulated for cats and kittens. Provides essential vitamins to support immune system function, growth, and overall health. Available in different sizes.",
-      image: "/src/assets/id24.jpg",
+      image: assetUrl('id24.jpg'),
       hasVariants: true,
       variants: [
         { id: "60ml", size: "60ml", price: 135.00 },
@@ -526,7 +527,7 @@ const Shop = () => {
       petType: "all",
       description: "Complete multivitamin supplement for pets that promotes overall wellness and energy levels.",
       longDescription: "Alpha-Vit Multivitamins provide a complete range of essential vitamins and minerals for pets. Supports overall wellness, energy levels, and helps maintain optimal health.",
-      image: "/src/assets/id25.jpg",
+      image: assetUrl('id25.jpg'),
       hasVariants: false,
       
       brand: "Alpha-Vit",
@@ -542,7 +543,7 @@ const Shop = () => {
       petType: "all",
       description: "Herbal supplement for cough and cold symptoms in dogs and cats. Natural relief for respiratory issues.",
       longDescription: "Broncho Aid is a herbal supplement that provides natural relief for cough and cold symptoms in dogs and cats. Helps soothe respiratory irritation and supports respiratory health.",
-      image: "/src/assets/id26.jpg",
+      image: assetUrl('id26.jpg'),
       hasVariants: false,
       note: "For cough & cold herbal supplement",
       
@@ -560,7 +561,7 @@ const Shop = () => {
       petType: "all",
       description: "Chewable calcium tablets for strong bones and teeth. Supports skeletal health in growing and adult pets.",
       longDescription: "Deltacal Chewable Calcium Tablets provide essential calcium for strong bones and teeth. Particularly important for growing puppies/kittens, pregnant/nursing pets, and senior animals.",
-      image: "/src/assets/id27.jpg",
+      image: assetUrl('id27.jpg'),
       hasVariants: true,
       variants: [
         { id: "10-tablets", size: "10 tablets", price: 70.00 },
@@ -580,7 +581,7 @@ const Shop = () => {
       petType: "all",
       description: "Veterinary-grade spray that effectively eliminates ticks, fleas, and prevents reinfestation.",
       longDescription: "Dr Shiba Anti Tick and Flea Spray is a veterinary-grade formula that effectively eliminates ticks and fleas on contact. Provides protection against reinfestation and is safe for both dogs and cats.",
-      image: "/src/assets/id28.jpg",
+      image: assetUrl('id28.jpg'),
       hasVariants: false,
 
       brand: "Dr Shiba",
@@ -596,7 +597,7 @@ const Shop = () => {
       petType: "all",
       description: "Advanced formula tick and flea spray with natural ingredients. Provides long-lasting protection.",
       longDescription: "Vetcore Nature's Advance Tick and Flea Spray uses an advanced formula with natural ingredients to provide effective and long-lasting protection against ticks and fleas. Safe for regular use.",
-      image: "/src/assets/id29.jpg",
+      image: assetUrl('id29.jpg'),
       hasVariants: false,
       
       brand: "Vetcore",
@@ -612,7 +613,7 @@ const Shop = () => {
       petType: "all",
       description: "New formula dextrose powder for quick energy recovery in weak, dehydrated, or convalescing pets.",
       longDescription: "NEW Petsmed Dextrose Powder is an improved formula that provides quick energy recovery for weak, dehydrated, or convalescing pets. Easily administered by mixing with water or food.",
-      image: "/src/assets/id30.jpg",
+      image: assetUrl('id30.jpg'),
       hasVariants: false,
       
       brand: "Petsmed",
@@ -631,7 +632,7 @@ const Shop = () => {
       petType: "dog",
       description: "Disposable belly wrap diaper for male dogs. Ideal for incontinence, marking, or post-surgery care.",
       longDescription: "Dono Disposable Male Belly Wraps are designed for male dogs experiencing incontinence, marking behavior, or requiring post-surgical care. Disposable and convenient for temporary use.",
-      image: "/src/assets/id31.jpg",
+      image: assetUrl('id31.jpg'),
       hasVariants: true,
       variants: [
         { id: "xs", size: "XS", price: 15.00 },
@@ -654,7 +655,7 @@ const Shop = () => {
       petType: "cat",
       description: "Clumping cat litter sand with pleasant scents. Controls odor and makes cleaning easy.",
       longDescription: "Purreetty Cat Litter Sand features excellent clumping ability with pleasant scents. Effectively controls odor and makes litter box maintenance easy. Available in different sizes and scents.",
-      image: "/src/assets/id32.jpg",
+      image: assetUrl('id32.jpg'),
       hasVariants: true,
       variants: [
         { id: "1kg-lemon", size: "1kg", scent: "Lemon", price: 65.00 },
@@ -677,7 +678,7 @@ const Shop = () => {
       petType: "cat",
       description: "Premium clumping cat litter with various scents. Excellent odor control and low dust formula.",
       longDescription: "Cattitude Cat Litter Sand is a premium clumping litter with excellent odor control properties. Low dust formula is better for both cats and owners. Available in various appealing scents.",
-      image: "/src/assets/id33.jpg",
+      image: assetUrl('id33.jpg'),
       hasVariants: true,
       variants: [
         { id: "apple", scent: "Apple", price: 259.00 },
@@ -701,7 +702,7 @@ const Shop = () => {
       petType: "dog",
       description: "Training spray that attracts puppies to designated potty areas. Speeds up housebreaking process.",
       longDescription: "Bioline Potty Puppy Training Spray contains attractants that encourage puppies to use designated potty areas. Helps speed up the housebreaking process and establish good bathroom habits.",
-      image: "/src/assets/id34.jpg",
+      image: assetUrl('id34.jpg'),
       hasVariants: false,
     
       brand: "Bioline",
@@ -717,7 +718,7 @@ const Shop = () => {
       petType: "dog",
       description: "Reusable washable diaper for female pets. Comes in random cute designs with adjustable fit.",
       longDescription: "These washable diapers for female pets feature cute random designs and adjustable fit for comfort. Reusable and eco-friendly alternative to disposable diapers. Machine washable for easy cleaning.",
-      image: "/src/assets/id35.jpg",
+      image: assetUrl('id35.jpg'),
       hasVariants: true,
       variants: [
         { id: "xs", size: "XS", price: 119.00 },
@@ -740,7 +741,7 @@ const Shop = () => {
       petType: "cat",
       description: "Premium scented cat litter with superior clumping and odor neutralizing properties.",
       longDescription: "Warrior Scented Premium Cat Litter offers superior clumping performance and excellent odor neutralization. Premium quality with various scent options to keep the litter box area fresh.",
-      image: "/src/assets/id36.jpg",
+      image: assetUrl('id36.jpg'),
       hasVariants: true,
       variants: [
         { id: "lavender", scent: "Lavender", price: 289.00 },
@@ -764,7 +765,7 @@ const Shop = () => {
       petType: "all",
       description: "Disposable absorbent pads for training, elderly pets, or post-surgical care. Quick-dry top layer.",
       longDescription: "Disposable Pet Blue Pads feature a quick-dry top layer and super absorbent core. Ideal for puppy training, elderly pets with incontinence, or post-surgical care. Available in different sizes.",
-      image: "/src/assets/id37.jpg",
+      image: assetUrl('id37.jpg'),
       hasVariants: true,
       variants: [
         { id: "s", size: "S", price: 6.00 },
@@ -783,7 +784,7 @@ const Shop = () => {
       petType: "dog",
       description: "Reusable belly band for male dogs. Adjustable and washable, ideal for marking or incontinence.",
       longDescription: "Pet Belly Bands are reusable washable diapers designed specifically for male dogs. Adjustable fit ensures comfort and effectiveness for marking behavior or incontinence issues.",
-      image: "/src/assets/id38.jpg",
+      image: assetUrl('id38.jpg'),
       hasVariants: true,
       variants: [
         { id: "xs", size: "XS", price: 120.00 },
@@ -805,7 +806,7 @@ const Shop = () => {
       petType: "all",
       description: "Biodegradable poop bags with cute paw print design. Eco-friendly and leak-proof for clean disposal.",
       longDescription: "These biodegradable poop bags feature cute paw print designs and are leak-proof for clean waste disposal. Eco-friendly option for responsible pet owners who clean up after their pets.",
-      image: "/src/assets/id39.jpg",
+      image: assetUrl('id39.jpg'),
       hasVariants: false,
     
       brand: "Pet Clean",
@@ -821,7 +822,7 @@ const Shop = () => {
       petType: "all",
       description: "Triple-action formula that eliminates odors, disinfects surfaces, and dries pet waste quickly.",
       longDescription: "Wizpoop is a triple-action formula that eliminates odors, disinfects surfaces, and helps dry pet waste quickly. Organic formula is safe for use around pets while effectively managing waste odors.",
-      image: "/src/assets/id40.jpg",
+      image: assetUrl('id40.jpg'),
       hasVariants: false,
     
       brand: "Wizpoop",
@@ -839,7 +840,7 @@ const Shop = () => {
       petType: "dog",
       description: "Fun squeaky bone-shaped toy with paw and bone prints. Durable and entertaining for playtime.",
       longDescription: "This flat bone-shaped toy features fun paw and bone prints with an internal squeaker for added entertainment. Durable construction withstands regular play while providing mental stimulation.",
-      image: "/src/assets/id41.jpg",
+      image: assetUrl('id41.jpg'),
       hasVariants: false,
 
       brand: "Pet Play",
@@ -855,7 +856,7 @@ const Shop = () => {
       petType: "dog",
       description: "Braided rope toy for tug-of-war and dental cleaning. Random colors available for durable play.",
       longDescription: "Braided rope toys are perfect for tug-of-war games and help clean your dog's teeth during play. Durable construction with random color availability. Great for interactive play with your dog.",
-      image: "/src/assets/id42.jpg",
+      image: assetUrl('id42.jpg'),
       hasVariants: false,
       note: "Random color only",
   
@@ -872,7 +873,7 @@ const Shop = () => {
       petType: "dog",
       description: "Bright yellow chicken-shaped squeaky toy. Perfect for fetch and interactive play sessions.",
       longDescription: "This bright yellow chicken-shaped squeaky toy is perfect for fetch and interactive play sessions. The squeaker inside adds excitement to playtime, encouraging your dog to engage with the toy.",
-      image: "/src/assets/id43.jpg",
+      image: assetUrl('id43.jpg'),
       hasVariants: false,
 
       brand: "Pet Play",
@@ -888,7 +889,7 @@ const Shop = () => {
       petType: "cat",
       description: "Interactive spiral tower with balls for cats to bat and chase. Stimulates natural hunting instincts.",
       longDescription: "This spiral tower toy comes with free balls that cats can bat and chase through the spiral track. Stimulates natural hunting instincts and provides hours of entertainment for indoor cats.",
-      image: "/src/assets/id44.jpg",
+      image: assetUrl('id44.jpg'),
       hasVariants: false,
 
       brand: "Cat Enrichment",
@@ -904,7 +905,7 @@ const Shop = () => {
       petType: "dog",
       description: "Multi-functional rubber ball toy that bounces, floats, and can hold treats for extended play.",
       longDescription: "This 3-in-1 rubber ball toy bounces for fetch games, floats for water play, and can be filled with treats for extended engagement. Durable rubber construction withstands aggressive chewers.",
-      image: "/src/assets/id45.jpg",
+      image: assetUrl('id45.jpg'),
       hasVariants: false,
   
       brand: "Pet Play",
@@ -920,7 +921,7 @@ const Shop = () => {
       petType: "all",
       description: "Vibrant plastic feeding bowl in candy colors. Perfect for small pets or as a treat dish.",
       longDescription: "These vibrant candy-colored plastic bowls are perfect for small pets or as treat dishes. Easy to clean and available in various bright colors to match your pet's personality.",
-      image: "/src/assets/id46.jpg",
+      image: assetUrl('id46.jpg'),
       hasVariants: true,
       variants: [
         { id: "blue", color: "Blue", price: 25.00 },
@@ -941,7 +942,7 @@ const Shop = () => {
       petType: "dog",
       description: "Colorful rainbow-pattern harness and leash set for small dogs. Comfortable and secure fit.",
       longDescription: "This rainbow-pattern harness and leash set is designed for small dogs. Provides comfortable and secure fit for walks while adding a colorful style element to your pet's accessories.",
-      image: "/src/assets/id47.jpg",
+      image: assetUrl('id47.jpg'),
       hasVariants: false,
 
       brand: "Pet Fashion",
@@ -957,7 +958,7 @@ const Shop = () => {
       petType: "dog",
       description: "Stylish sunglasses for pets with UV protection. Perfect for photos or sunny outdoor adventures.",
       longDescription: "These stylish pet sunglasses offer UV protection and come in various colors. Perfect for sunny outdoor adventures or fun photo sessions. Currently on sale at a discounted price.",
-      image: "/src/assets/id48.jpg",
+      image: assetUrl('id48.jpg'),
       hasVariants: true,
       promotion: "SALE",
       variants: [
@@ -982,7 +983,7 @@ const Shop = () => {
       petType: "all",
       description: "Portable foldable tent playpen for pets. Great for travel, containment, or creating a safe play area.",
       longDescription: "This foldable tent playpen is portable and easy to set up. Perfect for travel, temporary containment, or creating a safe play area for your pet indoors or outdoors. Available in different colors.",
-      image: "/src/assets/id49.jpg",
+      image: assetUrl('id49.jpg'),
       hasVariants: true,
       variants: [
         { id: "brown", color: "Brown", price: 550.00 },
@@ -1003,7 +1004,7 @@ const Shop = () => {
       petType: "all",
       description: "Colorful rainbow-pattern adjustable collar with secure buckle. Stylish and functional for daily wear.",
       longDescription: "Rainbow 2.0 pet collar features a vibrant rainbow pattern with adjustable fit and secure buckle. Both stylish and functional for daily wear, adding a pop of color to your pet's look.",
-      image: "/src/assets/id50.jpg",
+      image: assetUrl('id50.jpg'),
       hasVariants: false,
     
       brand: "Pet Fashion",
@@ -1208,7 +1209,7 @@ const Shop = () => {
         <div className="happy-tails-shop-header">
           <div className="happy-tails-logo-container">
             <img 
-              src="/src/assets/logo.png" 
+              src={assetUrl('logo.png')} 
               alt="HappyTails Logo" 
               className="happy-tails-logo"
               onError={(e) => {

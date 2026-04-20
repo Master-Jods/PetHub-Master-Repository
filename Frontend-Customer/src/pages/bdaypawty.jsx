@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './bdaypawty.css';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../backend/context/AuthContext';
+import { assetUrl } from '../utils/assets';
 
 const BdayPawty = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const BdayPawty = () => {
           <div 
             className="bdaypawty-background-image"
             style={{ 
-              backgroundImage: 'url("src/assets/pawty.jpg")',
+              backgroundImage: `url(${assetUrl('pawty.jpg')})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
@@ -106,7 +107,7 @@ const BdayPawty = () => {
               <div 
                 className="bdaypawty-photo-placeholder-gallery"
                 style={{ 
-                  backgroundImage: 'url("src/assets/pawty1.jpg")',
+                  backgroundImage: `url(${assetUrl('pawty1.jpg')})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -116,7 +117,7 @@ const BdayPawty = () => {
               <div 
                 className="bdaypawty-photo-placeholder-gallery"
                 style={{ 
-                  backgroundImage: 'url("src/assets/pawty2.jpg")',
+                  backgroundImage: `url(${assetUrl('pawty2.jpg')})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -126,7 +127,7 @@ const BdayPawty = () => {
               <div 
                 className="bdaypawty-photo-placeholder-gallery"
                 style={{ 
-                  backgroundImage: 'url("src/assets/pawty3.jpg")',
+                  backgroundImage: `url(${assetUrl('pawty3.jpg')})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -136,7 +137,7 @@ const BdayPawty = () => {
               <div 
                 className="bdaypawty-photo-placeholder-gallery"
                 style={{ 
-                  backgroundImage: 'url("src/assets/pawty4.jpg")',
+                  backgroundImage: `url(${assetUrl('pawty4.jpg')})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -206,12 +207,12 @@ const BdayPawty = () => {
                 <div className="bdaypawty-menu-content">
                   <div className="bdaypawty-menu-images">
                     <img
-                      src="/src/assets/menu1.jpg"
+                      src={assetUrl('menu1.jpg')}
                       alt="Consumables Menu 1"
                       className="bdaypawty-menu-image"
                     />
                     <img
-                      src="/src/assets/menu2.jpg"
+                      src={assetUrl('menu2.jpg')}
                       alt="Consumables Menu 2"
                       className="bdaypawty-menu-image"
                     />
@@ -242,5 +243,4 @@ const BdayPawty = () => {
 };
 
 export default BdayPawty;
-
 

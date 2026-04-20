@@ -12,7 +12,25 @@ import dashboardRouter from './routes/dashboard.js';
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGINS || [
+  'https://pethub-customer.vercel.app',
+  'https://pethub-admin-three.vercel.app',
+  'https://pethub-lemon.vercel.app',
+].join(','))
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+}));
 app.use(express.json());
 
 app.use('/api/bookings', bookingsRouter);

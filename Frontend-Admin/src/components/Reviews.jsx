@@ -3,7 +3,7 @@ import './Reviews.css';
 
 const REVIEW_FILTERS = ['All Reviews', 'Grooming', 'Boarding', 'Birthday Party', 'Orders'];
 const STAR_FILTERS = ['All Ratings', '5 Stars', '4 Stars', '3 Stars', '2 Stars', '1 Star'];
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://pethub-customer-api.onrender.com/api';
 const RECORDS_PER_PAGE = 10;
 
 const mapReview = (review) => ({

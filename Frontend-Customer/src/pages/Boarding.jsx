@@ -5,6 +5,7 @@ import './Boarding.css';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../backend/context/AuthContext';
 import boardingPic from '../assets/boardingpic.jpg';
+import { assetUrl } from '../utils/assets';
 
 const Boarding = () => {
   const navigate = useNavigate();
@@ -139,7 +140,7 @@ const Boarding = () => {
               <div className="most-popular-badge">DAYCARE</div>
               <div className="card-header">
                 <img 
-                  src="/src/assets/daycare.jpg" 
+                  src={assetUrl('daycare.jpg')} 
                   alt="Daycare" 
                   className="card-image zoomed-out-image"
                 />
@@ -172,7 +173,7 @@ const Boarding = () => {
             <div className="package-card">
               <div className="card-header">
                 <img 
-                  src="/src/assets/overnight.jpg" 
+                  src={assetUrl('overnight.jpg')} 
                   alt="Overnight Boarding" 
                   className="card-image zoomed-out-image"
                 />
@@ -270,7 +271,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/whiskers.jpg" 
+                          src={assetUrl('whiskers.jpg')} 
                           alt="Whiskers the cat" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -285,7 +286,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/luna.webp" 
+                          src={assetUrl('luna.webp')} 
                           alt="Luna the cat" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -300,7 +301,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/simba.jpg" 
+                          src={assetUrl('simba.jpg')} 
                           alt="Simba the cat" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -318,7 +319,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/mittens.jpg" 
+                          src={assetUrl('mittens.jpg')} 
                           alt="Mittens the cat" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -333,7 +334,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/oliver.jpg" 
+                          src={assetUrl('oliver.jpg')} 
                           alt="Oliver the cat" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -348,7 +349,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/bellaa.jpg" 
+                          src={assetUrl('bellaa.jpg')} 
                           alt="Bella the cat" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -412,7 +413,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/max.jpg" 
+                          src={assetUrl('max.jpg')} 
                           alt="Max the dog" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -427,7 +428,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/charlie.jpg" 
+                          src={assetUrl('charlie.jpg')} 
                           alt="Charlie the dog" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -442,7 +443,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/bailey.jpg" 
+                          src={assetUrl('bailey.jpg')} 
                           alt="Bailey the dog" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -460,7 +461,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/rocky.jpg" 
+                          src={assetUrl('rocky.jpg')} 
                           alt="Rocky the dog" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -475,7 +476,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/daisy.jpg" 
+                          src={assetUrl('daisy.jpg')} 
                           alt="Daisy the dog" 
                           className="gallery-photo"
                           onError={(e) => {
@@ -490,7 +491,7 @@ const Boarding = () => {
                     <div className="photo-card">
                       <div className="photo-square">
                         <img 
-                          src="/src/assets/cooper.jpg" 
+                          src={assetUrl('cooper.jpg')} 
                           alt="Cooper the dog" 
                           className="gallery-photo"
                           onError={(e) => {
