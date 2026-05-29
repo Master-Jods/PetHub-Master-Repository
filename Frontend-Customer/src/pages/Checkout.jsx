@@ -10,8 +10,11 @@ import './Shop.css';
 import './Checkout.css';
 
 const PET_MENU_CATEGORIES = new Set(['pet-treats', 'frozen-treats', 'for-dogs', 'for-cats']);
+const PHONE_DIGIT_LIMIT = 11;
+const ZIP_DIGIT_LIMIT = 4;
 
 const formatCurrency = (amount) => `PHP ${Number(amount || 0).toFixed(2)}`;
+const digitsOnly = (value, limit) => String(value || '').replace(/\D/g, '').slice(0, limit);
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -50,21 +53,26 @@ const Checkout = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    const sanitizedValue = name === 'phone'
+      ? digitsOnly(value, PHONE_DIGIT_LIMIT)
+      : name === 'zipCode'
+        ? digitsOnly(value, ZIP_DIGIT_LIMIT)
+        : value;
 
     setFormData((prev) => {
       const next = {
         ...prev,
-        [name]: value
+        [name]: sanitizedValue
       };
 
-      if (name === 'fulfillmentMethod' && value === 'pickup') {
+      if (name === 'fulfillmentMethod' && sanitizedValue === 'pickup') {
         next.shippingOption = '';
       }
 
       if (name === 'fulfillmentMethod' || name === 'shippingOption') {
         updateCheckoutPreferences({
-          fulfillmentMethod: name === 'fulfillmentMethod' ? value : next.fulfillmentMethod,
-          shippingOption: name === 'shippingOption' ? value : next.shippingOption
+          fulfillmentMethod: name === 'fulfillmentMethod' ? sanitizedValue : next.fulfillmentMethod,
+          shippingOption: name === 'shippingOption' ? sanitizedValue : next.shippingOption
         });
       }
 
@@ -99,6 +107,11 @@ const Checkout = () => {
       return;
     }
 
+    if (formData.phone.length !== PHONE_DIGIT_LIMIT) {
+      alert('Please enter a valid 11-digit contact number.');
+      return;
+    }
+
     if (formData.fulfillmentMethod === 'delivery') {
       if (!formData.shippingOption) {
         alert('Please select a shipping area to preview the delivery fee.');
@@ -107,6 +120,11 @@ const Checkout = () => {
 
       if (!formData.address || !formData.city || !formData.zipCode) {
         alert('Please complete the delivery address details.');
+        return;
+      }
+
+      if (formData.zipCode.length !== ZIP_DIGIT_LIMIT) {
+        alert('Please enter a valid 4-digit ZIP code.');
         return;
       }
     }
@@ -362,6 +380,9 @@ const Checkout = () => {
                               value={formData.phone}
                               onChange={handleInputChange}
                               placeholder="Enter phone number"
+                              inputMode="numeric"
+                              maxLength={PHONE_DIGIT_LIMIT}
+                              pattern="\d{11}"
                               required
                             />
                           </Form.Group>
@@ -414,6 +435,9 @@ const Checkout = () => {
                                   value={formData.zipCode}
                                   onChange={handleInputChange}
                                   placeholder="Enter ZIP code"
+                                  inputMode="numeric"
+                                  maxLength={ZIP_DIGIT_LIMIT}
+                                  pattern="\d{4}"
                                   required={formData.fulfillmentMethod === 'delivery'}
                                 />
                               </Form.Group>

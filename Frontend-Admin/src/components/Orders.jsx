@@ -123,7 +123,11 @@ const mapOrder = (order) => ({
   timeline: normalizeTimeline(order.timeline, order.deliveryMethod || order.delivery_method || 'Store Pickup', order.status),
   proofOfPayment: order.proofOfPayment || order.proof_of_payment || ''
   ,
-  proofOfPaymentName: order.proofOfPaymentName || order.proof_of_payment_name || ''
+  proofOfPaymentName: order.proofOfPaymentName || order.proof_of_payment_name || '',
+  refundStatus: order.refundStatus || order.refund_status || 'None',
+  refundReason: order.refundReason || order.refund_reason || '',
+  refundRequestedAt: order.refundRequestedAt || order.refund_requested_at || '',
+  refundApprovedAt: order.refundApprovedAt || order.refund_approved_at || ''
 });
 
 const isImageProof = (value) => String(value || '').startsWith('data:image/')
@@ -542,6 +546,20 @@ function Orders({ onNotificationCountChange }) {
     saveSelectedOrderChanges((currentOrder) => currentOrder);
   };
 
+  const handleRefundStatusUpdate = async (refundStatus) => {
+    if (!selectedOrder) return;
+    setSavingModalChanges(true);
+
+    try {
+      await persistOrderPatch(selectedOrder.id, { refundStatus });
+      setError('');
+    } catch (saveError) {
+      setError(saveError.message || 'Unable to update refund request.');
+    } finally {
+      setSavingModalChanges(false);
+    }
+  };
+
   return (
     <div className="orders-container">
       <div className="orders-header orders-header--with-actions">
@@ -728,6 +746,7 @@ function Orders({ onNotificationCountChange }) {
                       </div>
                       <div className="detail-item"><span className="detail-label">Payment Method</span><span className="detail-value">{selectedOrder.paymentMethod}</span></div>
                       <div className="detail-item"><span className="detail-label">Payment Status</span><span className="detail-value">{selectedOrder.paymentStatus}</span></div>
+                      <div className="detail-item"><span className="detail-label">Refund</span><span className="detail-value">{selectedOrder.refundStatus || 'None'}</span></div>
                     </div>
 
                     <div className="orders-acceptance-card">
@@ -804,6 +823,31 @@ function Orders({ onNotificationCountChange }) {
                               <p>Awaiting uploaded proof of payment screenshot.</p>
                             )}
                           </div>
+                        </div>
+                      )}
+                      {selectedOrder.refundStatus && selectedOrder.refundStatus !== 'None' && (
+                        <div className="orders-fulfillment-card">
+                          <p><strong>Refund Status:</strong> {selectedOrder.refundStatus}</p>
+                          {selectedOrder.refundReason && <p><strong>Customer Reason:</strong> {selectedOrder.refundReason}</p>}
+                          {selectedOrder.refundRequestedAt && <p><strong>Requested:</strong> {new Date(selectedOrder.refundRequestedAt).toLocaleString()}</p>}
+                          {selectedOrder.refundStatus === 'Pending Approval' && (
+                            <div className="orders-request-actions">
+                              <button type="button" className="update-status-btn" onClick={() => handleRefundStatusUpdate('Approved')} disabled={savingModalChanges}>
+                                Approve Refund
+                              </button>
+                              <button type="button" className="orders-reject-btn" onClick={() => handleRefundStatusUpdate('Rejected')} disabled={savingModalChanges}>
+                                Reject Refund
+                              </button>
+                            </div>
+                          )}
+                          {selectedOrder.refundStatus === 'Approved' && (
+                            <>
+                              <p className="orders-delivery-note">Customer should ship the item back to the shop. Mark refunded after manual refund is done.</p>
+                              <button type="button" className="orders-save-btn" onClick={() => handleRefundStatusUpdate('Refunded')} disabled={savingModalChanges}>
+                                Mark Manually Refunded
+                              </button>
+                            </>
+                          )}
                         </div>
                       )}
                       {selectedOrder.deliveryMethod === 'Delivery' && (

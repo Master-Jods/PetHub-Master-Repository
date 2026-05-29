@@ -10,6 +10,7 @@ import {
   fetchProfileDashboard,
   markAllNotificationsAsRead,
   markNotificationAsRead,
+  requestProfileOrderRefund,
   saveProfileReview,
 } from '../backend/services/profileDataService';
 import './Profile.css';
@@ -18,6 +19,8 @@ import { assetUrl } from '../utils/assets';
 
 const ENABLE_PROFILE_REALTIME = true;
 const PROFILE_DASHBOARD_CACHE_PREFIX = 'happytails_profile_dashboard_cache:';
+const PHONE_DIGIT_LIMIT = 11;
+const digitsOnly = (value, limit) => String(value || '').replace(/\D/g, '').slice(0, limit);
 
 const splitFullName = (fullName) => {
   const trimmed = fullName.trim();
@@ -801,6 +804,53 @@ const Profile = () => {
     alert('Order cancelled successfully!');
   };
 
+  const handleRequestRefund = async (order) => {
+    if (!order || order.refundStatus === 'Pending Approval' || order.refundStatus === 'Approved') return;
+    const reason = window.prompt('Reason for refund request:');
+    const trimmedReason = String(reason || '').trim();
+    if (!trimmedReason) return;
+
+    if (authUser?.id) {
+      try {
+        const saved = await requestProfileOrderRefund(authUser.id, order.dbId || order.id, {
+          reason: trimmedReason,
+        });
+
+        if (!saved) {
+          alert('Unable to request a refund for this order. Please try again later.');
+          return;
+        }
+      } catch (error) {
+        alert(error?.message || 'Unable to request a refund right now.');
+        return;
+      }
+    }
+
+    const requestedAt = new Date().toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+
+    setOrderHistory((prev) =>
+      prev.map((entry) => (
+        entry.id === order.id
+          ? {
+              ...entry,
+              refundStatus: 'Pending Approval',
+              refundReason: trimmedReason,
+              refundRequestedAt: requestedAt,
+              updatedAt: requestedAt,
+            }
+          : entry
+      ))
+    );
+
+    alert('Refund request submitted. Please wait for staff approval before shipping the item back.');
+  };
+
   const handleViewServiceDetails = (booking) => {
     switch(booking.serviceType) {
       case 'grooming':
@@ -992,7 +1042,7 @@ const Profile = () => {
     setSettingsSuccess('');
     setSettingsForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : name === 'phone' ? digitsOnly(value, PHONE_DIGIT_LIMIT) : value
     }));
   };
 
@@ -1005,6 +1055,11 @@ const Profile = () => {
 
     if (!trimmedName || !trimmedEmail || !trimmedPhone) {
       setSettingsError('Please complete Full Name, Email, and Phone.');
+      return;
+    }
+
+    if (trimmedPhone.length !== PHONE_DIGIT_LIMIT) {
+      setSettingsError('Please enter a valid 11-digit phone number.');
       return;
     }
 
@@ -1430,6 +1485,7 @@ const Profile = () => {
                         const { timeline, currentStepIndex, customerStage } = getTrackingConfig(order);
                         const isCompleted = customerStage === 'Delivered' || customerStage === 'Order Received';
                         const isCancelled = customerStage === 'Cancelled';
+                        const canRequestRefund = isCompleted && (!order.refundStatus || order.refundStatus === 'None' || order.refundStatus === 'Rejected');
                         const paymentLabel = order.paymentMethod || (order.status === 'Paid' ? 'GCash' : 'Cash');
                         const fulfillmentLabel = order.fulfillmentMethod || (String(order.riderName || '').toLowerCase().includes('pickup') ? 'Pickup' : 'Delivery');
                         const showTracking = !!expandedTracking[order.id];
@@ -1463,6 +1519,9 @@ const Profile = () => {
                             )}
                             {isCancelled && order.cancelReason && (
                               <span><strong>Reason:</strong> {order.cancelReason}</span>
+                            )}
+                            {order.refundStatus && order.refundStatus !== 'None' && (
+                              <span><strong>Refund:</strong> {order.refundStatus}</span>
                             )}
                             {!isCompleted && !isCancelled && order.eta && (
                               <span><strong>ETA:</strong> {order.eta}</span>
@@ -1551,6 +1610,11 @@ const Profile = () => {
                             {!isCompleted && !isCancelled && order.requestStatus === 'Pending Request' && (
                               <button className="btn-outline" onClick={() => handleCancelOrder(order)}>
                                 Cancel
+                              </button>
+                            )}
+                            {canRequestRefund && (
+                              <button className="btn-outline" onClick={() => handleRequestRefund(order)}>
+                                Request Refund
                               </button>
                             )}
                             <button className="btn-secondary" onClick={() => handleReorder(order)}>
@@ -1766,6 +1830,9 @@ const Profile = () => {
                             name="phone"
                             value={settingsForm.phone}
                             onChange={handleSettingsChange}
+                            inputMode="numeric"
+                            maxLength={PHONE_DIGIT_LIMIT}
+                            pattern="\d{11}"
                           />
                         </div>
                       </div>

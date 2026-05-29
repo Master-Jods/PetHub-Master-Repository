@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../backend/context/AuthContext";
 import "./AuthModal.css";
 
+const PHONE_DIGIT_LIMIT = 11;
+const digitsOnly = (value) => String(value || "").replace(/\D/g, "").slice(0, PHONE_DIGIT_LIMIT);
+
 const AuthModal = ({ show, onClose, onSuccess }) => {
   const { login, signup, loading: authLoading } = useAuth();
 
@@ -67,6 +70,10 @@ const AuthModal = ({ show, onClose, onSuccess }) => {
     if (!canSubmit || submitting) return;
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
+      return;
+    }
+    if (phone.length !== PHONE_DIGIT_LIMIT) {
+      setError("Please enter a valid 11-digit phone number.");
       return;
     }
     setSubmitting(true);
@@ -193,8 +200,11 @@ const AuthModal = ({ show, onClose, onSuccess }) => {
               <Form.Label className="ht-auth-label">Phone</Form.Label>
               <Form.Control
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(digitsOnly(e.target.value))}
                 placeholder="09XXXXXXXXX"
+                inputMode="numeric"
+                maxLength={PHONE_DIGIT_LIMIT}
+                pattern="\d{11}"
                 required
               />
             </Form.Group>

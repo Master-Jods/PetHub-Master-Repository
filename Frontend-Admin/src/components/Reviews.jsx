@@ -17,6 +17,7 @@ const mapReview = (review) => ({
   petName: review.petName || review.pet_name || 'N/A',
   review: review.review || review.review_text || '',
   wouldRecommend: Boolean(review.wouldRecommend ?? review.would_recommend),
+  showToCommunity: Boolean(review.showToCommunity ?? review.show_to_community),
   transaction: review.transaction || {
     reference: review.reference || '',
     serviceName: review.serviceName || '',
@@ -37,6 +38,7 @@ function Reviews() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [savingCommunityReviewId, setSavingCommunityReviewId] = useState('');
 
   useEffect(() => {
     const loadReviews = async () => {
@@ -101,6 +103,33 @@ function Reviews() {
       fiveStarCount
     };
   }, [reviews]);
+
+  const handleCommunityToggle = async (review) => {
+    setSavingCommunityReviewId(review.id);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/${review.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ showToCommunity: !review.showToCommunity })
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.message || `Failed to update review (${response.status})`);
+      }
+
+      const payload = await response.json();
+      const updatedReview = mapReview(payload.review);
+      setReviews((prev) => prev.map((item) => (item.id === updatedReview.id ? updatedReview : item)));
+      setSelectedReview((prev) => (prev && prev.id === updatedReview.id ? updatedReview : prev));
+      setError('');
+    } catch (saveError) {
+      setError(saveError.message || 'Unable to update community review.');
+    } finally {
+      setSavingCommunityReviewId('');
+    }
+  };
 
   return (
     <div className="reviews-container">
@@ -194,6 +223,18 @@ function Reviews() {
                 >
                   View Details
                 </button>
+                <button
+                  type="button"
+                  className={`review-details-btn ${review.showToCommunity ? 'active' : ''}`}
+                  onClick={() => handleCommunityToggle(review)}
+                  disabled={savingCommunityReviewId === review.id}
+                >
+                  {savingCommunityReviewId === review.id
+                    ? 'Saving...'
+                    : review.showToCommunity
+                      ? 'Shown to Community'
+                      : 'Show to Community'}
+                </button>
               </div>
 
               <p className="review-text">{review.review}</p>
@@ -262,7 +303,16 @@ function Reviews() {
                   <p><strong>Pet:</strong> {selectedReview.petName}</p>
                   <p><strong>Date Submitted:</strong> {selectedReview.date}</p>
                   <p><strong>Rating:</strong> {selectedReview.score}</p>
+                  <p><strong>Homepage:</strong> {selectedReview.showToCommunity ? 'Shown to Community' : 'Hidden'}</p>
                   <p className="reviews-modal-copy">{selectedReview.review}</p>
+                  <button
+                    type="button"
+                    className="review-details-btn"
+                    onClick={() => handleCommunityToggle(selectedReview)}
+                    disabled={savingCommunityReviewId === selectedReview.id}
+                  >
+                    {selectedReview.showToCommunity ? 'Hide from Community' : 'Show to Community'}
+                  </button>
                 </div>
 
                 <div className="reviews-modal-card">

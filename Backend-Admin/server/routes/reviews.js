@@ -42,6 +42,7 @@ const mapReview = (row, profileMap) => ({
   review: row.comment,
   adminResponse: row.admin_response || '',
   wouldRecommend: row.would_recommend,
+  showToCommunity: Boolean(row.show_to_community),
   transaction: buildTransaction(row),
 });
 
@@ -62,6 +63,7 @@ router.get('/', async (_req, res) => {
         comment,
         admin_response,
         would_recommend,
+        show_to_community,
         transaction,
         booking:bookings(booking_code, scheduled_at, payment_method, payment_status, service_total, service),
         order:orders(order_code, order_date, payment_method, payment_status, total, category)
@@ -92,15 +94,24 @@ router.get('/', async (_req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const { adminResponse } = req.body;
+  const { adminResponse, showToCommunity } = req.body;
+  const updateRow = {
+    updated_at: new Date().toISOString()
+  };
+
+  if (adminResponse !== undefined) {
+    updateRow.admin_response = adminResponse ?? '';
+  }
+
+  if (showToCommunity !== undefined) {
+    updateRow.show_to_community = Boolean(showToCommunity);
+    updateRow.community_featured_at = showToCommunity ? new Date().toISOString() : null;
+  }
 
   try {
     const { data, error } = await supabaseAdmin
       .from('reviews')
-      .update({
-        admin_response: adminResponse ?? '',
-        updated_at: new Date().toISOString()
-      })
+      .update(updateRow)
       .eq('review_code', id)
       .select(`
         id,
@@ -115,6 +126,7 @@ router.patch('/:id', async (req, res) => {
         comment,
         admin_response,
         would_recommend,
+        show_to_community,
         transaction,
         booking:bookings(booking_code, scheduled_at, payment_method, payment_status, service_total, service),
         order:orders(order_code, order_date, payment_method, payment_status, total, category)

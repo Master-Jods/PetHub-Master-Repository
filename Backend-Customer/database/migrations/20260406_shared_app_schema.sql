@@ -169,6 +169,13 @@ create table if not exists public.orders (
   cancelled_at timestamptz,
   cancelled_stage text,
   cancel_reason text,
+  refund_status text not null default 'None'
+    check (refund_status in ('None', 'Pending Approval', 'Approved', 'Rejected', 'Refunded')),
+  refund_reason text default '',
+  refund_requested_at timestamptz,
+  refund_approved_at timestamptz,
+  refund_rejected_at timestamptz,
+  refund_completed_at timestamptz,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
@@ -177,6 +184,7 @@ create table if not exists public.orders (
 create index if not exists idx_orders_user_id on public.orders(user_id);
 create index if not exists idx_orders_status on public.orders(status);
 create index if not exists idx_orders_request_status on public.orders(request_status);
+create index if not exists idx_orders_refund_status on public.orders(refund_status, refund_requested_at desc);
 create index if not exists idx_orders_order_date on public.orders(order_date);
 
 create table if not exists public.reviews (
@@ -196,6 +204,8 @@ create table if not exists public.reviews (
   comment text not null,
   admin_response text default '',
   would_recommend boolean not null default true,
+  show_to_community boolean not null default false,
+  community_featured_at timestamptz,
   transaction jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
@@ -204,6 +214,7 @@ create table if not exists public.reviews (
 create index if not exists idx_reviews_user_id on public.reviews(user_id);
 create index if not exists idx_reviews_booking_id on public.reviews(booking_id);
 create index if not exists idx_reviews_order_id on public.reviews(order_id);
+create index if not exists idx_reviews_show_to_community on public.reviews(show_to_community, community_featured_at desc);
 
 create table if not exists public.notifications (
   id uuid primary key default gen_random_uuid(),
@@ -553,6 +564,11 @@ create policy reviews_select_own
   on public.reviews for select to authenticated
   using (auth.uid() = user_id);
 
+drop policy if exists reviews_select_community_featured on public.reviews;
+create policy reviews_select_community_featured
+  on public.reviews for select to anon, authenticated
+  using (show_to_community = true);
+
 drop policy if exists reviews_insert_own on public.reviews;
 create policy reviews_insert_own
   on public.reviews for insert to authenticated
@@ -815,3 +831,6 @@ where not exists (
   where p.user_id = au.id
 )
 on conflict (user_id) do nothing;
+
+grant select on public.reviews to anon;
+grant select, insert, update, delete on public.reviews to authenticated;

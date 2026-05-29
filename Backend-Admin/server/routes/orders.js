@@ -7,6 +7,7 @@ const PAYMENT_METHOD_OPTIONS = ['Cash', 'GCash'];
 const PAYMENT_STATUS_OPTIONS = ['Pending', 'Paid', 'Refunded'];
 const ORDER_STATUS_OPTIONS = ['Pending', 'Order Placed', 'Preparing Order', 'Rider Picked Up', 'Out for Delivery', 'Delivered', 'Order Received', 'Cancelled'];
 const REQUEST_STATUS_OPTIONS = ['Pending Request', 'Accepted', 'Rejected'];
+const REFUND_STATUS_OPTIONS = ['None', 'Pending Approval', 'Approved', 'Rejected', 'Refunded'];
 const DELIVERY_METHOD_OPTIONS = ['Store Pickup', 'Delivery'];
 const DELIVERY_ZONE_RATES = {
   Pleasantville: 0,
@@ -39,6 +40,12 @@ const ORDER_LIST_COLUMNS = [
   'rider_snapshot',
   'timeline',
   'proof_of_payment',
+  'refund_status',
+  'refund_reason',
+  'refund_requested_at',
+  'refund_approved_at',
+  'refund_rejected_at',
+  'refund_completed_at',
   'metadata',
 ].join(', ');
 
@@ -147,6 +154,12 @@ const mapOrder = (row) => ({
     || row.metadata?.proofOfPaymentDataUrl
     || '',
   proofOfPaymentName: row.metadata?.proofOfPaymentName || '',
+  refundStatus: row.refund_status || 'None',
+  refundReason: row.refund_reason || '',
+  refundRequestedAt: row.refund_requested_at || '',
+  refundApprovedAt: row.refund_approved_at || '',
+  refundRejectedAt: row.refund_rejected_at || '',
+  refundCompletedAt: row.refund_completed_at || '',
 });
 
 async function getRecentNotifications() {
@@ -249,6 +262,24 @@ router.patch('/:id', async (req, res) => {
     patch.rejection_reason = req.body.rejectionReason;
   }
 
+  if (req.body.refundStatus !== undefined) {
+    if (!REFUND_STATUS_OPTIONS.includes(req.body.refundStatus)) {
+      return res.status(400).json({ message: 'Invalid refund status.' });
+    }
+
+    patch.refund_status = req.body.refundStatus;
+    const nowIso = new Date().toISOString();
+    if (req.body.refundStatus === 'Approved') {
+      patch.refund_approved_at = nowIso;
+      patch.refund_rejected_at = null;
+    } else if (req.body.refundStatus === 'Rejected') {
+      patch.refund_rejected_at = nowIso;
+    } else if (req.body.refundStatus === 'Refunded') {
+      patch.refund_completed_at = nowIso;
+      patch.payment_status = 'Refunded';
+    }
+  }
+
   if (req.body.shippingAddress !== undefined) {
     patch.shipping_address = req.body.shippingAddress;
   }
@@ -341,6 +372,26 @@ router.patch('/:id', async (req, res) => {
       } catch (notificationError) {
         console.warn('Order saved but notification state was not updated:', notificationError.message || notificationError);
       }
+    }
+
+    if (patch.refund_status && data.user_id) {
+      await supabaseAdmin.from('notifications').insert({
+        user_id: data.user_id,
+        audience: 'customer',
+        type: 'order',
+        entity_type: 'order',
+        entity_id: data.id,
+        title: `Refund ${patch.refund_status}`,
+        message: patch.refund_status === 'Approved'
+          ? `Your refund request for order ${data.order_code} was approved. Please ship the item back to the shop.`
+          : patch.refund_status === 'Refunded'
+            ? `Your order ${data.order_code} has been marked as manually refunded.`
+            : `Your refund request for order ${data.order_code} is ${patch.refund_status.toLowerCase()}.`,
+        metadata: {
+          orderCode: data.order_code,
+          refundStatus: patch.refund_status,
+        },
+      });
     }
 
     const [notifications, unreadCount] = await Promise.all([

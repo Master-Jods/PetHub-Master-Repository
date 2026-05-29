@@ -11,32 +11,7 @@ import { assetUrl } from '../utils/assets';
 const Home = () => {
   const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
-  const communityReviews = [
-    {
-      id: 1,
-      name: 'Sarah Chen',
-      review: 'Super bait ng staff and very maingat sila sa grooming ni Bella. Babalik kami ulit.',
-      service: 'Grooming Service',
-      rating: '5.0/5',
-      stars: 5
-    },
-    {
-      id: 2,
-      name: 'Miguel Santos',
-      review: 'Malinis yung boarding area and may updates ako na-receive habang naka-check in si Max.',
-      service: 'Pet Boarding',
-      rating: '5.0/5',
-      stars: 5
-    },
-    {
-      id: 3,
-      name: 'Alyssa Rivera',
-      review: 'Ang dali mag order sa shop at mabilis dumating. Quality din yung products.',
-      service: 'Shop Order',
-      rating: '4.9/5',
-      stars: 5
-    }
-  ];
+  const [communityReviews, setCommunityReviews] = useState([]);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -74,6 +49,41 @@ const Home = () => {
     };
 
     void loadAnnouncements();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    let isMounted = true;
+
+    const loadCommunityReviews = async () => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('id, service, rating, score, comment')
+        .eq('show_to_community', true)
+        .order('community_featured_at', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (!isMounted || error || !Array.isArray(data)) return;
+
+      setCommunityReviews(data.map((item) => {
+        return {
+          id: item.id,
+          name: 'Happy Tails Customer',
+          review: item.comment || '',
+          service: item.service || 'Happy Tails Service',
+          rating: item.score || `${Number(item.rating || 0).toFixed(1)}/5`,
+          stars: Number(item.rating || 0)
+        };
+      }).filter((item) => item.review));
+    };
+
+    void loadCommunityReviews();
 
     return () => {
       isMounted = false;
@@ -547,7 +557,7 @@ const Home = () => {
         </Container>
       </section>
 
-      {/* Community Reviews Section */}
+      {communityReviews.length > 0 && (
       <section className="home-community-reviews-section">
         <Container>
           <div className="home-community-reviews-shell">
@@ -601,6 +611,7 @@ const Home = () => {
           </Row>
         </Container>
       </section>
+      )}
     </div>
   );
 };

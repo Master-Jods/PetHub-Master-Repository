@@ -4,6 +4,9 @@ import './HappyTails2.css';
 import { useAuth } from "../backend/context/AuthContext";
 import { assetUrl } from '../utils/assets';
 
+const PHONE_DIGIT_LIMIT = 11;
+const digitsOnly = (value) => String(value || '').replace(/\D/g, '').slice(0, PHONE_DIGIT_LIMIT);
+
 const HappyTails2 = () => {
   const navigate = useNavigate();
 
@@ -176,6 +179,11 @@ const HappyTails2 = () => {
     // Password confirmation validation
     if (signupPassword !== signupConfirmPassword) {
       setAuthError('Passwords do not match!');
+      return;
+    }
+
+    if (signupPhone.length !== PHONE_DIGIT_LIMIT) {
+      setAuthError('Please enter a valid 11-digit phone number.');
       return;
     }
 
@@ -503,7 +511,10 @@ const HappyTails2 = () => {
                                 className="ht2-form-input"
                                 placeholder="Enter your phone number"
                                 value={signupPhone}
-                                onChange={(e) => setSignupPhone(e.target.value)}
+                                onChange={(e) => setSignupPhone(digitsOnly(e.target.value))}
+                                inputMode="numeric"
+                                maxLength={PHONE_DIGIT_LIMIT}
+                                pattern="\d{11}"
                                 required
                               />
                             </div>

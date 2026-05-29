@@ -289,7 +289,7 @@ async function loadOrderRows(userId) {
   const { data, error } = await supabase
     .from("orders")
     .select(
-      "id, order_code, order_date, items, total, base_total, currency, status, request_status, payment_method, payment_status, fulfillment_method, delivery_method, delivery_zone, delivery_fee, shipping_address, rider_snapshot, updated_at, eta, cancelled_at, cancelled_stage, cancel_reason, tracking_updates, timeline, proof_of_payment, delivery_status, created_at"
+      "id, order_code, order_date, items, total, base_total, currency, status, request_status, payment_method, payment_status, fulfillment_method, delivery_method, delivery_zone, delivery_fee, shipping_address, rider_snapshot, updated_at, eta, cancelled_at, cancelled_stage, cancel_reason, refund_status, refund_reason, refund_requested_at, refund_approved_at, tracking_updates, timeline, proof_of_payment, delivery_status, created_at"
     )
     .eq("user_id", userId)
     .order("order_date", { ascending: false });
@@ -481,6 +481,10 @@ export async function fetchProfileDashboard(userId) {
     cancelledAt: formatDateTime(row.cancelled_at),
     cancelledStage: row.cancelled_stage || "",
     cancelReason: row.cancel_reason || "",
+    refundStatus: row.refund_status || "None",
+    refundReason: row.refund_reason || "",
+    refundRequestedAt: formatDateTime(row.refund_requested_at),
+    refundApprovedAt: formatDateTime(row.refund_approved_at),
     trackingUpdates: Array.isArray(row.tracking_updates) ? row.tracking_updates : [],
   }));
 
@@ -934,6 +938,65 @@ export async function cancelProfileOrder(userId, orderId, payload = {}) {
       entity_id: data.id,
       title: "Order Cancelled",
       message: `Your order ${data.order_code} was cancelled.`,
+      metadata: {
+        orderCode: data.order_code,
+      },
+    },
+  ]);
+
+  return true;
+}
+
+export async function requestProfileOrderRefund(userId, orderId, payload = {}) {
+  if (!supabase || !userId || !orderId) return false;
+
+  const reason = String(payload.reason || "").trim();
+  if (!reason) throw new Error("Please enter a reason for the refund request.");
+
+  const nowIso = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("orders")
+    .update({
+      refund_status: "Pending Approval",
+      refund_reason: reason,
+      refund_requested_at: nowIso,
+      updated_at: nowIso,
+    })
+    .eq("user_id", userId)
+    .eq("id", orderId)
+    .in("status", ["Delivered", "Order Received"])
+    .select("id, order_code")
+    .maybeSingle();
+
+  if (error) {
+    if (isSchemaError(error)) return false;
+    throw new Error(error.message);
+  }
+
+  if (!data?.id) return false;
+
+  await insertNotifications([
+    {
+      audience: "admin",
+      type: "order",
+      entity_type: "order",
+      entity_id: data.id,
+      title: "Refund Request",
+      message: `Refund requested for order ${data.order_code}.`,
+      metadata: {
+        orderCode: data.order_code,
+        reason,
+        notificationKind: "refund",
+      },
+    },
+    {
+      user_id: userId,
+      audience: "customer",
+      type: "order",
+      entity_type: "order",
+      entity_id: data.id,
+      title: "Refund Request Submitted",
+      message: `Your refund request for order ${data.order_code} is pending staff approval.`,
       metadata: {
         orderCode: data.order_code,
       },
