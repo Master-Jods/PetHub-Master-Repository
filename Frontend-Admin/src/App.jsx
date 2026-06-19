@@ -1,4 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, lazy, Suspense } from 'react';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import { AuthProvider as CafeAuthProvider } from './cafe/context/AuthContext';
 import './App.css';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
@@ -17,6 +20,21 @@ import logo from './assets/Ht-logo.png';
 import { supabase } from './supabaseClient';
 import { toFriendlyMessage } from './utils/friendlyMessage';
 
+const CafeDashboardLayout = lazy(() => import('./cafe/staff/components/dashboard/DashboardLayout').then(m => ({ default: m.DashboardLayout })));
+const CafeDashboardPage = lazy(() => import('./cafe/staff/pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const CafeSettingsPage = lazy(() => import('./cafe/staff/pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const CafeActivityLogPage = lazy(() => import('./cafe/staff/pages/admin/ActivityLogPage').then(m => ({ default: m.ActivityLogPage })));
+const CafeDeliveryCoveragePage = lazy(() => import('./cafe/staff/pages/admin/DeliveryCoveragePage').then(m => ({ default: m.DeliveryCoveragePage })));
+const CafeReviewsPage = lazy(() => import('./cafe/staff/pages/owner/ReviewsPage').then(m => ({ default: m.ReviewsPage })));
+const CafeRiderManagementPage = lazy(() => import('./cafe/staff/pages/owner/RiderManagementPage').then(m => ({ default: m.RiderManagementPage })));
+const CafeStaffOrdersPage = lazy(() => import('./cafe/staff/pages/orders/OrdersPage').then(m => ({ default: m.OrdersPage })));
+const CafeDailyMenuPage = lazy(() => import('./cafe/staff/pages/menu/DailyMenuPage').then(m => ({ default: m.DailyMenuPage })));
+const CafeMenuManagementPage = lazy(() => import('./cafe/staff/pages/menu/MenuManagementPage').then(m => ({ default: m.MenuManagementPage })));
+const CafeInventoryManagementPage = lazy(() => import('./cafe/staff/pages/menu/InventoryManagementPage').then(m => ({ default: m.InventoryManagementPage })));
+const CafeCustomersLoyaltyPage = lazy(() => import('./cafe/staff/pages/customers/CustomersLoyaltyPage').then(m => ({ default: m.CustomersLoyaltyPage })));
+const CafeImportsReportsPage = lazy(() => import('./cafe/staff/pages/imports/ImportsReportsPage').then(m => ({ default: m.ImportsReportsPage })));
+const CafeStaffProfilePage = lazy(() => import('./cafe/staff/pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
+
 const AUTH_ROLE_STORAGE_KEY = 'happytails_admin_role';
 const LAST_PAGE_STORAGE_KEY = 'happytails_admin_last_page';
 const AUTH_ROLE_INTENT_STORAGE_KEY = 'happytails_auth_role_intent';
@@ -32,6 +50,10 @@ const withTimeout = (promise, timeoutMs = AUTH_TIMEOUT_MS) =>
   ]);
 
 function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isStaffPath = location.pathname.startsWith('/staff') || location.pathname.startsWith('/owner');
+
   const cachedRole = localStorage.getItem(AUTH_ROLE_STORAGE_KEY);
   const cachedPage = localStorage.getItem(LAST_PAGE_STORAGE_KEY) || 'dashboard';
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -277,6 +299,50 @@ function App() {
     );
   };
 
+  if (isStaffPath) {
+    return (
+      <CafeAuthProvider>
+        <Toaster position="top-center" richColors />
+        <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', fontFamily: 'sans-serif' }}>Loading Cafe Admin...</div>}>
+          <Routes>
+            <Route path="/staff" element={<CafeDashboardLayout />}>
+              <Route index element={<Navigate to="/staff/dashboard" replace />} />
+              <Route path="dashboard" element={<CafeDashboardPage />} />
+              <Route path="orders" element={<CafeStaffOrdersPage />} />
+              <Route path="daily-menu" element={<CafeDailyMenuPage />} />
+              <Route path="menu" element={<CafeMenuManagementPage />} />
+              <Route path="inventory" element={<CafeInventoryManagementPage />} />
+              <Route path="customers" element={<CafeCustomersLoyaltyPage />} />
+              <Route path="profile" element={<CafeStaffProfilePage />} />
+              <Route path="reviews" element={<CafeReviewsPage />} />
+              <Route path="riders" element={<CafeRiderManagementPage />} />
+              <Route path="imports" element={<CafeImportsReportsPage />} />
+              <Route path="settings" element={<CafeSettingsPage />} />
+              <Route path="admin/delivery-coverage" element={<CafeDeliveryCoveragePage />} />
+              <Route path="admin/activity-log" element={<CafeActivityLogPage />} />
+            </Route>
+            <Route path="/owner" element={<CafeDashboardLayout />}>
+              <Route index element={<Navigate to="/owner/dashboard" replace />} />
+              <Route path="dashboard" element={<CafeDashboardPage />} />
+              <Route path="orders" element={<CafeStaffOrdersPage />} />
+              <Route path="daily-menu" element={<CafeDailyMenuPage />} />
+              <Route path="menu" element={<CafeMenuManagementPage />} />
+              <Route path="inventory" element={<CafeInventoryManagementPage />} />
+              <Route path="customers" element={<CafeCustomersLoyaltyPage />} />
+              <Route path="profile" element={<CafeStaffProfilePage />} />
+              <Route path="reviews" element={<CafeReviewsPage />} />
+              <Route path="riders" element={<CafeRiderManagementPage />} />
+              <Route path="imports" element={<CafeImportsReportsPage />} />
+              <Route path="settings" element={<CafeSettingsPage />} />
+              <Route path="admin/delivery-coverage" element={<CafeDeliveryCoveragePage />} />
+              <Route path="admin/activity-log" element={<CafeActivityLogPage />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </CafeAuthProvider>
+    );
+  }
+
   if (authLoading) {
     return (
       <div className="session-loader">
@@ -405,6 +471,12 @@ function App() {
                 Analytics
               </button>
             )}
+            <button
+              className="nav-item"
+              onClick={() => navigate('/staff/dashboard')}
+            >
+              Cafe Management
+            </button>
             <button
               className={`nav-item ${currentPage === 'settings' ? 'active' : ''}`}
               onClick={() => setCurrentPage('settings')}

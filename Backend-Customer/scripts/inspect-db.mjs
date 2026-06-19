@@ -26,9 +26,16 @@ function loadEnvFile(filePath = ".env") {
 async function run() {
   loadEnvFile();
 
-  const dbUrl = process.env.SUPABASE_DB_URL;
+  const dbUrl = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
   if (!dbUrl) {
-    console.error("SUPABASE_DB_URL is missing in environment.");
+    console.error("DATABASE_URL or SUPABASE_DB_URL is missing in environment.");
+    process.exit(1);
+  }
+
+  if (dbUrl.startsWith("http")) {
+    console.error("Error: The environment variable points to an HTTPS REST URL (e.g. https://*.supabase.co) rather than a direct PostgreSQL connection string (postgresql://...).");
+    console.error("Please add a direct PostgreSQL connection string to your environment, for example:");
+    console.error("DATABASE_URL=postgresql://postgres:[password]@db.yzzxgtpquosljnfjqmtf.supabase.co:5432/postgres");
     process.exit(1);
   }
 

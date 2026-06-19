@@ -12,6 +12,7 @@
     "dev:customer": "npm --prefix Frontend-Customer run dev -- --host 0.0.0.0 --port 5173",
     "dev:admin": "npm --prefix Frontend-Admin run dev -- --host 0.0.0.0 --port 5174",
     "dev:backend-admin": "npm --prefix Backend-Admin run dev",
+    "db:migrate:cafe": "npm --prefix Backend-Customer run db:migrate:cafe",
     "dev:all": "concurrently -n launcher,customer,admin,backend-admin \"npm run dev:launcher\" \"npm run dev:customer\" \"npm run dev:admin\" \"npm run dev:backend-admin\""
   },
   "dependencies": {

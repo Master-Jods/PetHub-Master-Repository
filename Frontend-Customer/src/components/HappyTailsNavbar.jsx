@@ -5,8 +5,10 @@ import { assetUrl } from '../utils/assets';
 
 const HappyTailsNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCafeDropdownOpen, setIsCafeDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const cafeDropdownRef = useRef(null);
   const navigate = useNavigate();
 
   // Close dropdown when clicking outside
@@ -14,6 +16,9 @@ const HappyTailsNavbar = () => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
+      }
+      if (cafeDropdownRef.current && !cafeDropdownRef.current.contains(event.target)) {
+        setIsCafeDropdownOpen(false);
       }
     };
 
@@ -28,6 +33,7 @@ const HappyTailsNavbar = () => {
     const handleEscKey = (event) => {
       if (event.key === 'Escape') {
         setIsDropdownOpen(false);
+        setIsCafeDropdownOpen(false);
       }
     };
 
@@ -39,10 +45,17 @@ const HappyTailsNavbar = () => {
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
+    if (isCafeDropdownOpen) setIsCafeDropdownOpen(false);
+  };
+
+  const handleCafeDropdownToggle = () => {
+    setIsCafeDropdownOpen(!isCafeDropdownOpen);
+    if (isDropdownOpen) setIsDropdownOpen(false);
   };
 
   const handleDropdownItemClick = (path) => {
     setIsDropdownOpen(false);
+    setIsCafeDropdownOpen(false);
     setIsMobileMenuOpen(false);
     navigate(path);
   };
@@ -50,10 +63,12 @@ const HappyTailsNavbar = () => {
   const handleMobileMenuToggle = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
     if (isDropdownOpen) setIsDropdownOpen(false);
+    if (isCafeDropdownOpen) setIsCafeDropdownOpen(false);
   };
 
   const handleNavLinkClick = () => {
     setIsDropdownOpen(false);
+    setIsCafeDropdownOpen(false);
     setIsMobileMenuOpen(false);
   };
 
@@ -141,10 +156,38 @@ const HappyTailsNavbar = () => {
               Shop
             </Link>
             
-            {/* Pet Menu */}
-            <Link to="/petcafe" className="htn-nav-item" onClick={handleNavLinkClick}>
-              Pet Menu
-            </Link>
+            {/* Cafe Dropdown */}
+            <div 
+              className={`htn-nav-item htn-dropdown ${isCafeDropdownOpen ? 'active' : ''}`}
+              ref={cafeDropdownRef}
+            >
+              <button 
+                className="htn-dropdown-toggle"
+                onClick={handleCafeDropdownToggle}
+                aria-expanded={isCafeDropdownOpen}
+                aria-haspopup="true"
+              >
+                Cafe <span className={`htn-dropdown-icon ${isCafeDropdownOpen ? 'open' : ''}`}>▼</span>
+              </button>
+              
+              {/* Dropdown Content */}
+              <div className={`htn-dropdown-content ${isCafeDropdownOpen ? 'show' : ''}`}>
+                <Link 
+                  to="/cafe/menu" 
+                  className="htn-dropdown-item"
+                  onClick={() => handleDropdownItemClick('/cafe/menu')}
+                >
+                  Cafe Menu (For Humans)
+                </Link>
+                <Link 
+                  to="/petcafe" 
+                  className="htn-dropdown-item"
+                  onClick={() => handleDropdownItemClick('/petcafe')}
+                >
+                  Pet Menu (For Pets)
+                </Link>
+              </div>
+            </div>
             
             {/* User Icon - Logged in state */}
             <div className="htn-nav-item htn-user-container">

@@ -1,0 +1,127 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import {
+  buildDeliveryAddress,
+  formatDeliveryAddress,
+  parseDeliveryAddress,
+  validateDeliveryAddress,
+} from "../src/utils/deliveryAddress.js";
+
+const deliveryConfig = {
+  id: "area-1",
+  fixedBarangayName: "Ilayang Iyam",
+  city: "Lucena City",
+  province: "Quezon",
+  country: "Philippines",
+  centerLat: 13.93949,
+  centerLng: 121.6024,
+  maxDistanceKm: 4,
+  isActive: true,
+  deliveryStatus: "active",
+  puroks: [
+    { id: "purok-1", purokName: "Purok Sampaguita", lat: 13.942, lng: 121.623, isActive: true, deliveryStatus: "active" },
+    { id: "purok-2", purokName: "Purok Carmelita", lat: 13.9424, lng: 121.6234, isActive: true, deliveryStatus: "active" },
+  ],
+  polygon: [],
+};
+
+test("buildDeliveryAddress normalizes configured delivery labels", () => {
+  const address = buildDeliveryAddress({
+    houseDetails: "Blk 9 Lot 4",
+    purokName: "Purok Sampaguita",
+    fixedBarangayName: deliveryConfig.fixedBarangayName,
+    city: deliveryConfig.city,
+    province: deliveryConfig.province,
+    country: deliveryConfig.country,
+  });
+
+  assert.equal(address, "Blk 9 Lot 4, Purok Sampaguita, Ilayang Iyam, Lucena City, Quezon, Philippines");
+});
+
+test("parseDeliveryAddress resolves the saved purok from shared delivery config", () => {
+  const parsed = parseDeliveryAddress(
+    "Unit 5, Purok Carmelita, Ilayang Iyam, Lucena City, Quezon, Philippines",
+    deliveryConfig
+  );
+
+  assert.equal(parsed.houseDetails, "Unit 5");
+  assert.equal(parsed.selectedPurokId, "purok-2");
+});
+
+test("formatDeliveryAddress hides metadata and coordinates from order displays", () => {
+  const formatted = formatDeliveryAddress({
+    name: "Test Customer",
+    email: "test@example.com",
+    houseDetails: "Blk 8 Lot 1",
+    selectedPurokName: "Purok Sampaguita",
+    fixedBarangayName: "Ilayang Iyam",
+    city: "Lucena City",
+    province: "Quezon",
+    country: "Philippines",
+    latitude: 13.936,
+    longitude: 121.624,
+    deliveryAreaId: "area-1",
+    billedDistanceKm: 3,
+    dropoffLatLng: { lat: 13.936, lng: 121.624 },
+  });
+
+  assert.equal(formatted, "Blk 8 Lot 1, Purok Sampaguita, Ilayang Iyam, Lucena City, Quezon, Philippines");
+});
+
+test("formatDeliveryAddress prefers normalized strings and handles missing values", () => {
+  assert.equal(formatDeliveryAddress("Already clean address"), "Already clean address");
+  assert.equal(
+    formatDeliveryAddress({
+      normalizedAddress: "Unit 5, Purok Carmelita, Ilayang Iyam, Lucena City, Quezon, Philippines",
+      latitude: 13.942,
+      longitude: 121.623,
+    }),
+    "Unit 5, Purok Carmelita, Ilayang Iyam, Lucena City, Quezon, Philippines"
+  );
+  assert.equal(formatDeliveryAddress(null), "No delivery address provided");
+});
+
+test("validateDeliveryAddress accepts an active purok with a pin inside the distance coverage", () => {
+  const result = validateDeliveryAddress({
+    houseDetails: "Blk 4 Lot 8",
+    selectedPurokId: "purok-1",
+    latitude: 13.942,
+    longitude: 121.623,
+    config: deliveryConfig,
+  });
+
+  assert.equal(result.isValid, true);
+  assert.deepEqual(result.errors, {});
+  assert.equal(
+    result.normalizedAddress,
+    "Blk 4 Lot 8, Purok Sampaguita, Ilayang Iyam, Lucena City, Quezon, Philippines"
+  );
+});
+
+test("validateDeliveryAddress rejects pins outside the configured distance coverage", () => {
+  const result = validateDeliveryAddress({
+    houseDetails: "Blk 4 Lot 8",
+    selectedPurokId: "purok-1",
+    latitude: 13.99,
+    longitude: 121.66,
+    config: deliveryConfig,
+  });
+
+  assert.equal(result.isValid, false);
+  assert.match(result.errors.mapPin, /outside the 4.0 km delivery coverage/);
+});
+
+test("validateDeliveryAddress uses selected purok coordinates when the pin is not set yet", () => {
+  const result = validateDeliveryAddress({
+    houseDetails: "Blk 4 Lot 8",
+    selectedPurokId: "purok-1",
+    latitude: null,
+    longitude: null,
+    config: deliveryConfig,
+  });
+
+  assert.equal(result.isValid, true);
+  assert.equal(result.latitude, 13.942);
+  assert.equal(result.longitude, 121.623);
+});

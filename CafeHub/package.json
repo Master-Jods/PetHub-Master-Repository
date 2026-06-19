@@ -1,0 +1,13 @@
+{
+  "name": "happytails-cafe-system",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm --prefix ./Happy-tails-fontend/frontend install",
+    "dev": "npm --prefix ./Happy-tails-fontend/frontend run dev",
+    "dev:strict": "npm --prefix ./Happy-tails-fontend/frontend run dev:strict",
+    "build": "npm --prefix ./Happy-tails-fontend/frontend run build",
+    "preview": "npm --prefix ./Happy-tails-fontend/frontend run preview",
+    "lint": "npm --prefix ./Happy-tails-fontend/frontend run lint",
+    "test": "npm --prefix ./Happy-tails-fontend/frontend run test"
+  }
+}

@@ -29,6 +29,43 @@ import RequireAuth from './components/RequireAuth';
 import SiteAlertModal from './components/SiteAlertModal';
 import SiteConfirmModal from './components/SiteConfirmModal';
 import { toFriendlyMessage } from './utils/friendlyMessage';
+import { lazy, Suspense } from 'react';
+import { AuthProvider as CafeAuthProvider } from './cafe/context/AuthContext';
+import { CartProvider as CafeCartProvider } from './cafe/context/CartContext';
+
+const CafeMenu = lazy(() => import('./cafe/pages/Menu'));
+const CafeOrder = lazy(() => import('./cafe/pages/Order'));
+const CafeOrderCategory = lazy(() => import('./cafe/pages/OrderCategory'));
+const CafeCheckout = lazy(() => import('./cafe/pages/Checkout'));
+const CafeOrderSuccess = lazy(() => import('./cafe/pages/OrderSuccess'));
+const CafeTrackOrder = lazy(() => import('./cafe/pages/TrackOrder'));
+const CafeOrderHistory = lazy(() => import('./cafe/pages/OrderHistory'));
+const CafeNotifications = lazy(() => import('./cafe/pages/Notifications'));
+const CafeProfile = lazy(() => import('./cafe/pages/Profile'));
+const CafeAbout = lazy(() => import('./cafe/pages/About'));
+
+const CafeFlowWrapper = () => {
+  return (
+    <CafeAuthProvider>
+      <CafeCartProvider>
+        <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }}>Loading Cafe Page...</div>}>
+          <Routes>
+            <Route path="menu" element={<CafeMenu />} />
+            <Route path="order" element={<CafeOrder />} />
+            <Route path="order/:category" element={<CafeOrderCategory />} />
+            <Route path="checkout" element={<CafeCheckout />} />
+            <Route path="order-success" element={<CafeOrderSuccess />} />
+            <Route path="track-order" element={<CafeTrackOrder />} />
+            <Route path="order-history" element={<CafeOrderHistory />} />
+            <Route path="notifications" element={<CafeNotifications />} />
+            <Route path="profile" element={<CafeProfile />} />
+            <Route path="about" element={<CafeAbout />} />
+          </Routes>
+        </Suspense>
+      </CafeCartProvider>
+    </CafeAuthProvider>
+  );
+};
 
 // Create a wrapper component that conditionally shows the navbar
 const NavbarWrapper = () => {
@@ -171,6 +208,7 @@ function App() {
                   </RequireAuth>
                 }
               />
+              <Route path="/cafe/*" element={<CafeFlowWrapper />} />
             </Routes>
           </main>
           
