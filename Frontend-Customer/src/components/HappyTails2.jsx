@@ -20,6 +20,7 @@ const HappyTails2 = () => {
 
   // Services dropdown state
   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+  const [isCafeDropdownOpen, setIsCafeDropdownOpen] = useState(false);
 
   // Mobile menu state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -27,6 +28,7 @@ const HappyTails2 = () => {
   // Refs for click outside detection
   const loginDropdownRef = useRef(null);
   const servicesDropdownRef = useRef(null);
+  const cafeDropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
   // Form states (Login)
@@ -58,6 +60,11 @@ const HappyTails2 = () => {
         setIsServicesDropdownOpen(false);
       }
 
+      // Close cafe dropdown
+      if (cafeDropdownRef.current && !cafeDropdownRef.current.contains(event.target)) {
+        setIsCafeDropdownOpen(false);
+      }
+
       // Close mobile menu
       if (
         mobileMenuRef.current &&
@@ -80,6 +87,7 @@ const HappyTails2 = () => {
       if (event.key === 'Escape') {
         setIsLoginOpen(false);
         setIsServicesDropdownOpen(false);
+        setIsCafeDropdownOpen(false);
         setIsMobileMenuOpen(false);
       }
     };
@@ -106,6 +114,8 @@ const HappyTails2 = () => {
   const toggleLoginDropdown = () => {
     setIsLoginOpen(!isLoginOpen);
     setAuthError('');
+    if (isServicesDropdownOpen) setIsServicesDropdownOpen(false);
+    if (isCafeDropdownOpen) setIsCafeDropdownOpen(false);
 
     // Reset to login form when opening
     if (!isLoginOpen) {
@@ -115,6 +125,14 @@ const HappyTails2 = () => {
 
   const toggleServicesDropdown = () => {
     setIsServicesDropdownOpen(!isServicesDropdownOpen);
+    if (isCafeDropdownOpen) setIsCafeDropdownOpen(false);
+    if (isLoginOpen) setIsLoginOpen(false);
+  };
+
+  const toggleCafeDropdown = () => {
+    setIsCafeDropdownOpen(!isCafeDropdownOpen);
+    if (isServicesDropdownOpen) setIsServicesDropdownOpen(false);
+    if (isLoginOpen) setIsLoginOpen(false);
   };
 
   const toggleMobileMenu = () => {
@@ -122,6 +140,7 @@ const HappyTails2 = () => {
     // Close dropdowns when opening mobile menu
     if (!isMobileMenuOpen) {
       setIsServicesDropdownOpen(false);
+      setIsCafeDropdownOpen(false);
       setIsLoginOpen(false);
     }
   };
@@ -188,7 +207,7 @@ const HappyTails2 = () => {
     }
 
     try {
-      await signup(
+      const loggedIn = await signup(
         {
           firstName: signupFirstName,
           lastName: signupLastName,
@@ -199,10 +218,17 @@ const HappyTails2 = () => {
         rememberMe
       );
 
-      // After signup: return to login (or keep logged in if backend returns token)
-      setIsLoginForm(true);
       clearSignupFields();
       setAuthError('');
+
+      if (loggedIn) {
+        setIsLoginOpen(false);
+        setIsMobileMenuOpen(false);
+      } else {
+        // Fallback if email confirmation is required by Supabase auth configuration
+        setIsLoginForm(true);
+        setAuthError('Account created! Please check your email to confirm your account.');
+      }
     } catch (err) {
       setAuthError(err?.message || 'Sign up failed.');
     }
@@ -223,6 +249,7 @@ const HappyTails2 = () => {
   const handleNavLinkClick = () => {
     setIsMobileMenuOpen(false);
     setIsServicesDropdownOpen(false);
+    setIsCafeDropdownOpen(false);
     setIsLoginOpen(false);
   };
 
@@ -234,6 +261,7 @@ const HappyTails2 = () => {
 
   const handleDropdownItemClick = (path) => {
     setIsServicesDropdownOpen(false);
+    setIsCafeDropdownOpen(false);
     setIsMobileMenuOpen(false);
     navigate(path);
   };
@@ -340,10 +368,41 @@ const HappyTails2 = () => {
               Shop
             </Link>
 
-            {/* Pet Menu */}
-            <Link to="/petcafe" className="ht2-nav-item" onClick={handleNavLinkClick}>
-              Pet Menu
-            </Link>
+            {/* Cafe Dropdown */}
+            <div
+              className={`ht2-nav-item ht2-dropdown ${isCafeDropdownOpen ? 'active' : ''}`}
+              ref={cafeDropdownRef}
+            >
+              <button
+                className="ht2-dropdown-toggle"
+                onClick={toggleCafeDropdown}
+                aria-expanded={isCafeDropdownOpen}
+                aria-haspopup="true"
+              >
+                Cafe{' '}
+                <span className={`ht2-dropdown-icon ${isCafeDropdownOpen ? 'open' : ''}`}>
+                  ▼
+                </span>
+              </button>
+
+              {/* Dropdown Content */}
+              <div className={`ht2-dropdown-content ${isCafeDropdownOpen ? 'show' : ''}`}>
+                <Link
+                  to="/cafe/menu"
+                  className="ht2-dropdown-item"
+                  onClick={() => handleDropdownItemClick('/cafe/menu')}
+                >
+                  Cafe Menu (For Humans)
+                </Link>
+                <Link
+                  to="/petcafe"
+                  className="ht2-dropdown-item"
+                  onClick={() => handleDropdownItemClick('/petcafe')}
+                >
+                  Pet Menu (For Pets)
+                </Link>
+              </div>
+            </div>
 
             {/* Login/Signup Dropdown */}
             <div className="ht2-nav-item ht2-login-dropdown-container" ref={loginDropdownRef}>

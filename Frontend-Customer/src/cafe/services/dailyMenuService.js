@@ -44,7 +44,10 @@ export async function getCurrentDailyMenu() {
     .limit(1)
     .maybeSingle();
 
-  if (dailyError) throw asDbError(dailyError, "Unable to load the daily menu.", { table: "daily_menus", operation: "select" });
+  if (dailyError) {
+    console.error("getCurrentDailyMenu Error Details:", dailyError);
+    throw asDbError(dailyError, "Unable to load the daily menu.", { table: "daily_menus", operation: "select" });
+  }
 
   if (!dailyMenu) {
     return {

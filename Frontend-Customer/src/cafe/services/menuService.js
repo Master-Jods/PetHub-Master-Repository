@@ -142,7 +142,10 @@ export async function getMenuCategories() {
     ? { data: sourceRows, error: null }
     : await supabase.from("menu_categories").select("*").order("sort_order", { ascending: true }).limit(500);
 
-  if (fallback.error) throw asDbError(fallback.error, "Unable to load menu categories.", { table: "menu_categories", operation: "select" });
+  if (fallback.error) {
+    console.error("getMenuCategories Error Details:", fallback.error);
+    throw asDbError(fallback.error, "Unable to load menu categories.", { table: "menu_categories", operation: "select" });
+  }
   const mapped = (Array.isArray(fallback.data) ? fallback.data : []).map(mapMenuCategoryRow).filter((row) => row.isActive !== false);
   menuCategoriesCache = { ts: Date.now(), data: mapped };
   return cloneRows(mapped);
@@ -181,7 +184,10 @@ export async function getMenuItems() {
 
   const supabase = requireSupabaseClient();
   const { data, error } = await supabase.from("menu_items").select("*").order("name", { ascending: true }).limit(1000);
-  if (error) throw asDbError(error, "Unable to load menu items.", { table: "menu_items", operation: "select" });
+  if (error) {
+    console.error("getMenuItems Error Details:", error);
+    throw asDbError(error, "Unable to load menu items.", { table: "menu_items", operation: "select" });
+  }
   const mapped = (Array.isArray(data) ? data : []).map(mapMenuItemRow);
   menuItemsCache = { ts: Date.now(), data: mapped };
   return cloneRows(mapped);

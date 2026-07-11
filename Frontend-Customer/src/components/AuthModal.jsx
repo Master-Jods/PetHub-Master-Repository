@@ -79,7 +79,7 @@ const AuthModal = ({ show, onClose, onSuccess }) => {
     setSubmitting(true);
     setError("");
     try {
-      await signup({
+      const loggedIn = await signup({
         firstName,
         lastName,
         phone,
@@ -87,7 +87,13 @@ const AuthModal = ({ show, onClose, onSuccess }) => {
         password,
       });
       resetFields();
-      setMode("login");
+      if (loggedIn) {
+        onClose?.();
+        onSuccess?.();
+      } else {
+        setMode("login");
+        setError("Account created! Please check your email to confirm your account.");
+      }
     } catch (err) {
       setError(err?.message || "Sign up failed.");
     } finally {

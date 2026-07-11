@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SidebarProfile from '../components/SidebarProfile';
+import { getOrderHistory as fetchCafeOrders } from '../cafe/services/orderService';
 import { useAuth } from '../backend/context/AuthContext';
 import { supabase } from '../backend/supabaseClient';
 import {
@@ -264,6 +265,8 @@ const Profile = () => {
   const [pastBookings, setPastBookings] = useState([]);
   // Order history
   const [orderHistory, setOrderHistory] = useState([]);
+  const [cafeOrderHistory, setCafeOrderHistory] = useState([]);
+  const [cafeOrderFilter, setCafeOrderFilter] = useState('all');
   // User reviews
   const [userReviews, setUserReviews] = useState([]);
 
@@ -341,6 +344,15 @@ const Profile = () => {
       } catch (error) {
         console.error('Unable to load profile dashboard data:', error?.message || error);
       }
+
+      try {
+        const cafeOrders = await fetchCafeOrders();
+        if (isMounted) {
+          setCafeOrderHistory(cafeOrders || []);
+        }
+      } catch (error) {
+        console.error('Unable to load cafe orders:', error?.message || error);
+      }
     };
 
     void loadDashboardData();
@@ -378,6 +390,13 @@ const Profile = () => {
           sessionStorage.setItem(`${PROFILE_DASHBOARD_CACHE_PREFIX}${authUser.id}`, JSON.stringify(dashboard));
         } catch (error) {
           console.error('Unable to refresh profile dashboard data:', error?.message || error);
+        }
+
+        try {
+          const cafeOrders = await fetchCafeOrders();
+          setCafeOrderHistory(cafeOrders || []);
+        } catch (error) {
+          console.error('Unable to refresh cafe orders:', error?.message || error);
         }
       }, 250);
     };
@@ -1011,6 +1030,28 @@ const Profile = () => {
     return orderHistory.filter((order) => getOrderFilterKey(order) === orderFilter);
   }, [orderFilter, orderHistory]);
 
+  const getCafeOrderFilterKey = (order) => {
+    const status = String(order.status || 'pending').toLowerCase();
+    if (status === 'completed' || status === 'delivered') return 'completed';
+    if (status === 'cancelled') return 'cancelled';
+    return 'inprocess';
+  };
+
+  const filteredCafeOrders = useMemo(() => {
+    if (cafeOrderFilter === 'all') {
+      return cafeOrderHistory;
+    }
+    return cafeOrderHistory.filter((order) => getCafeOrderFilterKey(order) === cafeOrderFilter);
+  }, [cafeOrderFilter, cafeOrderHistory]);
+
+  useEffect(() => {
+    if (activeTab === 'cafe-orders' && authUser?.id) {
+      fetchCafeOrders()
+        .then((orders) => setCafeOrderHistory(orders || []))
+        .catch((err) => console.error("Unable to update cafe orders:", err));
+    }
+  }, [activeTab, authUser?.id]);
+
   const availableReviewBookings = useMemo(
     () => pastBookings.filter((booking) => booking.status === 'Completed' && !booking.reviewed),
     [pastBookings]
@@ -1631,6 +1672,134 @@ const Profile = () => {
                       <p>Visit our shop to find great products for your pets!</p>
                       <button className="btn-primary" onClick={() => navigate('/shop')}>
                         Shop Now
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* CAFE ORDERS TAB */}
+              {activeTab === 'cafe-orders' && (
+                <div className="orders-tab">
+                  <h2 className="section-title">Cafe Orders</h2>
+                  <p className="section-subtitle">Track your food and beverage orders from CafeHub</p>
+
+                  <div className="order-filter-tabs">
+                    {orderFilterTabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        className={`order-filter-btn ${cafeOrderFilter === tab.id ? 'active' : ''}`}
+                        onClick={() => setCafeOrderFilter(tab.id)}
+                      >
+                        {tab.label}
+                        <span className="order-filter-count">
+                          {tab.id === 'all'
+                            ? cafeOrderHistory.length
+                            : cafeOrderHistory.filter((order) => getCafeOrderFilterKey(order) === tab.id).length}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {filteredCafeOrders.length > 0 ? (
+                    <div className="orders-list">
+                      {filteredCafeOrders.map(order => {
+                        const isCompleted = order.status === 'completed' || order.status === 'delivered';
+                        const isCancelled = order.status === 'cancelled';
+                        const paymentLabel = order.paymentMethodLabel || 'QRPH';
+                        const fulfillmentLabel = order.orderTypeLabel || 'Takeout';
+                        const showTimeline = !!expandedTracking[order.id];
+
+                        return (
+                          <div key={order.id} className="order-card">
+                            <div className="order-header">
+                              <div className="order-id">Order #{order.code || order.id.slice(0, 8)}</div>
+                              <div className="order-date">{new Date(order.placedAt).toLocaleString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit',
+                              })}</div>
+                              <span className={`order-status ${getSafeStatusClass(order.statusLabel)}`}>
+                                {order.statusLabel || 'Pending'}
+                              </span>
+                            </div>
+
+                            <div className="order-meta-row">
+                              <span><strong>Fulfillment:</strong> {fulfillmentLabel}</span>
+                              <span><strong>Payment:</strong> {paymentLabel}</span>
+                              {order.notes && (
+                                <span><strong>Notes:</strong> {order.notes}</span>
+                              )}
+                            </div>
+
+                            <div className="order-items">
+                              {order.items.map((item, idx) => (
+                                <div key={idx} className="order-item">
+                                  <span>{item.itemName}</span>
+                                  <span className="item-quantity">x{item.quantity}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="order-total">
+                              <span>Total</span>
+                              <span className="total-amount">PHP {order.totalAmount?.toFixed(2)}</span>
+                            </div>
+
+                            {showTimeline && order.statusTimeline && (
+                              <div className="order-tracking">
+                                <div className="delivery-track-header">
+                                  <h4>Status History</h4>
+                                </div>
+                                <div className="delivery-timeline">
+                                  {order.statusTimeline.map((log, idx) => {
+                                    const isCurrentLog = idx === order.statusTimeline.length - 1;
+                                    const isLastLog = idx === order.statusTimeline.length - 1;
+                                    return (
+                                      <div
+                                        key={`${order.id}-log-${idx}`}
+                                        className={`delivery-timeline-item ${isCurrentLog ? 'current' : ''}`}
+                                      >
+                                        <div className="delivery-marker">
+                                          <span className="delivery-dot" />
+                                          {!isLastLog && <span className="delivery-line" />}
+                                        </div>
+                                        <div className="delivery-step-content">
+                                          <div className="delivery-step-title">{log.status.toUpperCase()}</div>
+                                          {log.note && <div className="delivery-step-details">{log.note}</div>}
+                                        </div>
+                                        {log.at && (
+                                          <div className="delivery-step-time">
+                                            {new Date(log.at).toLocaleTimeString('en-US', {
+                                              hour: 'numeric',
+                                              minute: '2-digit',
+                                            })}
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="order-actions">
+                              <button className="btn-outline" onClick={() => toggleTracking(order.id)}>
+                                {showTimeline ? 'Hide Status History' : 'View Status History'}
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="empty-state">
+                      <h3>No Cafe Orders Yet</h3>
+                      <p>Visit our Cafe to place your first food and beverage order!</p>
+                      <button className="btn-primary" onClick={() => navigate('/cafe/menu')}>
+                        Cafe Menu
                       </button>
                     </div>
                   )}

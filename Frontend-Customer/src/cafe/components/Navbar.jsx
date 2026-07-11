@@ -153,8 +153,8 @@ function Navbar({ onSignOut, onOpenModal }) {
 
       <ul className="nav-center">
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/menu">Cafe Menu</Link></li>
-        <li><Link to="/about">About Us</Link></li>
+        <li><Link to="/cafe/menu">Cafe Menu</Link></li>
+        <li><Link to="/cafe/about">About Us</Link></li>
       </ul>
 
       <div className="nav-right">
@@ -212,9 +212,9 @@ function Navbar({ onSignOut, onOpenModal }) {
                     <Link to={dashboardPath} role="menuitem">Dashboard</Link>
                   ) : (
                     <>
-                      <Link to="/profile/info" role="menuitem">Profile Info</Link>
-                      <Link to="/profile/loyalty" role="menuitem">Loyalty and Perks</Link>
-                      <Link to="/order-history" role="menuitem">Order History</Link>
+                      <Link to="/cafe/profile/info" role="menuitem">Profile Info</Link>
+                      <Link to="/cafe/profile/loyalty" role="menuitem">Loyalty and Perks</Link>
+                      <Link to="/cafe/order-history" role="menuitem">Order History</Link>
                     </>
                   )}
                 </div>
@@ -225,7 +225,7 @@ function Navbar({ onSignOut, onOpenModal }) {
         ) : (
           <>
             {hasGuestOrderHistory ? (
-              <Link className="guest-history-link" to="/order-history">
+              <Link className="guest-history-link" to="/cafe/order-history">
                 Order History
               </Link>
             ) : null}

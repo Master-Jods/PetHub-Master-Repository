@@ -67,12 +67,25 @@ const SidebarProfile = ({ activeTab, onTabChange, user, unreadCount, onLogout })
         </button>
 
         <button 
+          className={`nav-item ${activeTab === 'cafe-orders' ? 'active' : ''}`}
+          onClick={() => handleNavigation('cafe-orders')}
+        >
+          <span className="nav-text">Cafe Orders</span>
+        </button>
+
+        <button 
           className={`nav-item ${activeTab === 'reviews' ? 'active' : ''}`}
           onClick={() => handleNavigation('reviews')}
         >
           <span className="nav-text">My Reviews</span>
         </button>
 
+        <button 
+          className="nav-item"
+          onClick={() => navigate('/cafe/profile/loyalty')}
+        >
+          <span className="nav-text">Cafe Loyalty & Perks</span>
+        </button>
       </nav>
 
       {/* Footer Actions */}

@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useOrderTracking } from "../hooks/useOrderTracking";
 import {
@@ -106,7 +106,7 @@ export default function TrackOrder() {
         <div className="track-state">
           <h2>No Active Order Found</h2>
           <p>Place an order first, or enter your order ID above.</p>
-          <Link to="/order">Go to Menu</Link>
+          <Link to="/cafe/order">Go to Menu</Link>
         </div>
       ) : null}
 
@@ -173,8 +173,8 @@ export default function TrackOrder() {
       ) : null}
 
       <div className="track-actions">
-        <Link to="/order-history">View order history</Link>
-        {!isAuthenticated ? <Link to="/order">Start another order</Link> : null}
+        <Link to="/cafe/order-history">View order history</Link>
+        {!isAuthenticated ? <Link to="/cafe/order">Start another order</Link> : null}
       </div>
 
       <ReviewPrompt order={order} />

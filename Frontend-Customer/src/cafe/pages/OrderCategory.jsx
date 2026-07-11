@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../context/CartContext";
 import { getMenuCatalog } from "../services/dailyMenuService";
 import { getMenuCategories } from "../services/menuService";
 import "./OrderCategory.css";
@@ -75,7 +75,7 @@ export default function OrderCategory() {
   const { category: categoryId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { addItem, openMiniCart } = useCart();
+  const { addToCart, setCartVisible } = useCart();
   const [menuItems, setMenuItems] = useState([]);
   const [menuCategories, setMenuCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -244,14 +244,25 @@ export default function OrderCategory() {
 
   const handleAddToBasket = (item) => {
     if (!item || item.isAvailable === false) return;
-    addItem(item);
+    addToCart({
+      id: item.id,
+      code: item.code || item.menuItemCode || "",
+      name: item.displayName || item.name,
+      basePrice: item.price,
+      price: item.price,
+      image: item.image,
+      category: 'Cafe',
+      isCafeItem: true,
+      stock: 9999
+    });
+    setCartVisible(true);
   };
 
   if (!isLoading && !category && items.length === 0) {
     return (
       <div style={{ padding: 40 }}>
         <p>Category not found.</p>
-        <button onClick={() => navigate("/order")}>Back</button>
+        <button onClick={() => navigate("/cafe/order")}>Back</button>
       </div>
     );
   }
@@ -262,7 +273,7 @@ export default function OrderCategory() {
     >
       <div className="ordercat-header">
         <div className="ordercat-header-inner">
-          <button className="ordercat-back-btn" onClick={() => navigate("/order")}>
+          <button className="ordercat-back-btn" onClick={() => navigate("/cafe/order")}>
             {"<"} Back to Categories
           </button>
 
@@ -400,7 +411,7 @@ export default function OrderCategory() {
         </div>
       ) : null}
 
-      <button className="view-cart-fab" onClick={openMiniCart}>
+      <button className="view-cart-fab" onClick={() => setCartVisible(true)}>
         View Basket
       </button>
     </div>

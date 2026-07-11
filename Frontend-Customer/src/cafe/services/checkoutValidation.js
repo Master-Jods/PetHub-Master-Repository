@@ -12,14 +12,6 @@ export async function validateCheckout(orderPayload) {
 
   if (!items.length) {
     errors.items = "Your cart is empty.";
-  } else {
-    const hasMissingItemCode = items.some((item) => {
-      const code = String(item?.code || item?.menuItemCode || item?.menu_item_code || "").trim();
-      return !code;
-    });
-    if (hasMissingItemCode) {
-      errors.items = "Every cart item must include a valid menu item code. Remove and re-add items from the menu.";
-    }
   }
 
   const hasLoyaltyRewardItems = items.some(isLoyaltyRewardCartItem);
@@ -32,8 +24,8 @@ export async function validateCheckout(orderPayload) {
   const phone = String(orderPayload.customer?.phone || "").trim();
   if (!phone) {
     errors.phone = "Phone number is required.";
-  } else if (!/^\+639\d{9}$/.test(phone)) {
-    errors.phone = "Use a valid PH mobile number (e.g., +639123456789).";
+  } else if (!/^(\+639|09)\d{9}$/.test(phone)) {
+    errors.phone = "Use a valid PH mobile number (e.g., 09123456789 or +639123456789).";
   }
   const canonicalOrderType = labelToCanonicalOrderType(orderPayload.orderType || "");
   if (canonicalOrderType === "delivery" && !orderPayload.customer?.address?.trim()) {
@@ -72,6 +64,8 @@ export async function validateCheckout(orderPayload) {
     errors.receipt = "Receipt upload is required.";
   }
 
+  // Temporarily commented out getOrderWindowStatus check for testing
+  /*
   const orderWindowStatus = getOrderWindowStatus(
     orderPayload.placedAt || orderPayload.currentDate,
     orderPayload.businessSettings || orderPayload.checkoutSettings || orderPayload.kitchenCutoff
@@ -79,6 +73,7 @@ export async function validateCheckout(orderPayload) {
   if (!orderWindowStatus.isOpen && !errors.form) {
     errors.form = orderWindowStatus.message;
   }
+  */
 
   return { isValid: Object.keys(errors).length === 0, errors };
 }

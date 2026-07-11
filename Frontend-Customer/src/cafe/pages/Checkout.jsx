@@ -661,7 +661,7 @@ export default function Checkout() {
       if (isAuthenticated) await syncCustomerNotifications();
       clearCart();
       removeReceipt();
-      navigate("/order-success");
+      navigate("/cafe/order-success");
     } catch (error) {
       setErrors({ form: error.message || "Could not place your order." });
       if (error?.kind === "missing_rpc" || error?.kind === "missing_relation") {
@@ -680,7 +680,7 @@ export default function Checkout() {
       <div className="checkout-state">
         <h1>Checkout</h1>
         <p>Your cart is empty.</p>
-        <Link to="/order">Go to Order</Link>
+        <Link to="/cafe/order">Go to Order</Link>
       </div>
     );
   }
@@ -689,7 +689,7 @@ export default function Checkout() {
     <div className="checkout-page">
       <div className="checkout-header">
         <h1>Checkout</h1>
-        <Link to="/order">Back to Menu</Link>
+        <Link to="/cafe/order">Back to Menu</Link>
       </div>
       <p className="profile-session">
         Ordering as <strong>{user?.email || form.name || "Guest"}</strong>

@@ -16,6 +16,7 @@ export const CartProvider = ({ children }) => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [checkoutPreferences, setCheckoutPreferences] = useState(DEFAULT_FULFILLMENT);
+  const [cartVisible, setCartVisible] = useState(false);
 
   // Load cart from localStorage on initial mount
   useEffect(() => {
@@ -194,7 +195,9 @@ export const CartProvider = ({ children }) => {
       formatPrice,
       showToast,
       toastMessage,
-      setShowToast
+      setShowToast,
+      cartVisible,
+      setCartVisible
     }}>
       {children}
     </CartContext.Provider>

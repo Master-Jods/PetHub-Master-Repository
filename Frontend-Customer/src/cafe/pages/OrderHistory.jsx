@@ -120,7 +120,7 @@ export default function OrderHistory() {
             {totalOrders ? `Showing ${pageStart}-${pageEnd} of ${totalOrders} orders.` : "Your timeline and receipts will appear here."}
           </p>
         </div>
-        <Link className="history-primary-link" to="/order">
+        <Link className="history-primary-link" to="/cafe/order">
           Start an order
         </Link>
       </div>
@@ -252,7 +252,7 @@ export default function OrderHistory() {
                 <button type="button" onClick={() => setExpandedId(isExpanded ? "" : order.id)}>
                   {isExpanded ? "Hide details" : "View details"}
                 </button>
-                <Link to="/track-order">Track status</Link>
+                <Link to="/cafe/track-order">Track status</Link>
               </div>
 
               {isExpanded ? (

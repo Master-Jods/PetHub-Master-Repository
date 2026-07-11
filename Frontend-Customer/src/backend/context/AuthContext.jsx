@@ -259,17 +259,37 @@ export function AuthProvider({ children }) {
         if (error) throw new Error(error.message);
 
         const nextUser = data?.user ?? null;
-        if (!nextUser?.id) return;
+        if (!nextUser?.id) return false;
 
-        if (data.session) {
-          await ensureCustomerProfile(nextUser, {
+        let session = data.session;
+        let activeUser = nextUser;
+
+        if (!session) {
+          try {
+            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+            if (!signInError && signInData?.session) {
+              session = signInData.session;
+              activeUser = signInData.user || nextUser;
+            }
+          } catch (_signInErr) {
+            // Ignore auto-login errors here (e.g. if email confirmation is required)
+          }
+        }
+
+        if (session) {
+          await ensureCustomerProfile(activeUser, {
             firstName,
             lastName,
             displayName,
             phone,
           });
-          await loadProfile(nextUser.id, nextUser);
+          await loadProfile(activeUser.id, activeUser);
+          return true;
         }
+        return false;
       },
 
       async refreshProfile() {

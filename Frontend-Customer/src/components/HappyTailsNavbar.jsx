@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import './HappyTailsNavbar.css';
 import { assetUrl } from '../utils/assets';
 
@@ -10,6 +11,7 @@ const HappyTailsNavbar = () => {
   const dropdownRef = useRef(null);
   const cafeDropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { getCartCount, setCartVisible } = useCart();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -189,6 +191,39 @@ const HappyTailsNavbar = () => {
               </div>
             </div>
             
+            {/* Cart Icon */}
+            <div className="htn-nav-item htn-cart-container" style={{ marginRight: '10px' }}>
+              <div className="htn-user-icon-box">
+                <button 
+                  className="htn-user-icon-btn"
+                  aria-label="Shopping cart"
+                  title="Shopping Cart"
+                  onClick={() => setCartVisible(true)}
+                  style={{ position: 'relative' }}
+                >
+                  <span className="htn-user-icon">🛒</span>
+                  {getCartCount() > 0 && (
+                    <span 
+                      style={{
+                        position: 'absolute',
+                        top: '-5px',
+                        right: '-5px',
+                        background: '#f53799',
+                        color: 'white',
+                        borderRadius: '50%',
+                        padding: '2px 6px',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        lineHeight: 1
+                      }}
+                    >
+                      {getCartCount()}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+
             {/* User Icon - Logged in state */}
             <div className="htn-nav-item htn-user-container">
               <div className="htn-user-icon-box">

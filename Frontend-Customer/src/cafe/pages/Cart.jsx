@@ -61,7 +61,7 @@ export default function Cart() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
         <h1 style={{ margin: 0 }}>Your Cart</h1>
         <div style={{ display: "flex", gap: 8 }}>
-          <Link to="/order" style={{ textDecoration: "none" }}>Add more</Link>
+          <Link to="/cafe/order" style={{ textDecoration: "none" }}>Add more</Link>
           {cart.length > 0 && <button onClick={clearCart}>Clear</button>}
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function Cart() {
                 Order <strong>#{activeOrder.code || activeOrder.id}</strong> is currently <strong>{activeOrder.statusLabel || activeOrder.status}</strong>.
               </p>
               <button
-                onClick={() => navigate("/track-order")}
+                onClick={() => navigate("/cafe/track-order")}
                 style={{
                   padding: "12px 24px",
                   backgroundColor: "#ff8fa3",
@@ -103,7 +103,7 @@ export default function Cart() {
           ) : (
             <>
               <p>Your cart is empty.</p>
-              <Link to="/order">Go to Order</Link>
+              <Link to="/cafe/order">Go to Order</Link>
             </>
           )}
         </div>
@@ -158,7 +158,7 @@ export default function Cart() {
 
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
             <button
-              onClick={() => navigate("/checkout")}
+              onClick={() => navigate("/cafe/checkout")}
               style={{ fontWeight: 900, padding: "10px 14px", backgroundColor: "#ff8fa3", border: "none", borderRadius: "8px", cursor: "pointer" }}
             >
               Checkout

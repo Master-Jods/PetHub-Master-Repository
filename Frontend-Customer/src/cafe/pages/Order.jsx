@@ -139,13 +139,13 @@ function Order({ navigateOverride }) {
             <div
               key={category.id}
               className="order-category-card"
-              onClick={() => handleNavigate(`/order/${category.id}`)}
+              onClick={() => handleNavigate(`/cafe/order/${category.id}`)}
               role="button"
               tabIndex={0}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
-                  handleNavigate(`/order/${category.id}`);
+                  handleNavigate(`/cafe/order/${category.id}`);
                 }
               }}
             >

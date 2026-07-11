@@ -122,7 +122,7 @@ function mapMenuItem(item, categoryById) {
       item?.imageUrl ||
       resolveMenuItemImage(name, categoryName) ||
       getCategoryFallbackImage(categoryName || name),
-    orderLink: categoryId ? `/order/${categoryId}?focus=${encodeURIComponent(name)}` : "/order",
+    orderLink: categoryId ? `/cafe/order/${categoryId}?focus=${encodeURIComponent(name)}` : "/cafe/order",
   };
 }
 
@@ -288,7 +288,7 @@ function Menu() {
           </p>
 
           <div className="menu-hero__actions">
-            <Link to="/order" className="menu-cta menu-cta--primary">
+            <Link to="/cafe/order" className="menu-cta menu-cta--primary">
               Start Your Order
             </Link>
             <a href="#menu-categories" className="menu-cta menu-cta--secondary">
@@ -325,7 +325,7 @@ function Menu() {
 
           <div className="menu-hero__shortcut-grid">
             {quickLinks.map((category) => (
-              <Link key={category.id} to={`/order/${category.id}`} className="menu-hero__shortcut-card">
+              <Link key={category.id} to={`/cafe/order/${category.id}`} className="menu-hero__shortcut-card">
                 <div className="menu-hero__shortcut-top">
                   <strong>{category.displayName}</strong>
                   <span>{category.startingPrice !== null ? `From ${formatPrice(category.startingPrice)}` : "Browse"}</span>
@@ -352,7 +352,7 @@ function Menu() {
             <h2>Best sellers</h2>
             <p>Top picks ranked from actual completed orders, then blended with chef highlights when data is tied.</p>
           </div>
-          <Link to="/order" className="menu-inline-link">
+          <Link to="/cafe/order" className="menu-inline-link">
             Open full order page
           </Link>
         </div>
@@ -393,7 +393,7 @@ function Menu() {
         <div className="menu-category-grid">
           {!categoryCards.length && !isLoading ? <p className="menu-loading">No categories available right now.</p> : null}
           {categoryCards.map((category) => (
-            <Link key={category.id} to={`/order/${category.id}`} className="menu-category-card">
+            <Link key={category.id} to={`/cafe/order/${category.id}`} className="menu-category-card">
               <div className="menu-category-card__image-wrap">
                 <img src={category.heroImage} alt={category.name} />
               </div>
@@ -441,7 +441,7 @@ function Menu() {
                   <h3>{category.displayName}</h3>
                   <p>{category.description}</p>
                 </div>
-                <Link to={`/order/${category.id}`} className="menu-inline-link">
+                <Link to={`/cafe/order/${category.id}`} className="menu-inline-link">
                   See all {category.displayName}
                 </Link>
               </div>

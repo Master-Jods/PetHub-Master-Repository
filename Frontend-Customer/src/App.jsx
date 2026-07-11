@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext'; // Add this import
 import HappyTailsNavbar from './components/HappyTailsNavbar';
 import HappyTailsFooter from './components/HappyTailsFooter'; // Import new footer
@@ -28,6 +28,7 @@ import SidebarProfile from './components/SidebarProfile';
 import RequireAuth from './components/RequireAuth';
 import SiteAlertModal from './components/SiteAlertModal';
 import SiteConfirmModal from './components/SiteConfirmModal';
+import CartModal from './components/CartModal';
 import { toFriendlyMessage } from './utils/friendlyMessage';
 import { lazy, Suspense } from 'react';
 import { AuthProvider as CafeAuthProvider } from './cafe/context/AuthContext';
@@ -58,7 +59,9 @@ const CafeFlowWrapper = () => {
             <Route path="track-order" element={<CafeTrackOrder />} />
             <Route path="order-history" element={<CafeOrderHistory />} />
             <Route path="notifications" element={<CafeNotifications />} />
-            <Route path="profile" element={<CafeProfile />} />
+            <Route path="profile" element={<Navigate to="/cafe/profile/info" replace />} />
+            <Route path="profile/info" element={<RequireAuth><CafeProfile view="info" /></RequireAuth>} />
+            <Route path="profile/loyalty" element={<RequireAuth><CafeProfile view="loyalty" /></RequireAuth>} />
             <Route path="about" element={<CafeAbout />} />
           </Routes>
         </Suspense>
@@ -181,7 +184,14 @@ function App() {
               />
               <Route path="/shop" element={<Shop />} />
               <Route path="/shop/:category" element={<Shop />} />
-              <Route path="/checkout" element={<Checkout />} />
+              <Route
+                path="/checkout"
+                element={
+                  <RequireAuth>
+                    <Checkout />
+                  </RequireAuth>
+                }
+              />
               <Route path="/petcafe" element={<Petcafe />} />
               <Route
                 path="/boarding-appointment-confirmed"
@@ -214,6 +224,7 @@ function App() {
           
           {/* New Happy Tails Footer - Shows on ALL pages */}
           <HappyTailsFooter />
+          <CartModal />
           <SiteAlertModal
             open={alertState.open}
             message={alertState.message}

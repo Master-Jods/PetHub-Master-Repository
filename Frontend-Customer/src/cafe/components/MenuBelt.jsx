@@ -1,4 +1,4 @@
-﻿// src/components/MenuBelt.jsx
+// src/components/MenuBelt.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -138,7 +138,7 @@ export default function MenuBelt() {
   const handlePick = (picked) => {
     const categoryId = resolveCategoryId(picked?.tagLeft, menuCategories);
     if (!categoryId) {
-      navigate("/order");
+      navigate("/cafe/order");
       return;
     }
 
@@ -146,7 +146,7 @@ export default function MenuBelt() {
     if (picked?.name) params.set("focus", String(picked.name));
     const qs = params.toString();
 
-    navigate(`/order/${categoryId}${qs ? `?${qs}` : ""}`);
+    navigate(`/cafe/order/${categoryId}${qs ? `?${qs}` : ""}`);
   };
 
   return (
@@ -189,7 +189,7 @@ export default function MenuBelt() {
       </div>
 
       <div className="belt-ctaRow">
-        <Link className="belt-ctaBtn" to="/order">
+        <Link className="belt-ctaBtn" to="/cafe/order">
           Order Now
         </Link>
       </div>

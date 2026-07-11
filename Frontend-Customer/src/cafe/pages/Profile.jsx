@@ -485,10 +485,10 @@ function Profile({ linkComponent: LinkComponent, view = "info" }) {
           ) : null}
 
           <div className="profile-links">
-            <LinkImpl href="/order-history" to="/order-history">
+            <LinkImpl href="/cafe/order-history" to="/cafe/order-history">
               View order history
             </LinkImpl>
-            <LinkImpl href="/track-order" to="/track-order">
+            <LinkImpl href="/cafe/track-order" to="/cafe/track-order">
               Track latest order
             </LinkImpl>
           </div>

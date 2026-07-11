@@ -53,7 +53,7 @@ export default function Home({ onOrderClick }) {
               with the pets who make life sweeter.
             </p>
             <div className="home-about-teaser__actions">
-              <Link className="home-about-teaser__button" to="/about">
+              <Link className="home-about-teaser__button" to="/cafe/about">
                 About Us
               </Link>
             </div>

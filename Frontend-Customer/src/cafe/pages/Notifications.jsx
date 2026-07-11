@@ -73,7 +73,7 @@ export default function Notifications() {
           <p>Create an account or log in to view notifications.</p>
           <div className="notifications-guest-actions">
             <Link to="/" state={{ openAuth: true }}>Create Account / Log In</Link>
-            <Link to="/track-order">Track an order</Link>
+            <Link to="/cafe/track-order">Track an order</Link>
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function Notifications() {
         <div className="notifications-state">
           <h2>No notifications yet</h2>
           <p>We will show order updates, loyalty awards, promo alerts, and new item notices here.</p>
-          <Link to="/order">Start an order</Link>
+          <Link to="/cafe/order">Start an order</Link>
         </div>
       ) : (
         <>
@@ -134,7 +134,7 @@ export default function Notifications() {
                 </div>
                 <h3>{item.title}</h3>
                 <p>{item.message}</p>
-                {item.orderId ? <Link to="/track-order">View related order</Link> : null}
+                {item.orderId ? <Link to="/cafe/track-order">View related order</Link> : null}
               </article>
             ))}
           </div>

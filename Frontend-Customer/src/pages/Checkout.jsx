@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../backend/context/AuthContext';
 import { createProfileOrder } from '../backend/services/profileDataService';
+import { createOrder as createCafeOrder } from '../cafe/services/orderService';
 import { DEFAULT_FULFILLMENT, SHIPPING_OPTIONS, getShippingFee } from '../constants/fulfillment';
 import gcashQr from '../assets/gcashqr.jpg';
 import './Shop.css';
@@ -139,8 +140,6 @@ const Checkout = () => {
       return;
     }
 
-    setIsSubmitting(true);
-
     try {
       const orderNumber = `ORD-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
       const orderedAt = new Date().toISOString();
@@ -148,77 +147,140 @@ const Checkout = () => {
         ? new Date(Date.now() + (24 * 60 * 60 * 1000)).toISOString()
         : null;
 
-      const items = cart.map((item) => ({
-        productId: item.id,
-        name: item.name,
-        variantId: item.variantId || null,
-        variantName: item.variantName || null,
-        quantity: Number(item.quantity || 0),
-        unitPrice: Number(item.price || 0),
-        subtotal: Number(item.price || 0) * Number(item.quantity || 0),
-      }));
+      const cafeItemsInCart = cart.filter(item => item.isCafeItem);
+      const petItemsInCart = cart.filter(item => !item.isCafeItem);
 
-      const trackingUpdates = [
-        {
-          time: new Date(orderedAt).toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-          }),
-          title: 'Order Placed',
-          details: 'Your order was received.',
-        },
-        {
-          time: new Date(orderedAt).toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-          }),
-          title: formData.paymentMethod === 'gcash' ? 'Payment Proof Submitted' : 'Awaiting Approval',
-          details: formData.paymentMethod === 'gcash'
-            ? 'GCash proof submitted. Please wait for admin approval.'
-            : 'Cash payment selected. Please wait for admin approval before your order is confirmed.',
-        },
-      ];
+      let confirmedNum = orderNumber;
 
-      const savedOrder = await createProfileOrder(authUser.id, {
-        orderCode: orderNumber,
-        orderedAt,
-        items,
-        category: cartInsights.hasShopSupplies ? 'Pet Shop' : 'Pet Menu',
-        customerName: `${formData.firstName} ${formData.lastName}`.trim(),
-        customerEmail: formData.email.trim(),
-        customerPhone: formData.phone.trim(),
-        baseTotal: subtotal,
-        totalAmount: total,
-        currency: 'PHP',
-        status: 'Pending',
-        requestStatus: 'Pending Request',
-        paymentStatus: formData.paymentMethod === 'gcash' ? 'Paid' : 'Pending',
-        deliveryStatus: 'Processing',
-        paymentMethod: formData.paymentMethod,
-        fulfillmentMethod: formData.fulfillmentMethod,
-        deliveryZone: selectedShipping?.label || '',
-        deliveryFee: shippingFee,
-        shippingAddress: formData.fulfillmentMethod === 'delivery'
-          ? `${formData.address}, ${formData.city} ${formData.zipCode}`.trim()
-          : '',
-        eta,
-        proofOfPayment: proofOfPaymentDataUrl,
-        trackingUpdates,
-        timeline: trackingUpdates,
-        metadata: proofFileName ? { proofOfPaymentName: proofFileName } : {},
-      });
+      if (cafeItemsInCart.length > 0) {
+        const cafeSubtotal = cafeItemsInCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const cafeDeliveryFee = petItemsInCart.length === 0 ? shippingFee : 0;
+        const cafeTotal = cafeSubtotal + cafeDeliveryFee;
 
-      setConfirmedOrderNumber(savedOrder?.order_number || orderNumber);
+        const cafePayload = {
+          orderType: formData.fulfillmentMethod,
+          paymentMethod: formData.paymentMethod,
+          receiptImageUrl: proofOfPaymentDataUrl || null,
+          notes: `Placed via PetHub Unified Checkout.`,
+          customer: {
+            name: `${formData.firstName} ${formData.lastName}`.trim(),
+            phone: formData.phone.trim(),
+            email: formData.email.trim(),
+            address: formData.fulfillmentMethod === 'delivery'
+              ? `${formData.address}, ${formData.city} ${formData.zipCode}`.trim()
+              : 'Store Pickup'
+          },
+          deliveryMeta: formData.fulfillmentMethod === 'delivery' ? {
+            deliveryFee: cafeDeliveryFee,
+            distanceKm: 0.1,
+            pickupLatLng: { lat: 13.9372, lng: 121.6146 },
+            dropoffLatLng: { lat: 13.9372, lng: 121.6146 },
+            purok: "",
+            barangay: selectedShipping?.label || ""
+          } : null,
+          items: cafeItemsInCart.map(item => ({
+            id: item.id,
+            menuItemId: item.id,
+            menuItemCode: item.code || item.menuItemCode || null,
+            code: item.code || item.menuItemCode || null,
+            name: item.name,
+            displayName: item.name,
+            price: item.price,
+            originalPrice: item.basePrice,
+            qty: item.quantity,
+            quantity: item.quantity,
+            isLoyaltyReward: false
+          }))
+        };
+
+        const createdCafeOrder = await createCafeOrder(cafePayload);
+        if (petItemsInCart.length === 0 && createdCafeOrder) {
+          confirmedNum = createdCafeOrder.code || createdCafeOrder.id;
+        }
+      }
+
+      if (petItemsInCart.length > 0) {
+        const petSubtotal = petItemsInCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const petTotal = petSubtotal + shippingFee;
+
+        const petItemsPayload = petItemsInCart.map((item) => ({
+          productId: item.id,
+          name: item.name,
+          variantId: item.variantId || null,
+          variantName: item.variantName || null,
+          quantity: Number(item.quantity || 0),
+          unitPrice: Number(item.price || 0),
+          subtotal: Number(item.price || 0) * Number(item.quantity || 0),
+        }));
+
+        const trackingUpdates = [
+          {
+            time: new Date(orderedAt).toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+            }),
+            title: 'Order Placed',
+            details: 'Your order was received.',
+          },
+          {
+            time: new Date(orderedAt).toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+            }),
+            title: formData.paymentMethod === 'gcash' ? 'Payment Proof Submitted' : 'Awaiting Approval',
+            details: formData.paymentMethod === 'gcash'
+              ? 'GCash proof submitted. Please wait for admin approval.'
+              : 'Cash payment selected. Please wait for admin approval before your order is confirmed.',
+          },
+        ];
+
+        const savedOrder = await createProfileOrder(authUser.id, {
+          orderCode: orderNumber,
+          orderedAt,
+          items: petItemsPayload,
+          category: cartInsights.hasShopSupplies ? 'Pet Shop' : 'Pet Menu',
+          customerName: `${formData.firstName} ${formData.lastName}`.trim(),
+          customerEmail: formData.email.trim(),
+          customerPhone: formData.phone.trim(),
+          baseTotal: petSubtotal,
+          totalAmount: petTotal,
+          currency: 'PHP',
+          status: 'Pending',
+          requestStatus: 'Pending Request',
+          paymentStatus: formData.paymentMethod === 'gcash' ? 'Paid' : 'Pending',
+          deliveryStatus: 'Processing',
+          paymentMethod: formData.paymentMethod,
+          fulfillmentMethod: formData.fulfillmentMethod,
+          deliveryZone: selectedShipping?.label || '',
+          deliveryFee: shippingFee,
+          shippingAddress: formData.fulfillmentMethod === 'delivery'
+            ? `${formData.address}, ${formData.city} ${formData.zipCode}`.trim()
+            : '',
+          eta,
+          proofOfPayment: proofOfPaymentDataUrl,
+          trackingUpdates,
+          timeline: trackingUpdates,
+          metadata: proofFileName ? { proofOfPaymentName: proofFileName } : {},
+        });
+        confirmedNum = savedOrder?.order_number || orderNumber;
+      }
+
+      setConfirmedOrderNumber(confirmedNum);
       setOrderComplete(true);
       clearCart();
     } catch (error) {
-      alert(error?.message || 'Unable to save your order right now. Please try again.');
+      if (error.validationErrors) {
+        const errorMsg = Object.values(error.validationErrors).join("\n");
+        alert(errorMsg);
+      } else {
+        alert(error?.message || 'Unable to save your order right now. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
