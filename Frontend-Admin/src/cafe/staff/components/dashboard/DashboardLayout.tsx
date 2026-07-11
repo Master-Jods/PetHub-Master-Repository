@@ -24,6 +24,7 @@ import { CommandBar } from '@/components/navigation/CommandBar';
 import { MobileNav } from '@/components/navigation/MobileNav';
 import { useNotifications } from '@/hooks/useNotifications';
 import happyTailsLogo from '@/assets/branding/logo.png';
+import '../../styles/index.css';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuth();

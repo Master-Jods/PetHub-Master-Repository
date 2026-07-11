@@ -19,6 +19,11 @@ import SiteConfirmModal from './components/SiteConfirmModal';
 import logo from './assets/Ht-logo.png';
 import { supabase } from './supabaseClient';
 import { toFriendlyMessage } from './utils/friendlyMessage';
+import CafeDashboard from './components/CafeDashboard';
+import CafeOrders from './components/CafeOrders';
+import CafeInventory from './components/CafeInventory';
+import CafeMenu from './components/CafeMenu';
+import CafeLoyalty from './components/CafeLoyalty';
 
 const CafeDashboardLayout = lazy(() => import('./cafe/staff/components/dashboard/DashboardLayout').then(m => ({ default: m.DashboardLayout })));
 const CafeDashboardPage = lazy(() => import('./cafe/staff/pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
@@ -91,6 +96,19 @@ function App() {
     return () => {
       window.alert = nativeAlert;
       delete window.__siteConfirm;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleNavigateCafeTab = (e) => {
+      const targetPage = e.detail;
+      if (targetPage) {
+        setCurrentPage(targetPage);
+      }
+    };
+    window.addEventListener('navigate-cafe-tab', handleNavigateCafeTab);
+    return () => {
+      window.removeEventListener('navigate-cafe-tab', handleNavigateCafeTab);
     };
   }, []);
 
@@ -386,6 +404,16 @@ function App() {
         return <RiderManagement />;
       case 'announcements':
         return <Announcements />;
+      case 'cafe-dashboard':
+        return <CafeDashboard />;
+      case 'cafe-orders':
+        return <CafeOrders />;
+      case 'cafe-inventory':
+        return <CafeInventory />;
+      case 'cafe-menu':
+        return <CafeMenu />;
+      case 'cafe-loyalty':
+        return <CafeLoyalty />;
       default:
         return <Dashboard userType={userType} />;
     }
@@ -421,6 +449,7 @@ function App() {
           </button>
 
           <div className="nav-section">
+            <div className="nav-section-title">PetHub Management</div>
             <button
               className={`nav-item ${currentPage === 'customers' ? 'active' : ''}`}
               onClick={() => setCurrentPage('customers')}
@@ -471,11 +500,45 @@ function App() {
                 Analytics
               </button>
             )}
+
+            <div className="nav-section-title">Cafe Management</div>
+            <button
+              className={`nav-item ${currentPage === 'cafe-dashboard' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('cafe-dashboard')}
+            >
+              Cafe Overview
+            </button>
+            <button
+              className={`nav-item ${currentPage === 'cafe-orders' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('cafe-orders')}
+            >
+              Cafe Orders
+            </button>
+            <button
+              className={`nav-item ${currentPage === 'cafe-inventory' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('cafe-inventory')}
+            >
+              Cafe Inventory
+            </button>
+            <button
+              className={`nav-item ${currentPage === 'cafe-menu' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('cafe-menu')}
+            >
+              Cafe Menu Items
+            </button>
+            <button
+              className={`nav-item ${currentPage === 'cafe-loyalty' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('cafe-loyalty')}
+            >
+              Cafe Loyalty
+            </button>
+
+            <div className="nav-section-title">System</div>
             <button
               className="nav-item"
-              onClick={() => navigate('/staff/dashboard')}
+              onClick={() => navigate(userType === 'owner' ? '/owner/dashboard' : '/staff/dashboard')}
             >
-              Cafe Management
+              Legacy Cafe Workspace
             </button>
             <button
               className={`nav-item ${currentPage === 'settings' ? 'active' : ''}`}

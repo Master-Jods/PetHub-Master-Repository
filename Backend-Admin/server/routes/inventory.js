@@ -49,6 +49,20 @@ const uploadInventoryImage = async (image, productName) => {
   const parsed = parseDataUrl(image);
   if (!parsed) return image ?? '';
 
+  // Proactively ensure storage bucket exists
+  try {
+    const { data: buckets } = await supabaseAdmin.storage.listBuckets();
+    const bucketExists = (buckets || []).some((b) => b.name === inventoryImageBucket);
+    if (!bucketExists) {
+      await supabaseAdmin.storage.createBucket(inventoryImageBucket, {
+        public: true,
+        fileSizeLimit: 52428800, // 50MB
+      });
+    }
+  } catch (bucketError) {
+    console.warn('Proactive storage bucket check failed:', bucketError.message || bucketError);
+  }
+
   const extension = parsed.contentType.split('/')[1]?.replace(/[^a-z0-9]/gi, '') || 'png';
   const filePath = `products/${slugify(productName)}-${Date.now()}.${extension}`;
   const { error } = await supabaseAdmin.storage
