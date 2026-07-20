@@ -73,8 +73,8 @@ const uploadInventoryImage = async (image, productName) => {
     });
 
   if (error) {
-    console.warn('Inventory image upload failed, storing inline image instead:', error.message || error);
-    return image;
+    console.warn('Inventory image upload failed, saving product without an inline image:', error.message || error);
+    return '';
   }
 
   const { data } = supabaseAdmin.storage.from(inventoryImageBucket).getPublicUrl(filePath);
@@ -128,7 +128,9 @@ const mapProduct = (row, soldCount = 0) => ({
 async function loadSoldCountMaps() {
   const { data, error } = await supabaseAdmin
     .from('orders')
-    .select('items, status, delivery_status');
+    .select('items, status, delivery_status')
+    .or('status.in.(Delivered,Order Received),delivery_status.eq.Completed')
+    .limit(1000);
 
   if (error) {
     throw error;

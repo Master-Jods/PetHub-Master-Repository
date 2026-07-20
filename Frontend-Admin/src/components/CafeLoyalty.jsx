@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import './Customers.css';
 import { supabaseCafe } from '../supabaseCafe';
-import { supabase } from '../supabaseClient';
 
 const RECORDS_PER_PAGE = 10;
 
@@ -34,9 +33,9 @@ function CafeLoyalty() {
 
       const customerIds = (accountsData || []).map((acc) => acc.customer_id).filter(Boolean);
 
-      // 2. Fetch profiles from public schema to get names and contact details
+      // 2. Fetch profiles from cafe schema to get names and contact details
       if (customerIds.length > 0) {
-        const { data: profilesData, error: profilesErr } = await supabase
+        const { data: profilesData, error: profilesErr } = await supabaseCafe
           .from('profiles')
           .select('id, name, email, phone')
           .in('id', customerIds);

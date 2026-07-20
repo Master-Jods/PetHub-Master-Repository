@@ -157,10 +157,10 @@ export const useInventory = () => {
     const channelName = `inventory-live-updates-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
       .channel(channelName)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_items' }, queueRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_categories' }, queueRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_recipe_lines' }, queueRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_stock_movements' }, queueRefresh)
+      .on('postgres_changes', { event: '*', schema: 'cafe', table: 'inventory_items' }, queueRefresh)
+      .on('postgres_changes', { event: '*', schema: 'cafe', table: 'inventory_categories' }, queueRefresh)
+      .on('postgres_changes', { event: '*', schema: 'cafe', table: 'inventory_recipe_lines' }, queueRefresh)
+      .on('postgres_changes', { event: '*', schema: 'cafe', table: 'inventory_stock_movements' }, queueRefresh)
       .subscribe();
 
     return () => {

@@ -10,8 +10,6 @@ import ChooseService from './pages/ChooseService';
 import ScheduleAppointment from './pages/ScheduleAppointment';
 import BookingConfirmation from './pages/BookingConfirmation';
 import AppointmentConfirmed from './pages/AppointmentConfirmed';
-import Shop from './pages/Shop';
-import Checkout from './pages/Checkout';
 import Boarding from './pages/Boarding';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -20,7 +18,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Add Bootstrap CSS
 import BoardingBook from './pages/BoardingBook';
 import BoardingConfirmed from './pages/BoardingConfirmed';
 import BoardingAppointmentConfirmed from './pages/BoardingAppointmentConfirmed';
-import Petcafe from './pages/Petcafe';
+import MaintenancePage from './pages/MaintenancePage';
 import BdayPawty from './pages/bdaypawty';
 import BookPawty from './pages/BookPawty';
 import Profile from './pages/Profile';
@@ -30,45 +28,6 @@ import SiteAlertModal from './components/SiteAlertModal';
 import SiteConfirmModal from './components/SiteConfirmModal';
 import CartModal from './components/CartModal';
 import { toFriendlyMessage } from './utils/friendlyMessage';
-import { lazy, Suspense } from 'react';
-import { AuthProvider as CafeAuthProvider } from './cafe/context/AuthContext';
-import { CartProvider as CafeCartProvider } from './cafe/context/CartContext';
-
-const CafeMenu = lazy(() => import('./cafe/pages/Menu'));
-const CafeOrder = lazy(() => import('./cafe/pages/Order'));
-const CafeOrderCategory = lazy(() => import('./cafe/pages/OrderCategory'));
-const CafeCheckout = lazy(() => import('./cafe/pages/Checkout'));
-const CafeOrderSuccess = lazy(() => import('./cafe/pages/OrderSuccess'));
-const CafeTrackOrder = lazy(() => import('./cafe/pages/TrackOrder'));
-const CafeOrderHistory = lazy(() => import('./cafe/pages/OrderHistory'));
-const CafeNotifications = lazy(() => import('./cafe/pages/Notifications'));
-const CafeProfile = lazy(() => import('./cafe/pages/Profile'));
-const CafeAbout = lazy(() => import('./cafe/pages/About'));
-
-const CafeFlowWrapper = () => {
-  return (
-    <CafeAuthProvider>
-      <CafeCartProvider>
-        <Suspense fallback={<div style={{ padding: 40, textAlign: 'center' }}>Loading Cafe Page...</div>}>
-          <Routes>
-            <Route path="menu" element={<CafeMenu />} />
-            <Route path="order" element={<CafeOrder />} />
-            <Route path="order/:category" element={<CafeOrderCategory />} />
-            <Route path="checkout" element={<CafeCheckout />} />
-            <Route path="order-success" element={<CafeOrderSuccess />} />
-            <Route path="track-order" element={<CafeTrackOrder />} />
-            <Route path="order-history" element={<CafeOrderHistory />} />
-            <Route path="notifications" element={<CafeNotifications />} />
-            <Route path="profile" element={<Navigate to="/cafe/profile/info" replace />} />
-            <Route path="profile/info" element={<RequireAuth><CafeProfile view="info" /></RequireAuth>} />
-            <Route path="profile/loyalty" element={<RequireAuth><CafeProfile view="loyalty" /></RequireAuth>} />
-            <Route path="about" element={<CafeAbout />} />
-          </Routes>
-        </Suspense>
-      </CafeCartProvider>
-    </CafeAuthProvider>
-  );
-};
 
 // Create a wrapper component that conditionally shows the navbar
 const NavbarWrapper = () => {
@@ -182,17 +141,10 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/shop/:category" element={<Shop />} />
-              <Route
-                path="/checkout"
-                element={
-                  <RequireAuth>
-                    <Checkout />
-                  </RequireAuth>
-                }
-              />
-              <Route path="/petcafe" element={<Petcafe />} />
+              <Route path="/shop" element={<MaintenancePage />} />
+              <Route path="/shop/:category" element={<MaintenancePage />} />
+              <Route path="/checkout" element={<MaintenancePage />} />
+              <Route path="/petcafe" element={<MaintenancePage />} />
               <Route
                 path="/boarding-appointment-confirmed"
                 element={
@@ -218,7 +170,7 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route path="/cafe/*" element={<CafeFlowWrapper />} />
+              <Route path="/cafe/*" element={<MaintenancePage />} />
             </Routes>
           </main>
           

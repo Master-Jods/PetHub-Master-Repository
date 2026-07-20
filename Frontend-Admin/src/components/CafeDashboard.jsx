@@ -60,11 +60,30 @@ function CafeDashboard() {
         // 5. Recent Orders
         const { data: recentOrdersData, error: recentOrdersErr } = await supabaseCafe
           .from('orders')
-          .select('id, code, status, total_amount, placed_at, customer_name')
+          .select('id, code, status, total_amount, placed_at, customer_id')
           .order('created_at', { ascending: false })
           .limit(5);
 
         if (recentOrdersErr) throw recentOrdersErr;
+
+        const customerIds = [
+          ...new Set((recentOrdersData || []).map((order) => order.customer_id).filter(Boolean)),
+        ];
+        let customersById = {};
+
+        if (customerIds.length > 0) {
+          const { data: profileRows, error: profileErr } = await supabaseCafe
+            .from('profiles')
+            .select('id, name, email')
+            .in('id', customerIds);
+
+          if (profileErr) throw profileErr;
+
+          customersById = (profileRows || []).reduce((lookup, profile) => {
+            lookup[profile.id] = profile.name || profile.email || 'Guest';
+            return lookup;
+          }, {});
+        }
 
         setStats({
           totalCustomers: customerCount || 0,
@@ -72,7 +91,12 @@ function CafeDashboard() {
           lowStockIngredients: lowStockCount,
           totalSales: totalSalesAmt,
         });
-        setRecentOrders(recentOrdersData || []);
+        setRecentOrders(
+          (recentOrdersData || []).map((order) => ({
+            ...order,
+            customer_name: customersById[order.customer_id] || 'Guest',
+          }))
+        );
       } catch (err) {
         console.error('Error fetching Cafe dashboard data:', err);
         setError(err.message || 'Failed to load Cafe overview.');

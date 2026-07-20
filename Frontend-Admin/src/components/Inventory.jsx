@@ -298,9 +298,13 @@ function Inventory() {
 
     const intervalId = window.setInterval(() => {
       loadInventory({ showLoader: false });
-    }, 60000);
+    }, 300000);
 
+    let lastFocusRefresh = 0;
     const handleWindowFocus = () => {
+      const now = Date.now();
+      if (now - lastFocusRefresh < 60000) return;
+      lastFocusRefresh = now;
       loadInventory({ showLoader: false });
     };
 
