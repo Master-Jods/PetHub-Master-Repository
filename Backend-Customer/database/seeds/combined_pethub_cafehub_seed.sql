@@ -31,6 +31,7 @@ create extension if not exists pg_trgm;
 \ir ../migrations/20260413_inventory_stock_on_orders.sql
 \ir ../migrations/20260415_customer_order_inventory_rpc.sql
 \ir ../migrations/20260529_featured_reviews_refunds.sql
+\ir ../migrations/20260814_pethub_campaigns.sql
 
 \echo 'Applying CafeHub cafe schema...'
 \ir ../migrations/cafe/unified_schema.sql

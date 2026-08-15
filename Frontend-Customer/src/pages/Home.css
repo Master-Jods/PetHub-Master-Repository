@@ -442,6 +442,135 @@
   font-weight: 500;
 }
 
+/* ==================== WOOF OFFERS SECTION ==================== */
+.home-woof-offers-section {
+  padding: 74px 0;
+  background:
+    linear-gradient(135deg, rgba(245, 55, 153, 0.08), rgba(58, 228, 250, 0.1)),
+    #ffffff;
+}
+
+.home-woof-offers-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.home-woof-offers-kicker {
+  margin: 0;
+  color: #f53799;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+}
+
+.home-woof-offers-header h2 {
+  margin: 4px 0 0;
+  color: #17223b;
+  font-size: clamp(38px, 5vw, 62px);
+  font-weight: 1000;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.home-woof-offer-card {
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(245, 55, 153, 0.22);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 16px 34px rgba(23, 34, 59, 0.1);
+}
+
+.home-woof-offer-media {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #fff2fa;
+}
+
+.home-woof-offer-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.home-woof-offer-body {
+  padding: 22px;
+}
+
+.home-woof-offer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.home-woof-offer-tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(58, 228, 250, 0.16);
+  color: #0f7180;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.home-woof-offer-subtitle {
+  margin: 0 0 8px;
+  color: #f53799;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.home-woof-offer-body h3 {
+  margin: 0;
+  color: #17223b;
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.home-woof-offer-description {
+  margin: 12px 0 0;
+  color: #596174;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.home-woof-offer-mechanic {
+  margin-top: 16px;
+  padding: 13px 14px;
+  border-left: 4px solid #f53799;
+  border-radius: 6px;
+  background: #fff7fa;
+  color: #8d285c;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.home-woof-offer-btn {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 18px;
+  border: none !important;
+  border-radius: 8px !important;
+  background: #f53799 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
 /* ==================== SERVICES SECTION ==================== */
 .home-services-section {
   padding: 100px 0;
@@ -1844,6 +1973,19 @@
 }
 
 @media (max-width: 768px) {
+  .home-woof-offers-section {
+    padding: 52px 0;
+  }
+
+  .home-woof-offers-header {
+    display: block;
+    margin-bottom: 22px;
+  }
+
+  .home-woof-offer-body h3 {
+    font-size: 24px;
+  }
+
   .home-footer-section {
     padding: 30px 0 15px;
   }

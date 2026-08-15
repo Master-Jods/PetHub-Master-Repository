@@ -11,11 +11,50 @@ import { assetUrl } from '../utils/assets';
 const Home = () => {
   const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
+  const [woofOffers, setWoofOffers] = useState([]);
   const [communityReviews, setCommunityReviews] = useState([]);
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    let isMounted = true;
+
+    const loadWoofOffers = async () => {
+      const { data, error } = await supabase
+        .from('pethub_campaigns')
+        .select('id, title, subtitle, description, campaign_image_url, cta_text, promo_mechanic, target_segment, source, sort_order')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (!isMounted || error || !Array.isArray(data)) {
+        return;
+      }
+
+      setWoofOffers(data.map((item) => ({
+        id: item.id,
+        title: item.title || '',
+        subtitle: item.subtitle || '',
+        description: item.description || '',
+        imageUrl: item.campaign_image_url || '',
+        ctaText: item.cta_text || 'View Offer',
+        promoMechanic: item.promo_mechanic || '',
+        targetSegment: item.target_segment || '',
+        source: item.source || 'WOOF',
+      })).filter((item) => item.title));
+    };
+
+    void loadWoofOffers();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -149,6 +188,11 @@ const Home = () => {
     window.scrollTo(0, 0);
   };
 
+  const handleWoofOfferClick = () => {
+    navigate('/booking');
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="home-main-page">
       {/* Special navbar for Home page */}
@@ -194,6 +238,47 @@ const Home = () => {
           </Row>
         </Container>
       </section>
+
+      {woofOffers.length > 0 && (
+        <section className="home-woof-offers-section">
+          <Container>
+            <div className="home-woof-offers-header">
+              <p className="home-woof-offers-kicker">Powered by WOOF</p>
+              <h2>WOOF Offers</h2>
+            </div>
+
+            <Row className="g-4">
+              {woofOffers.map((offer) => (
+                <Col lg={4} md={6} key={offer.id}>
+                  <article className="home-woof-offer-card">
+                    {offer.imageUrl ? (
+                      <div className="home-woof-offer-media">
+                        <img src={offer.imageUrl} alt={offer.title} />
+                      </div>
+                    ) : null}
+
+                    <div className="home-woof-offer-body">
+                      <div className="home-woof-offer-tags">
+                        <span>{offer.source}</span>
+                        {offer.targetSegment ? <span>{offer.targetSegment}</span> : null}
+                      </div>
+
+                      {offer.subtitle ? <p className="home-woof-offer-subtitle">{offer.subtitle}</p> : null}
+                      <h3>{offer.title}</h3>
+                      {offer.description ? <p className="home-woof-offer-description">{offer.description}</p> : null}
+                      {offer.promoMechanic ? <div className="home-woof-offer-mechanic">{offer.promoMechanic}</div> : null}
+
+                      <Button className="home-woof-offer-btn" onClick={handleWoofOfferClick}>
+                        {offer.ctaText}
+                      </Button>
+                    </div>
+                  </article>
+                </Col>
+              ))}
+            </Row>
+          </Container>
+        </section>
+      )}
 
       {/* Services Section */}
       <section className="home-services-section">

@@ -10,6 +10,7 @@ import analyticsRouter from './routes/analytics.js';
 import settingsRouter from './routes/settings.js';
 import dashboardRouter from './routes/dashboard.js';
 import announcementsRouter from './routes/announcements.js';
+import campaignsRouter from './routes/campaigns.js';
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/api/analytics', analyticsRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/announcements', announcementsRouter);
+app.use('/api/campaigns', campaignsRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true });
