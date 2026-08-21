@@ -11,6 +11,7 @@ import settingsRouter from './routes/settings.js';
 import dashboardRouter from './routes/dashboard.js';
 import announcementsRouter from './routes/announcements.js';
 import campaignsRouter from './routes/campaigns.js';
+import woofBackfillRouter from './routes/woofBackfill.js';
 
 const app = express();
 
@@ -47,6 +48,7 @@ app.use('/api/settings', settingsRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/announcements', announcementsRouter);
 app.use('/api/campaigns', campaignsRouter);
+app.use('/api/woof/backfill', woofBackfillRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true });
