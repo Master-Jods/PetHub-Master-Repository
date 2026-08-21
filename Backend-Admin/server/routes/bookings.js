@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { supabaseAdmin } from '../lib/supabaseAdmin.js';
+import { queueBookingWebhookIfFinalized } from '../services/woofWebhookService.js';
 
 const router = Router();
 
@@ -424,6 +425,10 @@ router.patch('/:id', async (req, res) => {
         console.warn('Booking saved but notification state was not updated:', notificationError.message || notificationError);
       }
     }
+
+    queueBookingWebhookIfFinalized(updatedBooking).catch((webhookError) => {
+      console.warn('Booking saved but WOOF webhook was not queued:', webhookError.message || webhookError);
+    });
 
     const [notifications, unreadCount] = await Promise.all([
       getRecentNotifications(),

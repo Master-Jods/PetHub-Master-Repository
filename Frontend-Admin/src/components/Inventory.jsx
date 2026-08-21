@@ -429,8 +429,18 @@ function Inventory() {
           imagePath: payload.product.imagePath || payload.product.image,
           image: resolveInventoryImage(payload.product.imagePath || payload.product.image),
         }]);
+        setActiveTypeTab(payload.product.productType || newProduct.productType);
+        setSearchTerm('');
+        setCategory('All Categories');
+        setStockLevel('All Stock Levels');
+        setSelectedPetType('All Pets');
         setNewProduct(baseFormState);
         setIsAddModalOpen(false);
+        void loadInventory({ showLoader: false }).then(() => {
+          if (payload.warning) {
+            setError(toFriendlyMessage(payload.warning, payload.warning));
+          }
+        });
       })
       .catch((saveError) => {
         setError(toFriendlyMessage(saveError.message, 'We couldn’t add that product right now.'));
@@ -475,6 +485,11 @@ function Inventory() {
         )));
         setIsEditModalOpen(false);
         setSelectedProduct(null);
+        void loadInventory({ showLoader: false }).then(() => {
+          if (payload.warning) {
+            setError(toFriendlyMessage(payload.warning, payload.warning));
+          }
+        });
       })
       .catch((saveError) => {
         setError(toFriendlyMessage(saveError.message, 'We couldn’t update that product right now.'));

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node server/index.js",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "webhook:test:woof": "node scripts/send-woof-sample-transaction.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",

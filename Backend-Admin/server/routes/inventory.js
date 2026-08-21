@@ -47,7 +47,7 @@ const parseDataUrl = (value) => {
 
 const uploadInventoryImage = async (image, productName) => {
   const parsed = parseDataUrl(image);
-  if (!parsed) return image ?? '';
+  if (!parsed) return { imageUrl: image ?? '', warning: '' };
 
   // Proactively ensure storage bucket exists
   try {
@@ -74,29 +74,40 @@ const uploadInventoryImage = async (image, productName) => {
 
   if (error) {
     console.warn('Inventory image upload failed, saving product without an inline image:', error.message || error);
-    return '';
+    return {
+      imageUrl: '',
+      warning: 'Product was saved, but the image could not be uploaded. Check the Supabase Storage bucket configuration.',
+    };
   }
 
   const { data } = supabaseAdmin.storage.from(inventoryImageBucket).getPublicUrl(filePath);
-  return data.publicUrl;
+  return { imageUrl: data.publicUrl, warning: '' };
 };
 
-const normalizeProductPayload = async (payload = {}) => ({
-  product_type: payload.productType ?? 'Pet Shop',
-  name: payload.name?.trim() ?? '',
-  category: payload.category?.trim() ?? '',
-  pet_type: payload.petType ?? 'All Pets',
-  price: Number(payload.price ?? 0),
-  stock: Number(payload.stock ?? 0),
-  brand: payload.brand?.trim() ?? '',
-  description: payload.description?.trim() ?? '',
-  image_url: await uploadInventoryImage(payload.image, payload.name),
-  variations: Array.isArray(payload.variations)
-    ? payload.variations
-        .filter((variation) => variation?.name && variation?.price !== '' && variation?.price != null)
-        .map(normalizeVariation)
-    : [],
-});
+const normalizeProductPayload = async (payload = {}) => {
+  const imageUpload = await uploadInventoryImage(payload.image, payload.name);
+
+  return {
+    product: {
+      product_type: payload.productType ?? 'Pet Shop',
+      name: payload.name?.trim() ?? '',
+      category: payload.category?.trim() ?? '',
+      pet_type: payload.petType ?? 'All Pets',
+      price: Number(payload.price ?? 0),
+      stock: Number(payload.stock ?? 0),
+      brand: payload.brand?.trim() ?? '',
+      description: payload.description?.trim() ?? '',
+      image_url: imageUpload.imageUrl,
+      is_active: true,
+      variations: Array.isArray(payload.variations)
+        ? payload.variations
+            .filter((variation) => variation?.name && variation?.price !== '' && variation?.price != null)
+            .map(normalizeVariation)
+        : [],
+    },
+    warning: imageUpload.warning,
+  };
+};
 
 const isValidProduct = (product) =>
   product.name &&
@@ -227,9 +238,10 @@ router.get('/catalog', async (req, res) => {
 
 router.post('/', async (req, res) => {
   let product;
+  let warning = '';
 
   try {
-    product = await normalizeProductPayload(req.body);
+    ({ product, warning } = await normalizeProductPayload(req.body));
   } catch (error) {
     return res.status(500).json({ error: error.message || 'Failed to prepare product.' });
   }
@@ -245,17 +257,19 @@ router.post('/', async (req, res) => {
     .single();
 
   if (error) {
-    return res.status(500).json({ error: 'Failed to create product.' });
+    console.error('Failed to create product:', error.message || error);
+    return res.status(500).json({ error: error.message || 'Failed to create product.' });
   }
 
-  return res.status(201).json({ product: mapProduct(data) });
+  return res.status(201).json({ product: mapProduct(data), warning });
 });
 
 router.patch('/:id', async (req, res) => {
   let product;
+  let warning = '';
 
   try {
-    product = await normalizeProductPayload(req.body);
+    ({ product, warning } = await normalizeProductPayload(req.body));
   } catch (error) {
     return res.status(500).json({ error: error.message || 'Failed to prepare product.' });
   }
@@ -272,10 +286,11 @@ router.patch('/:id', async (req, res) => {
     .single();
 
   if (error) {
-    return res.status(500).json({ error: 'Failed to update product.' });
+    console.error('Failed to update product:', error.message || error);
+    return res.status(500).json({ error: error.message || 'Failed to update product.' });
   }
 
-  return res.json({ product: mapProduct(data) });
+  return res.json({ product: mapProduct(data), warning });
 });
 
 router.delete('/:id', async (req, res) => {

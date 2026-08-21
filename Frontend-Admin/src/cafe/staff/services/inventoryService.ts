@@ -4,7 +4,6 @@ import { requireSupabaseClient } from '@/lib/supabase';
 import type { InventoryCategory, InventoryItem, InventoryMovement, InventoryMovementType, InventoryRecipeLine } from '@/types/inventory';
 
 const asTrimmed = (value: string | null | undefined) => String(value ?? '').trim();
-const hasPetKeyword = (value: string | null | undefined) => asTrimmed(value).toLowerCase().includes('pet');
 const roundQuantity = (value: number) => Math.round(value * 1000) / 1000;
 const isMissingInventoryExtension = (error: unknown) => {
   const record = error as { code?: unknown; message?: unknown };
@@ -91,7 +90,7 @@ export const inventoryService = {
     if (error) throw normalizeError(error, { fallbackMessage: 'Unable to load inventory categories.' });
     return (Array.isArray(data) ? data : [])
       .map(mapInventoryCategoryRow)
-      .filter((row) => row.isActive !== false && !hasPetKeyword(row.name));
+      .filter((row) => row.isActive !== false);
   },
 
   async saveCategory(category: InventoryCategory): Promise<InventoryCategory> {
@@ -131,7 +130,7 @@ export const inventoryService = {
     if (error) throw normalizeError(error, { fallbackMessage: 'Unable to load inventory items.' });
     return (Array.isArray(data) ? data : [])
       .map(mapInventoryItemRow)
-      .filter((row) => row.isActive !== false && !hasPetKeyword(row.name));
+      .filter((row) => row.isActive !== false);
   },
 
   async saveItem(item: InventoryItem): Promise<InventoryItem> {
